@@ -18,7 +18,7 @@
     "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#installing-and-loading-r-packages",
     "title": "Hands-on Exercise 1: Geospatial Data Wrangling with R",
     "section": "Installing and Loading R Packages",
-    "text": "Installing and Loading R Packages\nNext, I will install and load tidyverse and sf packages.\n\npacman::p_load(tidyverse, sf)"
+    "text": "Installing and Loading R Packages\nNext, I will install and load tidyverse and sf packages using p_load() from the pacman package. The pacman package is useful to load multiple packages at once!\n\npacman::p_load(tidyverse, sf)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#importing-geospatial-data-shapefile-format",

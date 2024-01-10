@@ -25,7 +25,7 @@ To begin our exercise, we need to have data on hand. Hence, we would be extracti
 
 ## Installing and Loading R Packages
 
-Next, I will install and load tidyverse and sf packages.
+Next, I will install and load tidyverse and sf packages using p_load() from the pacman package. The pacman package is useful to load multiple packages at once!
 
 ```{r}
 pacman::p_load(tidyverse, sf)
