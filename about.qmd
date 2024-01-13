@@ -1,9 +1,23 @@
 ---
-title: "About"
+title: "About Bin Hui"
 ---
 
-About this site
+![](images/IMG_6018.JPG){fig-align="center" width="262"}
 
-```{r}
-1 + 1
-```
+Hi there!
+
+I am Ong Bin Hui, a third-year student at the Singapore Management University (SMU), majoring in Finance with a second major in Data Science and Analytics.
+
+Apart from my love for music and the exciting world of Finance and Investments, I am very passionate in understanding and harnessing the power of Data Science and Analytics!
+
+Why so?
+
+I believe Data Science and Analytics has a wonderful ability and potential to bring tremendous value to societies and the world in an uncountable number of aspects like healthcare, housing and many more... all of which can uplift lives!
+
+With that, I am actively pursuing knowledge and experience in this area, in hopes I can effectively utilize them to contribute to the greater good. Geospatial Analytics, which is the course I am journaling about on this website, is an example of a skill I believe can help me in moving closer towards my goals.
+
+I hope you'll enjoy looking through my course work and potentially be inspired about this skill as well! Should you like to chat with me, you can drop me an email at @binhui.ong.2021\@business.smu.edu.sg!
+
+Have a great day ahead! :D
+
+*p.s.: Here's a feel-good song to make your day better: [Get a Guitar by RIIZE](https://www.youtube.com/watch?v=iUw3LPM7OBU)*

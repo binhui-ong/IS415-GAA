@@ -1,7 +1,13 @@
 ---
-title: "IS415-GAA"
+title: "Bin Hui's IS415-Geospatial Analytics and Applications Journal"
 ---
 
-Welcome to **IS415 Geospatial Analytics and Applications**.
+Hi there, welcome to **Bin Hui's IS415 (Geospatial Analytics and Applications) Journal**!
 
-This is the course website of IS415 I study this term. You will find my course work on this website.
+I am Ong Bin Hui, a penultimate student from the Singapore Management University.
+
+This is the course website of IS415, which I study this term. Please feel free to explore my course work on this website.
+
+Moreover, you can reach out to me through email at binhui.ong.2021\@business.smu.edu.sg if you would like to learn more about my work.
+
+Have a good day! :D

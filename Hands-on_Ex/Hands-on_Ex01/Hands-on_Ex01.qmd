@@ -2,7 +2,7 @@
 title: "Hands-on Exercise 1: Geospatial Data Wrangling with R"
 execute:
   warning: false
-date: "`r Sys.Date()`"
+date: "January 10, 2024"
 ---
 
 # 1.1 Overview
