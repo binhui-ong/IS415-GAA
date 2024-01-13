@@ -1,8 +1,8 @@
 ---
-title: "Hands-on_Exercise 2: Thematic Mapping and GeoVisualization with R"
+title: "Hands-on Exercise 2: Thematic Mapping and GeoVisualization with R"
 execute:
   warning: FALSE
-date: "`r Sys.Date()`"
+date: "January 13, 2024"
 ---
 
 # 2.1 Overview

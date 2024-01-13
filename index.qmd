@@ -2,12 +2,12 @@
 title: "Bin Hui's IS415-Geospatial Analytics and Applications Journal"
 ---
 
-Hi there, welcome to **Bin Hui's IS415 (Geospatial Analytics and Applications) Journal**!
+Hello, welcome to **Bin Hui's IS415 (Geospatial Analytics and Applications) Journal**!
 
-I am Ong Bin Hui, a penultimate student from the Singapore Management University.
+I am Ong Bin Hui, a penultimate student from the Singapore Management University (SMU)
 
-This is the course website of IS415, which I study this term. Please feel free to explore my course work on this website.
+This is the course website of IS415, which I study this term. Please feel free to explore my course work on this website with the navigation pane at the top of this webpage.
 
-Moreover, you can reach out to me through email at binhui.ong.2021\@business.smu.edu.sg if you would like to learn more about my work.
+Moreover, to find out more about me, head over to the "About Me" page.
 
-Have a good day! :D
+Have a good day! :)
