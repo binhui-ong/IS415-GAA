@@ -181,8 +181,7 @@ The second approach involves adding tmap's elements layer by layer to create a h
 
 It is more complicated and lengthy, but definitely rewarding when we want a beautiful graph!
 
-```{r}
-#|echo: false
+```{r, echo=FALSE}
 tm_shape(mpsz_pop2020) +
   tm_fill("DEPENDENCY",
           style = "quantile",
