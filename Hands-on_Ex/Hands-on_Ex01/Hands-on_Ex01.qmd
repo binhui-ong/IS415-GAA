@@ -273,7 +273,7 @@ Step 2: Hence, we employ ggplot2 functions instead.
 
 ```{r}
 ggplot(data=mpsz3414,
-       aes(x=as.numeric('PreSch Density'))) +
+       aes(x=as.numeric(`PreSch Density`))) +
   geom_histogram(bins=20, 
                  color = "black", 
                  fill = "light blue") + 

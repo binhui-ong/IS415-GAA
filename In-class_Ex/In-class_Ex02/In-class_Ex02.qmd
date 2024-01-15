@@ -1,0 +1,8 @@
+---
+title: "In-class Exercise 2: Thematic Mapping and GeoVisualization with R"
+execute:
+  warning: FALSE
+date: "January 15, 2024"
+---
+
+
