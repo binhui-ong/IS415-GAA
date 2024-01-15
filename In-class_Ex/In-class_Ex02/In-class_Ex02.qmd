@@ -1,8 +1,9 @@
 ---
 title: "In-class Exercise 2: R for Geospatial Analytics"
-html: 
-  code-fold: true
-  code-summary: "Show the code"
+format: 
+  html: 
+    code-fold: true
+    code-summary: "Show the code"
 execute:
   eval: true
   echo: true
