@@ -1,8 +1,99 @@
 ---
-title: "In-class Exercise 2: Thematic Mapping and GeoVisualization with R"
+title: "In-class Exercise 2: R for Geospatial Analytics"
+html: 
+  code-fold: true
+  code-summary: "Show the code"
 execute:
+  eval: true
+  echo: true
   warning: FALSE
+editor: visual
 date: "January 15, 2024"
 ---
 
+# 2.1 Getting Started
+
+To begin with, we will use p_load() from pacman package to load the following packages:
+
+-   arrow,
+
+-   lubridate,
+
+-   tidyverse,
+
+-   tmap, and
+
+-   sf.
+
+```{r}
+pacman::p_load(arrow, lubridate, tidyverse, tmap, sf)
+```
+
+# 2.2 Importing Grab-Posisi Dataset
+
+Import the parquet file into R and name the data frame as df:
+```{r}
+#| eval: false
+df <- read_parquet("data/GrabPosisi/part-00008-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+```
+
+To convert pingtimestamp field from integer to datetime data format:
+```{r}
+#| eval: false
+df$pingtimestamp <- as_datetime(df$pingtimestamp)
+```
+
+
+Save the newly reformatted df data frame as rds for future use:
+```{r}
+#| eval: false
+#| echo: false
+write_rds(df, "data/rds/part0.rds")
+```
+
+
+Extracting trip starting locations
+```{r}
+#| eval: false
+origin_df <- df %>%
+  group_by(trj_id) %>%
+  arrange(pingtimestamp) %>%
+  filter(row_number() == 1) %>%
+  mutate(weekday = wday(pingtimestamp,
+                         label = TRUE,
+                         abbr = TRUE),
+         start_hr = factor(hour(pingtimestamp)),
+         day = factor(mday(pingtimestamp)))
+origin_df
+```
+
+Extracting trip destination locations
+```{r}
+#| eval: false
+destination_df <- df %>%
+  group_by(trj_id) %>%
+  arrange(desc(pingtimestamp)) %>%
+  filter(row_number() == 1) %>%
+  mutate(weekday = wday(pingtimestamp,
+                         label = TRUE,
+                         abbr = TRUE),
+         end_hr = factor(hour(pingtimestamp)),
+         day = factor(mday(pingtimestamp)))
+dest_df
+```
+
+Save the newly created origin_df and destination_df dataframes as rds files for future use:
+```{r}
+#| eval: false
+#| echo: false
+write_rds(origin_df,"data/rds/origin_df.rds")
+write_rds(destination_df, "data/rds/destination_df.rds")
+```
+
+
+To import the objects the next time I reopen the R project,
+```{r}
+origin_df <- read_rds("data/rds/origin_df.rds")
+destination_df <- read_rds("data/rds/destination_df.rds")
+```
 
