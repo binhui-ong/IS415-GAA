@@ -33,24 +33,30 @@ pacman::p_load(arrow, lubridate, tidyverse, tmap, sf)
 # 2.2 Importing Grab-Posisi Dataset
 
 Import the parquet file into R and name the data frame as df:
+
 ```{r}
+#| eval: false
 df <- read_parquet("data/GrabPosisi/part-00008-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
 ```
 
 To convert pingtimestamp field from integer to datetime data format:
+
 ```{r}
+#| eval: false
 df$pingtimestamp <- as_datetime(df$pingtimestamp)
 ```
 
-
 Save the newly reformatted df data frame as rds for future use:
+
 ```{r}
+#| eval: false
 write_rds(df, "data/rds/part0.rds")
 ```
 
-
 Extracting trip starting locations
+
 ```{r}
+#| eval: false
 origin_df <- df %>%
   group_by(trj_id) %>%
   arrange(pingtimestamp) %>%
@@ -63,7 +69,9 @@ origin_df <- df %>%
 ```
 
 Extracting trip destination locations
+
 ```{r}
+#| eval: false
 destination_df <- df %>%
   group_by(trj_id) %>%
   arrange(desc(pingtimestamp)) %>%
@@ -76,15 +84,16 @@ destination_df <- df %>%
 ```
 
 Save the newly created origin_df and destination_df dataframes as rds files for future use:
+
 ```{r}
+#| eval: false
 write_rds(origin_df,"data/rds/origin_df.rds")
 write_rds(destination_df, "data/rds/destination_df.rds")
 ```
 
-
 To import the objects the next time I reopen the R project,
+
 ```{r}
 origin_df <- read_rds("data/rds/origin_df.rds")
 destination_df <- read_rds("data/rds/destination_df.rds")
 ```
-
