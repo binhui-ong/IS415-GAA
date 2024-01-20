@@ -107,7 +107,7 @@ sg_sf<- st_set_crs(sg_sf, 3414)
 mpsz_sf <- st_set_crs(mpsz_sf, 3414)
 ```
 
-## 4.4.2 Mapping the geospatial data sets (## COMEBACK TO DO)
+## 4.4.2 Mapping the geospatial data sets 
 
 After checking the referencing system of each geospatial data frame, it is also useful for us to plot a map to show their spatial patterns.
 
