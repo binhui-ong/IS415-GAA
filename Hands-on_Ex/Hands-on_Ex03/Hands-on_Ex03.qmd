@@ -706,7 +706,6 @@ clarkevans.test(childcare_tm_ppp,
 
 Since p-value \< 0.05, we have sufficient evidence at 95% confidence level that the childcare services in Tampines are not randomly distributed.
 
-
 # 4.8 Second-order Spatial Point Patterns Analysis
 
 ## 4.8.1 Analyzing Spatial Point Process using G-function
