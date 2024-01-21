@@ -111,6 +111,13 @@ mpsz_sf <- st_set_crs(mpsz_sf, 3414)
 
 After checking the referencing system of each geospatial data frame, it is also useful for us to plot a map to show their spatial patterns.
 
+```{r}
+tm_shape(sg_sf) + tm_polygons() + 
+tm_shape(mpsz_sf) + tm_polygons() + 
+tm_shape(childcare_sf) + tm_dots()
+```
+Notice that all the geospatial layers are within the same map extend. This shows that their referencing system and coordinate values are referred to similar spatial context. This is very important in any geospatial analysis.
+
 We can create a pin map by using the following code chunk:
 
 ```{r}
@@ -302,7 +309,7 @@ summary(childcareSG_ppp)
 To plot the newly derived childcareSG_ppp map,
 
 ```{r}
-plot(childcare_ppp)
+plot(childcareSG_ppp)
 ```
 
 # 4.6 First-Order Spatial Point Patterns Analysis
