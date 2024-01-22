@@ -121,7 +121,9 @@ We can check the duplication in a ***ppp*** object by using the following code c
 any(duplicated(childcare_ppp))
 ```
 
-To count the number of co-incidence points, we will use *multiplicity()* function as shown in the code chunk below.
+From the above, we see that there is no duplicated point.
+
+However, suppose there are duplicated points, to count the number of co-incidence points, we will use *multiplicity()* function as shown in the code chunk below.
 
 To find out how many locations have more than one point event, we can use the code:
 
@@ -148,7 +150,7 @@ childcare_ppp_jit <- rjitter(childcare_ppp,
 any(duplicated(childcare_ppp_jit))
 ```
 
-Now, we have no more duplicated points!
+Thereafter, we should expect no more duplicated points.
 
 ### 1.3.4 Creating owin object: sf method
 
@@ -183,15 +185,13 @@ plot(ck, main= "Choa Chu Kang")
 plot(jw, main = "Jurong West")
 ```
 
-#2 Network Constrained Spatial Point Patterns Analysis
+# 2 **Network Constrained Spatial Point Patterns Analysis**
 
 Network constrained Spatial Point Patterns Analysis (NetSPAA) is a collection of spatial point patterns analysis methods special developed for analysing spatial point event occurs on or alongside network. The spatial point event can be locations of traffic accident or childcare centre for example. The network, on the other hand can be a road network or river network.
 
 In this hands-on exercise, you are going to gain hands-on experience on using appropriate functions of spNetwork package:
 
 to derive network constrained kernel density estimation (NetKDE), and to perform network G-function and k-function analysis
-
-# 2 **Network Constrained Spatial Point Patterns Analysis**
 
 ## 2.1 Installing and Loading R Packages
 
