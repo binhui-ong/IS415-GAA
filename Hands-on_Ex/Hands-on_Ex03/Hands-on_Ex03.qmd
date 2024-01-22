@@ -1,6 +1,7 @@
 ---
 title: "Hands-on Exercise 3: 1st Order Spatial Point Pattern Analysis Methods"
 execute:
+  eval: false
   warning: false
 date: "January 21, 2024"
 ---
@@ -60,6 +61,7 @@ In this exercise, the following five R packages will be used"
 To install and load the packages, we apply the following code:
 
 ```{r}
+#|eval: FALSE
 pacman::p_load(sf,spatstat,raster,maptools,tmap)
 ```
 
@@ -70,16 +72,18 @@ pacman::p_load(sf,spatstat,raster,maptools,tmap)
 In this section, we will use st_read() from the sf package to import the three geospatial data sets into R.
 
 ```{r}
+#|eval: FALSE
 childcare_sf <- st_read(dsn = "data/ChildCareServices.geojson") %>%
   st_transform(crs=3414)
-childcare_sf
 ```
 
 ```{r}
+#|eval: FALSE
 sg_sf <- st_read(dsn="data", layer = "MP14_SUBZONE_WEB_PL") %>% st_union()
 ```
 
 ```{r}
+#|eval: FALSE
 mpsz_sf <- st_read(dsn="data", layer = "MP14_SUBZONE_WEB_PL")
 ```
 
@@ -107,7 +111,7 @@ sg_sf<- st_set_crs(sg_sf, 3414)
 mpsz_sf <- st_set_crs(mpsz_sf, 3414)
 ```
 
-## 4.4.2 Mapping the geospatial data sets 
+## 4.4.2 Mapping the geospatial data sets
 
 After checking the referencing system of each geospatial data frame, it is also useful for us to plot a map to show their spatial patterns.
 
@@ -116,6 +120,7 @@ tm_shape(sg_sf) + tm_polygons() +
 tm_shape(mpsz_sf) + tm_polygons() + 
 tm_shape(childcare_sf) + tm_dots()
 ```
+
 Notice that all the geospatial layers are within the same map extend. This shows that their referencing system and coordinate values are referred to similar spatial context. This is very important in any geospatial analysis.
 
 We can create a pin map by using the following code chunk:
@@ -146,7 +151,7 @@ In this section, we will convert simple feature data frame to sp’s Spatial\* c
 
 ## 4.5.1 Converting sf data frames to sp's Spatial\* class
 
-To convert geospatial data from sf dfata frame to sp's Spatial\* class, we use as_Spatial() from sf package.
+To convert geospatial data from sf data frame to sp's Spatial\* class, we use as_Spatial() from sf package.
 
 ```{r}
 childcare <- as_Spatial(childcare_sf)

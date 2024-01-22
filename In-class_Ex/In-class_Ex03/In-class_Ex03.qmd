@@ -1,0 +1,302 @@
+---
+title: "In-class Exercise 3: Kernel Density Estimation"
+format: 
+  html: 
+    code-fold: true
+    code-summary: "Show the code"
+execute:
+  eval: TRUE
+  echo: TRUE
+  warning: FALSE
+editor: visual
+date: "January 22, 2024"
+---
+
+# 1 Spatial Point Patterns Analysis Methods
+
+## 1.1 Data Acquisition
+
+In this exercise, we would be using the following three data sets:
+
+-   CHILDCARE (geojson format)
+
+    -   A point feature data providing both location and attribute information of childcare centres
+
+    -   Source: Data.gov.sg
+
+-   MP14_SUBZONE_WEB_PL (ESRI shapefile format)
+
+    -   A polygon feature data providing information of URA 2014 Master Plan Planning Subzone boundary data
+
+    -   Source: Data.gov.sg
+
+-   CostalOutline (ESRI shapefile format)
+
+    -   A polygon feature data showing the national boundary of Singapore
+
+    -   Source: SLA
+
+## 1.2 Installing and Loading the R packages
+
+In this exercise, the following five R packages will be used"
+
+-   sf
+
+-   spatspat
+
+-   raster
+
+-   maptools
+
+-   tmap
+
+To install and load the packages, we apply the following code:
+
+```{r}
+#|eval: FALSE
+pacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)
+```
+
+## 1.3 Spatial Data Wrangling
+
+### 1.3.1 Importing the spatial data
+
+In this section, we will use st_read() from the sf package to import the three geospatial data sets into R.
+
+```{r}
+#|eval: FALSE
+childcare_sf <- st_read(dsn = "data/ChildCareServices.geojson") %>%
+  st_transform(crs=3414)
+```
+
+```{r}
+#|eval: FALSE
+mpsz_sf <- st_read(dsn="data", layer = "MP14_SUBZONE_WEB_PL")
+```
+
+```{r}
+#|eval: FALSE
+sg_sf <- st_read(dsn="data", layer = "MP14_SUBZONE_WEB_PL") %>% st_union()
+```
+
+Alternatively, to get Coastal Outline sg_sf,
+
+we can derive it from mpsz_sf.
+
+```{r}
+#|eval: FALSE
+sg_sf <- mpsz_sf %>% st_union()
+```
+
+We can also use st_combine() (instead of st_union()) to get sg_sf. However, unlike st_union(), internal boundaries are not resolved in st_combine().
+
+```{r}
+#|eval: FALSE
+sg_sf <- mpsz_sf %>% st_combine()
+```
+
+Let's examine how the mpsz_sf data set looks like on a map.
+
+```{r}
+plot(mpsz_sf)
+```
+
+```{r}
+plot(sg_sf)
+```
+
+### 1.3.2 Converting the sf format into spatstat's ppp format
+
+Next, we will use as.ppp() from spatstat package to convert the spatial data into spatstat's ppp object format:
+
+```{r}
+childcare_ppp <- as.ppp(childcare_sf)
+```
+
+### 1.3.3 Handling duplicated points
+
+We can check the duplication in a ***ppp*** object by using the following code chunk:
+
+```{r}
+any(duplicated(childcare_ppp))
+```
+
+To count the number of co-incidence points, we will use *multiplicity()* function as shown in the code chunk below.
+
+To find out how many locations have more than one point event, we can use the code:
+
+```{r}
+sum(multiplicity(childcare_ppp) > 1)
+```
+
+To overcome the issue of duplicate points, we can use any of the following 3 solutions:
+
+1.  Delete the duplicates (however, this would lead to the loss of some useful point events)
+
+2.  Jittering: To add a small pertubation to the duplicate points, so that they do not occupy the exact same space
+
+3.  Make each point "unique", and attach the duplicates of the points to the patterns as **marks**, as attributes of the points. Then, we would need analytical techniques that take into account these marks.
+
+```{r}
+childcare_ppp_jit <- rjitter(childcare_ppp, 
+                             retry=TRUE,
+                             nsim = 1,
+                             drop = TRUE)
+```
+
+```{r}
+any(duplicated(childcare_ppp_jit))
+```
+
+Now, we have no more duplicated points!
+
+### 1.3.4 Creating owin object: sf method
+
+We can use as.owin(). Note that the object in as.owin() must be an sf object.
+
+```{r}
+sg_owin <- as.owin(sg_sf)
+```
+
+### 1.3.5 Extracting our study areas
+
+To extract our study areas, we use the filter() function from dplyr package. Do note that this code would only apply on sf objects.
+
+```{r}
+pg <- mpsz_sf %>% 
+  filter(PLN_AREA_N == "PUNGGOL")
+tm <- mpsz_sf %>% 
+  filter(PLN_AREA_N == "TAMPINES")
+ck <- mpsz_sf %>% 
+  filter(PLN_AREA_N == "CHOA CHU KANG")
+jw <- mpsz_sf %>% 
+  filter(PLN_AREA_N == "JURONG WEST")
+```
+
+Plotting target planning areas:
+
+```{r fig.width=16, fig.height=10}
+par(mfrow = c(2,2))
+plot(pg, main = "Punggol")
+plot(tm, main = "Tampines")
+plot(ck, main= "Choa Chu Kang")
+plot(jw, main = "Jurong West")
+```
+
+#2 Network Constrained Spatial Point Patterns Analysis
+
+Network constrained Spatial Point Patterns Analysis (NetSPAA) is a collection of spatial point patterns analysis methods special developed for analysing spatial point event occurs on or alongside network. The spatial point event can be locations of traffic accident or childcare centre for example. The network, on the other hand can be a road network or river network.
+
+In this hands-on exercise, you are going to gain hands-on experience on using appropriate functions of spNetwork package:
+
+to derive network constrained kernel density estimation (NetKDE), and to perform network G-function and k-function analysis
+
+# 2 **Network Constrained Spatial Point Patterns Analysis**
+
+## 2.1 Installing and Loading R Packages
+
+```{r}
+#|eval: FALSE
+pacman::p_load(sp ,sf, spNetwork, tmap, classInt, viridis, tidyverse)
+```
+
+## 2.2 Data Import
+
+```{r}
+#|eval: FALSE
+network <- st_read(dsn = "data 1/geospatial", 
+                   layer = "Punggol_St")
+childcare <- st_read(dsn = "data 1/geospatial",
+                     layer = "Punggol_CC")
+```
+
+We can examine the structure of the output SpatialDataFrame in RStudio.
+
+Alternatively, the code chunk below can be used to print the content of network SpatialLineDataFrame and childcare SpatialPointsDataFrame.
+
+```{r}
+str(network)
+str(childcare)
+
+```
+
+## 2.3 Geospatial Data Visualization
+
+To visualise geospatial data in a high cartographic quality and interactive manner, the mapping function of tmap package can be used as shown in the code chunk below.
+
+```{r}
+tmap_mode('view')
+tm_shape(childcare) + 
+tm_dots()+
+tm_shape(network) + 
+tm_lines()
+tmap_mode('plot')
+```
+
+## 2.4 Network Constrained KDE (NetKDE) Analysis
+
+In this section, we will perform NetKDE analysis by using appropriate functions provided in spNetwork package.
+
+### 2.4.1 Preparing the lixels objects
+
+Before computing NetKDE, the SpatialLines object need to be cut into lixels with a specified minimal distance. This task can be performed by using with lixelize_lines() of spNetwork as shown in the code chunk below.
+
+```{r}
+lixels <- lixelize_lines(network,
+                         750,
+                         mindist = 375)
+```
+
+### 2.4.2 Generating line centre points
+
+```{r}
+samples <- lines_center(lixels)
+```
+
+### 2.4.3 Performing NetKDE
+
+We can compute the NetKDE by using the code chunk below:
+
+```{r}
+densities <- nkde(network, 
+                  events = childcare,
+                  w = rep(1,nrow(childcare)),
+                  samples = samples,
+                  kernel_name = "quartic",
+                  bw = 300, 
+                  div= "bw", 
+                  method = "simple", 
+                  digits = 1, 
+                  tol = 1,
+                  grid_shape = c(1,1), 
+                  max_depth = 8,
+                  agg = 5, 
+                  sparse = TRUE,
+                  verbose = FALSE)
+```
+
+### 2.4.3.1 Visualizing NetKDE
+
+Before we can visualise the NetKDE values, code chunk below will be used to insert the computed density values (i.e. densities) into samples and lixels objects as density field.
+
+```{r}
+samples$density <- densities
+lixels$density <- densities
+```
+
+Rescaling to help mapping:
+
+```{r}
+samples$density <- samples$density*1000
+lixels$density <- lixels$density*1000
+```
+
+The code below uses appropriate functions of tmap package to prepare interactive and high cartographic quality map visualisation.
+
+```{r}
+tmap_mode('view')
+tm_shape(lixels)+
+  tm_lines(col="density")+
+tm_shape(childcare)+
+  tm_dots()
+```
