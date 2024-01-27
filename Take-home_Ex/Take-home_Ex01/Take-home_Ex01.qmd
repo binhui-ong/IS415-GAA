@@ -1,0 +1,268 @@
+---
+title: "Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore"
+execute:
+  eval: FALSE
+  echo: FALSE
+  warning: false
+date: "January 23, 2024"
+---
+
+# 1 Overview
+
+## 1.1 Background
+
+Human mobility, the movement of human beings in space and time, reflects the spatial-temporal characteristics of human behavior. With the advancement Information and Communication Technologies (ICT) especially in smartphones, a large volume of data related to human mobility have been collected. By using appropriate GIS analysis methods, these data are potentially useful in supporting smart city planning and management.
+
+In 2020, a very interesting human mobility data set called Grab Posisi was released by GRAB, one of the largest shared taxi operator in South-east Asia. This provides an opportunity for us to explore the geographical and spatio-temporal distribution of Grab hailing services locations in Singapore.
+
+## 1.2 Our Objectives
+
+In this exercise, we will be exploring the geographical and spatio-temporal distribution of Grab hailing services locations in Singapore with the use of spatial point patterns analysis techniques.
+
+## 1.3 Our Task
+
+-   Use appropriate functions of **sf** and **tidyverse** to prapre the following geospatial data layer in sf tibble data.frames:
+
+    -   Grab taxi location points either by origins or destinations.
+
+    -   Road layer within Singapore excluding outer islands.
+
+    -   Singapore boundary layer excluding outer islands
+
+-   Use the extracted data to derive traditional Kernel Density Estimation layers.
+
+-   Use the extracted data to derive either Network Kernel Density Estimation (NKDE) or Temporal Network Kernel Density Estimation (TNKDE)
+
+-   Use appropriate **tmap** functions to display the kernel density layers on openstreetmap of Singapore.
+
+-   Describe the spatial patterns revealed by the kernel density maps.
+
+## 1.4 Data Acquisition
+
+To address the above questions, we would be using the following data sets:
+
+| Type       | Content                                         | Source                                                                                                    |
+|-----------------|----------------------------|----------------------------|
+| Geospatial | Road data set of Malaysia, Singapore and Brunei | [OpenStreetMap of Geofabrik download server](https://download.geofabrik.de/)                              |
+| Geospatial | Master Plan 2019 Subzone Boundary (No Sea)      | [data.gov.sg](https://beta.data.gov.sg/collections/1749/datasets/d_8594ae9ff96d0c708bc2af633048edfb/view) |
+| Aspatial   | Grab-Posisi of Singapore                        | [engineering.grab.com](https://engineering.grab.com/grab-posisi)                                          |
+
+## 1.5 Install and Load R Packages
+
+In this exercise, the following R packages will be used:
+
+-   **tidyverse**: to read, manipulate and create tidy data, and to create data graphics
+
+-   **sf**: to provide simple features access to represent and work with spatial vector data such as points and polygons
+
+-   **spatstat**: to perform statistical analysis of spatial data
+
+-   **raster**: to read, write, manipulate, analyze and model spatial data
+
+-   **maptools**: tools for handling spatial objects
+
+-   **tmap**: to create thematic and high-quality cartographic maps
+
+-   **arrow**: improve the performance of data analysis methods, and to increase the efficiency of moving data from one system or programming language to another
+
+-   **spNetwork**: to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances.
+
+-   **classInt**: provides a uniform interface to finding class intervals for continuous numerical variables
+
+-   **viridis**: to create colorblind-friendly maps
+
+To install and load the packages, we will use p_load() from the pacman package:
+
+```{r}
+#|eval: FALSE
+pacman::p_load(tidyverse, sf, spatstat, raster, maptools, tmap, arrow, spNetwork, classInt, viridis)
+```
+
+# 2 Data Preparation (Geospatial)
+
+Let's begin getting our hands dirty by introducing and preparing the geospatial data sets in R!
+
+## 2.1 Data Import 
+
+To import geospatial data, we will be using **st_read()** from the **sf** package.
+
+Road data set from OSM (shapefile format):
+
+```{r}
+#|eval: FALSE
+roaddata_sf <- st_read(dsn = "data/geospatial", 
+                       layer = "gis_osm_roads_free_1")
+```
+
+Master Plan 2019 Subzone Boundary (No Sea) (geojson format):
+
+```{r}
+#|eval: FALSE
+mpsz_sf <- st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaGEOJSON.geojson")
+```
+
+## 2.2 Data Preparation
+
+It is important to ensure our geospatial data is clean, in the correct coordinate reference system (CRS) and extracted to contain only relevant data to prevent complications later on. 
+
+In this section, we will go through the procedures to prepare our geospatial data.
+
+### 2.2.1 Data Pre-Processing
+
+To begin with, let's examine the data sets to understand their features. 
+
+```{r}
+#|eval: FALSE
+roaddata_sf
+```
+
+From the above, we can see that roaddata_sf is an sf object, with linestring geometry type and dimension XY.
+
+We also notice that it is in WGS84 geodetic CRS, which is not our desired coordinate reference system (svy 21). Hence, we would have to reproject it later (\#### INDICATE SECTION NUMBER).
+
+```{r}
+#|eval: FALSE
+mpsz_sf
+```
+
+For mpsz_sf, we see that it is an sf object with multipolygon geometry type. It comprises of records with XYZ coordinates, indicating a Z-dimension, quite redundant to us.
+
+Here, we notice that mpsz_sf has geodetic CRS of WGS84 as well. Hence, we will need to fix the CRS for mpsz_sf later (###INDICATE SECTION NUMBER) as well.
+
+#### 2.2.1.1 Dropping Z-dimension
+
+After having an understanding of our data sets, we will start to modify them into our desired dimensions and systems.
+
+In this step, we will remove the Z-dimension in mpsz_sf, with the use of st_zm(). st_zm() is a function used to drop or add Z and/or M dimensions, from sf package.
+
+```{r}
+mpsz_sf <- st_zm(mpsz_sf)
+```
+
+```{r}
+mpsz_sf
+```
+
+With that, we can see that the mpsz_sf has become two-dimensional (XY).
+
+#### 2.2.1.2 Invalid Geometries
+
+To check whether our data sets contain invalid geometries, we can apply the following code chunks:
+
+```{r}
+length(which(st_is_valid(roaddata_sf) == FALSE))
+```
+
+```{r}
+length(which(st_is_valid(mpsz_sf) == FALSE))
+```
+
+We see that roaddata_sf has no invalid geometry, while mpsz_sf has 6 invalid geometries. 
+
+To correct the invalid geometries in mpsz_sf, we can use st_make_valid() from sf package,
+
+```{r}
+mpsz_sf <- st_make_valid(mpsz_sf)
+```
+
+and check confirm whether the modified mpsz_sf data set now contains fully valid geometries.
+
+```{r}
+length(which(st_is_valid(mpsz_sf) == FALSE))
+```
+
+Great! Our geographic data are now cleared of invalid geometries.
+
+### 2.2.2 Verifying and Transforming CRS
+
+To check the CRS of the data sets, we can use st_crs() from sf package.
+
+```{r}
+st_crs(roaddata_sf)
+```
+
+```{r}
+st_crs(mpsz_sf)
+```
+
+From the above, and as also noticed earlier in Section 2.2.1, the data sets are in the WGS84 CRS. However, in Singapore, we should use the SVY21 CRS (with EPSG code: 3414) as it is more appropriate for our analysis.
+
+To change the CRS of the data sets, we can use st_transform() from sf package, inputting the EPSG code for SVY21 (3414) as the second argument of the function.
+
+```{r}
+roaddata_sf <- st_transform(roaddata_sf, 3414)
+```
+
+```{r}
+mpsz_sf <- st_transform(mpsz_sf, 3414)
+```
+
+Then, let's confirm that the CRS for the data sets have been correctly modified.
+
+```{r}
+st_crs(roaddata_sf)
+```
+
+```{r}
+st_crs(mpsz_sf)
+```
+
+Hooray! Our geospatial data are now in the correct CRS!
+
+### 2.2.3 Extraction of relevant data
+
+After doing some cleaning of our geospatial data, let's visualize how they look like:
+
+```{r}
+#|eval: FALSE
+plot(roaddata_sf)
+```
+
+```{r}
+#|eval: FALSE
+plot(st_geometry(mpsz_sf))
+```
+
+```{r}
+tmap_mode("plot")
+
+tm_shape(roaddata_sf) + 
+  tm_lines()
+```
+As expected, roaddata_sf contains the visualization of Malaysia, Singapore and Brunei.
+
+```{r}
+tm_shape(mpsz_sf) +
+  tm_polygons()
+```
+
+And for mpsz_sf, since it is supposed to contain data of Singapore's territories, the visualization displays the map for only Singapore.
+
+Hence, there are some redundant data (Malaysia's and Brunei's data) from roaddata_sf that we want to remove. 
+
+To do so, we can use st_intersection() from the sf package to obtain the intersections of mpsz_sf and roaddata_sf data sets, forming a new data set which we shall name mpsz_road_sf. mpsz_road_sf should contain geospatial data only of Singapore's territories.
+
+```{r}
+mpsz_road_sf <- st_intersection(mpsz_sf,roaddata_sf)
+```
+
+```{r}
+mpsz_road_sf
+```
+
+Now, let's check that mpsz_road_sf contains data only of that of Singapore's territories by plotting a map!
+```{r}
+tm_shape(mpsz_road_sf) + 
+  tm_polygons() + 
+  tm_lines()
+```
+
+True enough, this should be how Singapore looks like! However, as we are not interested in the outer islands, we should remove them to narrow our data set to what we want to focus on. To do so, we can use st_boundary()
+
+```{r}
+```
+
+
+
+
+
