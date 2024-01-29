@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2024-01-23">
+
+<title>Bin Hui’s IS415-GAA Journal - (NOT DONE) Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Bin Hui’s IS415-GAA Journal</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Hands-on Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 4</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-in-class-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">In-class Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-in-class-exercise">    
+        <li class="dropdown-header">In-class Exercise 2</li>
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex02/In-class_Ex02.html" rel="" target="">
+ <span class="dropdown-text"></span></a>
+  </li>  
+        <li class="dropdown-header">In-class Exercise 3</li>
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex03/In-class_Ex03.html" rel="" target="">
+ <span class="dropdown-text"></span></a>
+  </li>  
+        <li class="dropdown-header">In-class Exercise 4</li>
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex04/In-class_Ex04.html" rel="" target="">
+ <span class="dropdown-text"></span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-take-home-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Take-home Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-take-home-exercise">    
+        <li class="dropdown-header">Take-home Exercise 1</li>
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html" rel="" target="">
+ <span class="dropdown-text"></span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About Me</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">1 Overview</a>
+  <ul class="collapse">
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">1.1 Background</a></li>
+  <li><a href="#our-objectives" id="toc-our-objectives" class="nav-link" data-scroll-target="#our-objectives">1.2 Our Objectives</a></li>
+  <li><a href="#our-task" id="toc-our-task" class="nav-link" data-scroll-target="#our-task">1.3 Our Task</a></li>
+  <li><a href="#data-acquisition" id="toc-data-acquisition" class="nav-link" data-scroll-target="#data-acquisition">1.4 Data Acquisition</a></li>
+  <li><a href="#install-and-load-r-packages" id="toc-install-and-load-r-packages" class="nav-link" data-scroll-target="#install-and-load-r-packages">1.5 Install and Load R Packages</a></li>
+  </ul></li>
+  <li><a href="#data-preparation-geospatial" id="toc-data-preparation-geospatial" class="nav-link" data-scroll-target="#data-preparation-geospatial">2 Data Preparation (Geospatial)</a>
+  <ul class="collapse">
+  <li><a href="#data-import" id="toc-data-import" class="nav-link" data-scroll-target="#data-import">2.1 Data Import</a></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">2.2 Data Preparation</a>
+  <ul class="collapse">
+  <li><a href="#data-pre-processing" id="toc-data-pre-processing" class="nav-link" data-scroll-target="#data-pre-processing">2.2.1 Data Pre-Processing</a></li>
+  <li><a href="#verifying-and-transforming-crs" id="toc-verifying-and-transforming-crs" class="nav-link" data-scroll-target="#verifying-and-transforming-crs">2.2.2 Verifying and Transforming CRS</a></li>
+  <li><a href="#extraction-of-relevant-data" id="toc-extraction-of-relevant-data" class="nav-link" data-scroll-target="#extraction-of-relevant-data">2.2.3 Extraction of relevant data</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#data-preparation-aspatial" id="toc-data-preparation-aspatial" class="nav-link" data-scroll-target="#data-preparation-aspatial">3 Data Preparation (Aspatial)</a>
+  <ul class="collapse">
+  <li><a href="#importing-aspatial-data" id="toc-importing-aspatial-data" class="nav-link" data-scroll-target="#importing-aspatial-data">3.1 Importing Aspatial Data</a></li>
+  <li><a href="#data-preparation-1" id="toc-data-preparation-1" class="nav-link" data-scroll-target="#data-preparation-1">3.1 Data Preparation</a></li>
+  </ul></li>
+  <li><a href="#joining-geospatial-and-aspatial-data" id="toc-joining-geospatial-and-aspatial-data" class="nav-link" data-scroll-target="#joining-geospatial-and-aspatial-data">4 Joining Geospatial and Aspatial Data</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">(NOT DONE) Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 23, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="overview" class="level1">
+<h1>1 Overview</h1>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">1.1 Background</h2>
+<p>Human mobility, the movement of human beings in space and time, reflects the spatial-temporal characteristics of human behavior. With the advancement Information and Communication Technologies (ICT) especially in smartphones, a large volume of data related to human mobility have been collected. By using appropriate GIS analysis methods, these data are potentially useful in supporting smart city planning and management.</p>
+<p>In 2020, a very interesting human mobility data set called Grab Posisi was released by GRAB, one of the largest shared taxi operator in South-east Asia. This provides an opportunity for us to explore the geographical and spatio-temporal distribution of Grab hailing services locations in Singapore.</p>
+</section>
+<section id="our-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="our-objectives">1.2 Our Objectives</h2>
+<p>In this exercise, we will be exploring the geographical and spatial-temporal distribution of Grab hailing services locations in Singapore with the use of spatial point patterns analysis techniques.</p>
+</section>
+<section id="our-task" class="level2">
+<h2 class="anchored" data-anchor-id="our-task">1.3 Our Task</h2>
+<ul>
+<li><p>Use appropriate functions of <strong>sf</strong> and <strong>tidyverse</strong> to prepare the following geospatial data layer in sf tibble data.frames:</p>
+<ul>
+<li><p>Grab taxi location points either by origins or destinations.</p></li>
+<li><p>Road layer within Singapore excluding outer islands.</p></li>
+<li><p>Singapore boundary layer excluding outer islands</p></li>
+</ul></li>
+<li><p>Use the extracted data to derive traditional Kernel Density Estimation layers.</p></li>
+<li><p>Use the extracted data to derive either Network Kernel Density Estimation (NKDE) or Temporal Network Kernel Density Estimation (TNKDE)</p></li>
+<li><p>Use appropriate <strong>tmap</strong> functions to display the kernel density layers on openstreetmap of Singapore.</p></li>
+<li><p>Describe the spatial patterns revealed by the kernel density maps.</p></li>
+</ul>
+</section>
+<section id="data-acquisition" class="level2">
+<h2 class="anchored" data-anchor-id="data-acquisition">1.4 Data Acquisition</h2>
+<p>To address the above questions, we would be using the following data sets:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Content</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Geospatial</td>
+<td>Road data set of Malaysia, Singapore and Brunei</td>
+<td><a href="https://download.geofabrik.de/">OpenStreetMap of Geofabrik download server</a></td>
+</tr>
+<tr class="even">
+<td>Geospatial</td>
+<td>Master Plan 2019 Subzone Boundary (No Sea)</td>
+<td><a href="https://beta.data.gov.sg/collections/1749/datasets/d_8594ae9ff96d0c708bc2af633048edfb/view">data.gov.sg</a></td>
+</tr>
+<tr class="odd">
+<td>Aspatial</td>
+<td>Grab-Posisi of Singapore</td>
+<td><a href="https://engineering.grab.com/grab-posisi">engineering.grab.com</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="install-and-load-r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="install-and-load-r-packages">1.5 Install and Load R Packages</h2>
+<p>In this exercise, the following R packages will be used:</p>
+<ul>
+<li><p><strong>tidyverse</strong>: to read, manipulate and create tidy data, and to create data graphics</p></li>
+<li><p><strong>sf</strong>: to provide simple features access to represent and work with spatial vector data such as points and polygons</p></li>
+<li><p><strong>spatstat</strong>: to perform statistical analysis of spatial data</p></li>
+<li><p><strong>raster</strong>: to read, write, manipulate, analyze and model spatial data</p></li>
+<li><p><strong>maptools</strong>: tools for handling spatial objects</p></li>
+<li><p><strong>tmap</strong>: to create thematic and high-quality cartographic maps</p></li>
+<li><p><strong>arrow</strong>: improve the performance of data analysis methods, and to increase the efficiency of moving data from one system or programming language to another</p></li>
+<li><p><strong>spNetwork</strong>: to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances.</p></li>
+<li><p><strong>classInt</strong>: provides a uniform interface to finding class intervals for continuous numerical variables</p></li>
+<li><p><strong>viridis</strong>: to create colorblind-friendly maps</p></li>
+<li><p>lUBRIDATE ******************</p></li>
+</ul>
+<p>To install and load the packages, we will use p_load() from the pacman package:</p>
+</section>
+</section>
+<section id="data-preparation-geospatial" class="level1">
+<h1>2 Data Preparation (Geospatial)</h1>
+<p>Let’s begin getting our hands dirty by introducing and preparing the geospatial data sets in R!</p>
+<section id="data-import" class="level2">
+<h2 class="anchored" data-anchor-id="data-import">2.1 Data Import</h2>
+<p>To import geospatial data, we will be using <strong>st_read()</strong> from the <strong>sf</strong> package.</p>
+<p>Road data set from OSM (shapefile format):</p>
+<p>Master Plan 2019 Subzone Boundary (No Sea) (geojson format):</p>
+</section>
+<section id="data-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="data-preparation">2.2 Data Preparation</h2>
+<p>It is important to ensure our geospatial data is clean, in the correct coordinate reference system (CRS) and extracted to contain only relevant data to prevent complications later on.</p>
+<p>In this section, we will go through the procedures to prepare our geospatial data.</p>
+<section id="data-pre-processing" class="level3">
+<h3 class="anchored" data-anchor-id="data-pre-processing">2.2.1 Data Pre-Processing</h3>
+<p>To begin with, let’s examine the data sets to understand their features.</p>
+<p>From the above, we can see that roaddata_sf is an sf object, with linestring geometry type and dimension XY.</p>
+<p>We also notice that it is in WGS84 geodetic CRS, which is not our desired coordinate reference system (svy 21). Hence, we would have to reproject it later (#### INDICATE SECTION NUMBER).</p>
+<p>For mpsz_sf, we see that it is an sf object with multipolygon geometry type. It comprises of records with XYZ coordinates, indicating a Z-dimension, quite redundant to us.</p>
+<p>Here, we notice that mpsz_sf has geodetic CRS of WGS84 as well. Hence, we will need to fix the CRS for mpsz_sf later (###INDICATE SECTION NUMBER) as well.</p>
+<section id="dropping-z-dimension" class="level4">
+<h4 class="anchored" data-anchor-id="dropping-z-dimension">2.2.1.1 Dropping Z-dimension</h4>
+<p>After having an understanding of our data sets, we will start to modify them into our desired dimensions and systems.</p>
+<p>In this step, we will remove the Z-dimension in mpsz_sf, with the use of st_zm(). st_zm() is a function used to drop or add Z and/or M dimensions, from sf package.</p>
+<p>With that, we can see that the mpsz_sf has become two-dimensional (XY).</p>
+</section>
+<section id="invalid-geometries" class="level4">
+<h4 class="anchored" data-anchor-id="invalid-geometries">2.2.1.2 Invalid Geometries</h4>
+<p>To check whether our data sets contain invalid geometries, we can apply the following code chunks:</p>
+<p>We see that roaddata_sf has no invalid geometry, while mpsz_sf has 6 invalid geometries.</p>
+<p>To correct the invalid geometries in mpsz_sf, we can use st_make_valid() from sf package,</p>
+<p>and check confirm whether the modified mpsz_sf data set now contains fully valid geometries.</p>
+<p>Great! Our geographic data are now cleared of invalid geometries.</p>
+</section>
+</section>
+<section id="verifying-and-transforming-crs" class="level3">
+<h3 class="anchored" data-anchor-id="verifying-and-transforming-crs">2.2.2 Verifying and Transforming CRS</h3>
+<p>To check the CRS of the data sets, we can use st_crs() from sf package.</p>
+<p>From the above, and as also noticed earlier in Section 2.2.1, the data sets are in the WGS84 CRS. However, in Singapore, we should use the SVY21 CRS (with EPSG code: 3414) as it is more appropriate for our analysis.</p>
+<p>To change the CRS of the data sets, we can use st_transform() from sf package, inputting the EPSG code for SVY21 (3414) as the second argument of the function.</p>
+<p>Then, let’s confirm that the CRS for the data sets have been correctly modified.</p>
+<p>Hooray! Our geospatial data are now in the correct CRS!</p>
+</section>
+<section id="extraction-of-relevant-data" class="level3">
+<h3 class="anchored" data-anchor-id="extraction-of-relevant-data">2.2.3 Extraction of relevant data</h3>
+<p>After doing some cleaning of our geospatial data, let’s visualize how they look like:</p>
+<p>As expected, roaddata_sf contains the visualization of Malaysia, Singapore and Brunei.</p>
+<p>And for mpsz_sf, since it is supposed to contain data of Singapore’s territories, the visualization displays the map for only Singapore.</p>
+<p>Hence, there are some redundant data (Malaysia’s and Brunei’s data) from roaddata_sf that we want to remove.</p>
+<p>To do so, we can use st_intersection() from the sf package to obtain the intersections of mpsz_sf and roaddata_sf data sets, forming a new data set which we shall name mpsz_road_sf. mpsz_road_sf should contain geospatial data only of Singapore’s territories.</p>
+<p>Now, let’s check that mpsz_road_sf contains data only of that of Singapore’s territories by plotting a map!</p>
+<p>True enough, this should be how Singapore looks like! However, as we are not interested in the outer islands, we should remove them to narrow our data set to what we want to focus on. To do so, we can use st_boundary()</p>
+</section>
+</section>
+</section>
+<section id="data-preparation-aspatial" class="level1">
+<h1>3 Data Preparation (Aspatial)</h1>
+<p>Now, it’s time to introduce our aspatial data set!</p>
+<section id="importing-aspatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="importing-aspatial-data">3.1 Importing Aspatial Data</h2>
+<p>To import aspatial data, we will be using <strong>read_parquet()</strong> from arrow package.</p>
+<p>Let’s take a look at the data frames using glimpse() from</p>
+<p>We see that each of the data frames are in sf tibble data frame, with nine columns, with the same column headers.</p>
+<p>To combine all of them into one single data frame named grabposisi, we can use rbind().</p>
+<p>Tadah! Our grabposisi data sets are consolidated and ready for further preparation.</p>
+</section>
+<section id="data-preparation-1" class="level2">
+<h2 class="anchored" data-anchor-id="data-preparation-1">3.1 Data Preparation</h2>
+<p>Next, let’s examine our new consolidated grabposisi data set.</p>
+<p>We see that the pingtimestamp field is in the integer format, when it is a datetime type of data. To convert it into datetime format, we can use the following code:</p>
+<p>Next, to obtain the Grab taxi location points by origin,</p>
+<p>To look into our new origin_posisi data frame,</p>
+</section>
+</section>
+<section id="joining-geospatial-and-aspatial-data" class="level1">
+<h1>4 Joining Geospatial and Aspatial Data</h1>
+<p>Now, we will join our geospatial and aspatial data so that we can conduct further analysis later!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
