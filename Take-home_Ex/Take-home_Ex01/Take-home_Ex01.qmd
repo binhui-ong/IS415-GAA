@@ -1,5 +1,5 @@
 ---
-title: "Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore"
+title: "(NOT DONE) Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore"
 execute:
   eval: FALSE
   echo: FALSE
@@ -17,11 +17,11 @@ In 2020, a very interesting human mobility data set called Grab Posisi was relea
 
 ## 1.2 Our Objectives
 
-In this exercise, we will be exploring the geographical and spatio-temporal distribution of Grab hailing services locations in Singapore with the use of spatial point patterns analysis techniques.
+In this exercise, we will be exploring the geographical and spatial-temporal distribution of Grab hailing services locations in Singapore with the use of spatial point patterns analysis techniques.
 
 ## 1.3 Our Task
 
--   Use appropriate functions of **sf** and **tidyverse** to prapre the following geospatial data layer in sf tibble data.frames:
+-   Use appropriate functions of **sf** and **tidyverse** to prepare the following geospatial data layer in sf tibble data.frames:
 
     -   Grab taxi location points either by origins or destinations.
 
@@ -42,7 +42,7 @@ In this exercise, we will be exploring the geographical and spatio-temporal dist
 To address the above questions, we would be using the following data sets:
 
 | Type       | Content                                         | Source                                                                                                    |
-|-----------------|----------------------------|----------------------------|
+|------------------|---------------------------|---------------------------|
 | Geospatial | Road data set of Malaysia, Singapore and Brunei | [OpenStreetMap of Geofabrik download server](https://download.geofabrik.de/)                              |
 | Geospatial | Master Plan 2019 Subzone Boundary (No Sea)      | [data.gov.sg](https://beta.data.gov.sg/collections/1749/datasets/d_8594ae9ff96d0c708bc2af633048edfb/view) |
 | Aspatial   | Grab-Posisi of Singapore                        | [engineering.grab.com](https://engineering.grab.com/grab-posisi)                                          |
@@ -71,18 +71,20 @@ In this exercise, the following R packages will be used:
 
 -   **viridis**: to create colorblind-friendly maps
 
+- lUBRIDATE ******************
+
 To install and load the packages, we will use p_load() from the pacman package:
 
 ```{r}
 #|eval: FALSE
-pacman::p_load(tidyverse, sf, spatstat, raster, maptools, tmap, arrow, spNetwork, classInt, viridis)
+pacman::p_load(tidyverse, sf, spatstat, raster, maptools, tmap, arrow, spNetwork, classInt, viridis, lubridate)
 ```
 
 # 2 Data Preparation (Geospatial)
 
 Let's begin getting our hands dirty by introducing and preparing the geospatial data sets in R!
 
-## 2.1 Data Import 
+## 2.1 Data Import
 
 To import geospatial data, we will be using **st_read()** from the **sf** package.
 
@@ -103,13 +105,13 @@ mpsz_sf <- st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaGEOJSON.ge
 
 ## 2.2 Data Preparation
 
-It is important to ensure our geospatial data is clean, in the correct coordinate reference system (CRS) and extracted to contain only relevant data to prevent complications later on. 
+It is important to ensure our geospatial data is clean, in the correct coordinate reference system (CRS) and extracted to contain only relevant data to prevent complications later on.
 
 In this section, we will go through the procedures to prepare our geospatial data.
 
 ### 2.2.1 Data Pre-Processing
 
-To begin with, let's examine the data sets to understand their features. 
+To begin with, let's examine the data sets to understand their features.
 
 ```{r}
 #|eval: FALSE
@@ -118,7 +120,7 @@ roaddata_sf
 
 From the above, we can see that roaddata_sf is an sf object, with linestring geometry type and dimension XY.
 
-We also notice that it is in WGS84 geodetic CRS, which is not our desired coordinate reference system (svy 21). Hence, we would have to reproject it later (\#### INDICATE SECTION NUMBER).
+We also notice that it is in WGS84 geodetic CRS, which is not our desired coordinate reference system (svy 21). Hence, we would have to reproject it later (#### INDICATE SECTION NUMBER).
 
 ```{r}
 #|eval: FALSE
@@ -157,7 +159,7 @@ length(which(st_is_valid(roaddata_sf) == FALSE))
 length(which(st_is_valid(mpsz_sf) == FALSE))
 ```
 
-We see that roaddata_sf has no invalid geometry, while mpsz_sf has 6 invalid geometries. 
+We see that roaddata_sf has no invalid geometry, while mpsz_sf has 6 invalid geometries.
 
 To correct the invalid geometries in mpsz_sf, we can use st_make_valid() from sf package,
 
@@ -229,6 +231,7 @@ tmap_mode("plot")
 tm_shape(roaddata_sf) + 
   tm_lines()
 ```
+
 As expected, roaddata_sf contains the visualization of Malaysia, Singapore and Brunei.
 
 ```{r}
@@ -238,7 +241,7 @@ tm_shape(mpsz_sf) +
 
 And for mpsz_sf, since it is supposed to contain data of Singapore's territories, the visualization displays the map for only Singapore.
 
-Hence, there are some redundant data (Malaysia's and Brunei's data) from roaddata_sf that we want to remove. 
+Hence, there are some redundant data (Malaysia's and Brunei's data) from roaddata_sf that we want to remove.
 
 To do so, we can use st_intersection() from the sf package to obtain the intersections of mpsz_sf and roaddata_sf data sets, forming a new data set which we shall name mpsz_road_sf. mpsz_road_sf should contain geospatial data only of Singapore's territories.
 
@@ -251,6 +254,7 @@ mpsz_road_sf
 ```
 
 Now, let's check that mpsz_road_sf contains data only of that of Singapore's territories by plotting a map!
+
 ```{r}
 tm_shape(mpsz_road_sf) + 
   tm_polygons() + 
@@ -260,9 +264,94 @@ tm_shape(mpsz_road_sf) +
 True enough, this should be how Singapore looks like! However, as we are not interested in the outer islands, we should remove them to narrow our data set to what we want to focus on. To do so, we can use st_boundary()
 
 ```{r}
+plot(st_boundary(mpsz_road_sf))
 ```
 
 
+# 3 Data Preparation (Aspatial)
+
+Now, it's time to introduce our aspatial data set!
+
+## 3.1 Importing Aspatial Data
+
+To import aspatial data, we will be using **read_parquet()** from arrow package.
+
+```{r}
+#|eval: FALSE
+grabposisi0 <- read_parquet("data/aspatial/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+grabposisi1 <- read_parquet("data/aspatial/part-00001-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+grabposisi2 <- read_parquet("data/aspatial/part-00002-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+grabposisi3 <- read_parquet("data/aspatial/part-00003-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+grabposisi4 <- read_parquet("data/aspatial/part-00004-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+grabposisi5 <- read_parquet("data/aspatial/part-00005-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+grabposisi6 <- read_parquet("data/aspatial/part-00006-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+grabposisi7 <- read_parquet("data/aspatial/part-00007-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+grabposisi8 <- read_parquet("data/aspatial/part-00008-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+grabposisi9 <- read_parquet("data/aspatial/part-00009-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
+```
+
+Let's take a look at the data frames using glimpse() from
+
+```{r}
+#|eval: FALSE
+glimpse(grabposisi0)
+glimpse(grabposisi1)
+glimpse(grabposisi2)
+glimpse(grabposisi3)
+glimpse(grabposisi4)
+glimpse(grabposisi5)
+glimpse(grabposisi6)
+glimpse(grabposisi7)
+glimpse(grabposisi8)
+glimpse(grabposisi9)
+```
+
+We see that each of the data frames are in sf tibble data frame, with nine columns, with the same column headers.
+
+To combine all of them into one single data frame named grabposisi, we can use rbind().
+
+```{r}
+grabposisi <- rbind(grabposisi0, grabposisi1, grabposisi2, grabposisi3, grabposisi4, grabposisi5, grabposisi6, grabposisi7, grabposisi8, grabposisi9)
+```
+
+Tadah! Our grabposisi data sets are consolidated and ready for further preparation.
+
+## 3.1 Data Preparation
+
+Next, let's examine our new consolidated grabposisi data set.
+
+```{r}
+glimpse(grabposisi)
+```
+We see that the pingtimestamp field is in the integer format, when it is a datetime type of data. To convert it into datetime format, we can use the following code:
+
+```{r}
+grabposisi$pingtimestamp <- as_datetime(grabposisi$pingtimestamp)
+```
+
+Next, to obtain the Grab taxi location points by origin, 
+
+```{r}
+origin_grabposisi <- grabposisi %>%
+  group_by(trj_id) %>%
+  arrange(pingtimestamp) %>%
+  filter(row_number() == 1) %>%
+  mutate(weekday = wday(pingtimestamp, 
+                        label = TRUE,
+                        abbr = TRUE),
+         start_hr = factor(hour(pingtimestamp)),
+         day = factor(mday(pingtimestamp)))
+```
+
+To look into our new origin_posisi data frame,
+
+```{r}
+origin_grabposisi
+```
+
+# 4 Joining Geospatial and Aspatial Data
+
+Now, we will join our geospatial and aspatial data so that we can conduct further analysis later!
 
 
 

@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2024-01-23">
 
-<title>Bin Hui’s IS415-GAA Journal - Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore</title>
+<title>Bin Hui’s IS415-GAA Journal - (NOT DONE) Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -178,6 +178,12 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#extraction-of-relevant-data" id="toc-extraction-of-relevant-data" class="nav-link" data-scroll-target="#extraction-of-relevant-data">2.2.3 Extraction of relevant data</a></li>
   </ul></li>
   </ul></li>
+  <li><a href="#data-preparation-aspatial" id="toc-data-preparation-aspatial" class="nav-link" data-scroll-target="#data-preparation-aspatial">3 Data Preparation (Aspatial)</a>
+  <ul class="collapse">
+  <li><a href="#importing-aspatial-data" id="toc-importing-aspatial-data" class="nav-link" data-scroll-target="#importing-aspatial-data">3.1 Importing Aspatial Data</a></li>
+  <li><a href="#data-preparation-1" id="toc-data-preparation-1" class="nav-link" data-scroll-target="#data-preparation-1">3.1 Data Preparation</a></li>
+  </ul></li>
+  <li><a href="#joining-geospatial-and-aspatial-data" id="toc-joining-geospatial-and-aspatial-data" class="nav-link" data-scroll-target="#joining-geospatial-and-aspatial-data">4 Joining Geospatial and Aspatial Data</a></li>
   </ul>
 </nav>
     </div>
@@ -186,7 +192,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore</h1>
+<h1 class="title">(NOT DONE) Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore</h1>
 </div>
 
 
@@ -216,12 +222,12 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="our-objectives" class="level2">
 <h2 class="anchored" data-anchor-id="our-objectives">1.2 Our Objectives</h2>
-<p>In this exercise, we will be exploring the geographical and spatio-temporal distribution of Grab hailing services locations in Singapore with the use of spatial point patterns analysis techniques.</p>
+<p>In this exercise, we will be exploring the geographical and spatial-temporal distribution of Grab hailing services locations in Singapore with the use of spatial point patterns analysis techniques.</p>
 </section>
 <section id="our-task" class="level2">
 <h2 class="anchored" data-anchor-id="our-task">1.3 Our Task</h2>
 <ul>
-<li><p>Use appropriate functions of <strong>sf</strong> and <strong>tidyverse</strong> to prapre the following geospatial data layer in sf tibble data.frames:</p>
+<li><p>Use appropriate functions of <strong>sf</strong> and <strong>tidyverse</strong> to prepare the following geospatial data layer in sf tibble data.frames:</p>
 <ul>
 <li><p>Grab taxi location points either by origins or destinations.</p></li>
 <li><p>Road layer within Singapore excluding outer islands.</p></li>
@@ -277,6 +283,7 @@ ul.task-list li input[type="checkbox"] {
 <li><p><strong>spNetwork</strong>: to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances.</p></li>
 <li><p><strong>classInt</strong>: provides a uniform interface to finding class intervals for continuous numerical variables</p></li>
 <li><p><strong>viridis</strong>: to create colorblind-friendly maps</p></li>
+<li><p>lUBRIDATE ******************</p></li>
 </ul>
 <p>To install and load the packages, we will use p_load() from the pacman package:</p>
 </section>
@@ -333,10 +340,33 @@ ul.task-list li input[type="checkbox"] {
 <p>To do so, we can use st_intersection() from the sf package to obtain the intersections of mpsz_sf and roaddata_sf data sets, forming a new data set which we shall name mpsz_road_sf. mpsz_road_sf should contain geospatial data only of Singapore’s territories.</p>
 <p>Now, let’s check that mpsz_road_sf contains data only of that of Singapore’s territories by plotting a map!</p>
 <p>True enough, this should be how Singapore looks like! However, as we are not interested in the outer islands, we should remove them to narrow our data set to what we want to focus on. To do so, we can use st_boundary()</p>
-
-
 </section>
 </section>
+</section>
+<section id="data-preparation-aspatial" class="level1">
+<h1>3 Data Preparation (Aspatial)</h1>
+<p>Now, it’s time to introduce our aspatial data set!</p>
+<section id="importing-aspatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="importing-aspatial-data">3.1 Importing Aspatial Data</h2>
+<p>To import aspatial data, we will be using <strong>read_parquet()</strong> from arrow package.</p>
+<p>Let’s take a look at the data frames using glimpse() from</p>
+<p>We see that each of the data frames are in sf tibble data frame, with nine columns, with the same column headers.</p>
+<p>To combine all of them into one single data frame named grabposisi, we can use rbind().</p>
+<p>Tadah! Our grabposisi data sets are consolidated and ready for further preparation.</p>
+</section>
+<section id="data-preparation-1" class="level2">
+<h2 class="anchored" data-anchor-id="data-preparation-1">3.1 Data Preparation</h2>
+<p>Next, let’s examine our new consolidated grabposisi data set.</p>
+<p>We see that the pingtimestamp field is in the integer format, when it is a datetime type of data. To convert it into datetime format, we can use the following code:</p>
+<p>Next, to obtain the Grab taxi location points by origin,</p>
+<p>To look into our new origin_posisi data frame,</p>
+</section>
+</section>
+<section id="joining-geospatial-and-aspatial-data" class="level1">
+<h1>4 Joining Geospatial and Aspatial Data</h1>
+<p>Now, we will join our geospatial and aspatial data so that we can conduct further analysis later!</p>
+
+
 </section>
 
 </main> <!-- /main -->

@@ -1,0 +1,12 @@
+---
+title: "Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore"
+execute:
+  eval: FALSE
+  echo: FALSE
+  warning: false
+date: "January 23, 2024"
+---
+
+```{r}
+mpsz_usingkml <- st_read(dsn = "data/MasterPlan2019SubzoneBoundaryNoSeaKML.kml")
+```
