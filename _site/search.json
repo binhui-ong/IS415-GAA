@@ -558,5 +558,26 @@
     "title": "In-class Exercise 3: Kernel Density Estimation",
     "section": "2.4 Network Constrained KDE (NetKDE) Analysis",
     "text": "2.4 Network Constrained KDE (NetKDE) Analysis\nIn this section, we will perform NetKDE analysis by using appropriate functions provided in spNetwork package.\n\n2.4.1 Preparing the lixels objects\nBefore computing NetKDE, the SpatialLines object need to be cut into lixels with a specified minimal distance. This task can be performed by using with lixelize_lines() of spNetwork as shown in the code chunk below.\n\n\nCode\nlixels &lt;- lixelize_lines(network,\n                         750,\n                         mindist = 375)\n\n\n\n\n2.4.2 Generating line centre points\n\n\nCode\nsamples &lt;- lines_center(lixels)\n\n\n\n\n2.4.3 Performing NetKDE\nWe can compute the NetKDE by using the code chunk below:\n\n\nCode\ndensities &lt;- nkde(network, \n                  events = childcare,\n                  w = rep(1,nrow(childcare)),\n                  samples = samples,\n                  kernel_name = \"quartic\",\n                  bw = 300, \n                  div= \"bw\", \n                  method = \"simple\", \n                  digits = 1, \n                  tol = 1,\n                  grid_shape = c(1,1), \n                  max_depth = 8,\n                  agg = 5, \n                  sparse = TRUE,\n                  verbose = FALSE)\n\n\n\n\n2.4.3.1 Visualizing NetKDE\nBefore we can visualise the NetKDE values, code chunk below will be used to insert the computed density values (i.e. densities) into samples and lixels objects as density field.\n\n\nCode\nsamples$density &lt;- densities\nlixels$density &lt;- densities\n\n\nRescaling to help mapping:\n\n\nCode\nsamples$density &lt;- samples$density*1000\nlixels$density &lt;- lixels$density*1000\n\n\nThe code below uses appropriate functions of tmap package to prepare interactive and high cartographic quality map visualisation.\n\n\nCode\ntmap_mode('view')\ntm_shape(lixels)+\n  tm_lines(col=\"density\")+\ntm_shape(childcare)+\n  tm_dots()"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-class_Ex04.html#importing-geospatial-data",
+    "href": "In-class_Ex/In-class_Ex04/In-class_Ex04.html#importing-geospatial-data",
+    "title": "In-class Exercise 4: Spatial Weights and Applications",
+    "section": "1.2.1 Importing Geospatial Data",
+    "text": "1.2.1 Importing Geospatial Data\n\nhunan &lt;- st_read(dsn=\"data/geospatial\",\n                 layer = \"Hunan\")"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-class_Ex04.html#importing-aspatial-data",
+    "href": "In-class_Ex/In-class_Ex04/In-class_Ex04.html#importing-aspatial-data",
+    "title": "In-class Exercise 4: Spatial Weights and Applications",
+    "section": "1.2.2 Importing Aspatial Data",
+    "text": "1.2.2 Importing Aspatial Data\n\nhunan2012 &lt;- read_csv(\"data/aspatial/Hunan_2012.csv\")"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-class_Ex04.html#joining-geospatial-and-aspatial-data",
+    "href": "In-class_Ex/In-class_Ex04/In-class_Ex04.html#joining-geospatial-and-aspatial-data",
+    "title": "In-class Exercise 4: Spatial Weights and Applications",
+    "section": "1.2.3 Joining Geospatial and Aspatial Data",
+    "text": "1.2.3 Joining Geospatial and Aspatial Data\n\nhunan &lt;- left_join(hunan, hunan2012) %&gt;%\n  select(1:4, 7, 15)"
   }
 ]
