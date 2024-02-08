@@ -1,6 +1,7 @@
 ---
 title: "Hands-on Exercise 5: Global and Local Measures of Spatial Autocorrection"
 execute:
+  freeze: true
   warning: false
 date: "February 4 , 2024"
 ---

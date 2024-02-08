@@ -5,6 +5,7 @@ format:
     code-fold: true
     code-summary: "Show the code"
 execute:
+  freeze: true
   eval: true
   echo: true
   warning: FALSE

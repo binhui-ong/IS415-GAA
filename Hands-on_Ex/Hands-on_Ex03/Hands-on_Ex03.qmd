@@ -5,6 +5,7 @@ format:
     code-fold: true
     code-summary: "Show the code"
 execute:
+  freeze: true
   echo: TRUE
   warning: false
 date: "January 21, 2024"
@@ -1278,7 +1279,6 @@ For instance, we can visualize the ggplot2 object of k-function by using the fol
 kfun_pg_childcare$plotk
 ```
 
-The blue line is the empirical network K-function of the childcare centres in Punggol planning area. The grey envelope represents the results of the 50 simulations in the interval 2.5% - 97.5%. 
+The blue line is the empirical network K-function of the childcare centres in Punggol planning area. The grey envelope represents the results of the 50 simulations in the interval 2.5% - 97.5%.
 
 Because the blue line between the distance of 250m-400m are below the grey area, we can infer that the childcare centres in Punggol planning area resemble regular pattern at the distance of 250m-400m.
-

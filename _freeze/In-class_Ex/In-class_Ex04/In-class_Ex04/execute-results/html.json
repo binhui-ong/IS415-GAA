@@ -1,0 +1,14 @@
+{
+  "hash": "1517703691982158a216619742f825a7",
+  "result": {
+    "markdown": "---\ntitle: \"In-class Exercise 4: Spatial Weights and Applications\"\nexecute:\n  freeze: true\n  eval: FALSE\n  warning: false\ndate: \"January 29, 2024\"\n---\n\n\n# 1 Getting Started\n\n# 1.1 Installing and Loading R Packages\n\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(sf, spdep, tmap, knitr, tidyverse, GWmodel)\n```\n:::\n\n\n# 1.2 Importing Data\n\n## 1.2.1 Importing Geospatial Data\n\n\n::: {.cell}\n\n```{.r .cell-code}\nhunan <- st_read(dsn=\"data/geospatial\",\n                 layer = \"Hunan\")\n```\n:::\n\n\n## 1.2.2 Importing Aspatial Data\n\n\n::: {.cell}\n\n```{.r .cell-code}\nhunan2012 <- read_csv(\"data/aspatial/Hunan_2012.csv\")\n```\n:::\n\n\n## 1.2.3 Joining Geospatial and Aspatial Data\n\n\n::: {.cell}\n\n```{.r .cell-code}\nhunan <- left_join(hunan, hunan2012) %>%\n  select(1:4, 7, 15)\n```\n:::\n\n\n# 2 Working with Geographically Weighted Summary Statistics\n\nTo use the GWmodel package, we must covert hunan sf data frame into sp class.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nhunan_sp <- hunan %>%\n  as_Spatial()\n```\n:::\n\n\nNext, we will apply gwstat() of GWmodel package to explore the geographically weighted summary statistics (GWSS) of the GDPPC field in hunan_sp.\n\n\n::: {.cell}\n\n```{.r .cell-code}\ngwstat <- gwss(data = hunan_sp,\n               vars = \"GDPPC\",\n               bw = 6,\n               kernel = \"bisquare\",\n               adaptive = TRUE,\n               longlat = T)\n```\n:::\n\n\nFor the code above:\n\n-   As we are using distance-weight matrix, we have to define the bandwidth. Since we are using adaptive distance, the bandwidth would be based on number of neighbours, which is 6 in this case.\n\n-   However, if we are using fixed-distance mathod, adaptive = FALSE, and the bw would be based on distance in kilometers (e.g. 62 km).\n\n-   For non-projected Great Circle distances, longlat = T, while for projected data, longlat = F.\n\n\n::: {.cell}\n\n```{.r .cell-code}\ngwstat\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

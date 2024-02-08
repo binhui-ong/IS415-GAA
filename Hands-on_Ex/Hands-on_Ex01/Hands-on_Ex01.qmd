@@ -1,6 +1,7 @@
 ---
 title: "Hands-on Exercise 1: Geospatial Data Wrangling with R"
 execute:
+  feeze: true
   warning: false
 date: "January 10, 2024"
 ---

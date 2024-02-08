@@ -1,0 +1,95 @@
+---
+title: "In-class Exercise 5: Global and Local Measures of Spatial Autocorrelation"
+execute:
+  echo: TRUE
+  warning: false
+date: "February 5, 2024"
+---
+
+# Install packages
+
+```{r}
+pacman::p_load(sf, tmap, sfdep, tidyverse)
+```
+
+# The Data
+
+Geospatial Data:
+
+```{r}
+hunan <- st_read(dsn = "data/geospatial",
+                 layer = "Hunan")
+```
+
+Attribute Data:
+
+```{r}
+hunan2012 <- read.csv("data/aspatial/Hunan_2012.csv")
+```
+
+```{r}
+hunan_GDPPC1 <- read.csv("data/aspatial/Hunan_GDPPC.csv")
+```
+
+To join the geospatial and attribute data, and select the relevant columns of the result,
+
+```{r}
+hunan_GDPPC <- left_join(hunan, hunan2012) %>% dplyr::select(1:4, 7,15) 
+```
+
+```{r}
+wm_q <- hunan_GDPPC %>% 
+  mutate(nb = st_contiguity(geometry),
+         wt = st_weights(nb,
+                         style = "W"))
+```
+
+# Visualizing Regional Development Indicator
+
+```{r}
+equal <- tm_shape(hunan_GDPPC) + 
+  tm_fill("GDPPC", 
+          n=5,
+          style = "equal") + 
+  tm_borders(alpha=0.5) + 
+  tm_layout(main.title = "Equal interval classification", main.title.size = 0.8)
+
+quantile <- tm_shape(hunan_GDPPC) + 
+  tm_fill("GDPPC",
+          n = 5, 
+          style = "quantile") + 
+  tm_borders (alpha = 0.5) + 
+  tm_layout(main.title = "Equal quantile classfication", main.title.size = 0.8)
+
+tmap_arrange(equal, quantile, asp = 1, ncol = 2 )
+```
+
+# Global Moran's
+
+Best method: Global Moran's permutation test
+
+```{r}
+global_moran_perm(wm_q$GDPPC, 
+                  wm_q$nb,
+                  wm_q$wt,
+                  nsim = 99)
+```
+
+Second best alternative: Global Moran Test
+
+```{r}
+global_moran_test(wm_q$GDPPC, 
+                  wm_q$nb,
+                  wm_q$wt)
+```
+
+However, it is only based on one observation.
+
+Computing Global Moran's I
+
+```{r}
+moranI  <- global_moran
+moranI
+```
+
+This is not so helpful and not necessary.

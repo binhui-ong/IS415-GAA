@@ -1,6 +1,7 @@
 ---
 title: "In-class Exercise 4: Spatial Weights and Applications"
 execute:
+  freeze: true
   eval: FALSE
   warning: false
 date: "January 29, 2024"
@@ -45,7 +46,7 @@ hunan_sp <- hunan %>%
   as_Spatial()
 ```
 
-Next, we will apply gwstat() of GWmodel package to explore the geographically weighted summary statistics (GWSS) of the GDPPC field in hunan_sp. 
+Next, we will apply gwstat() of GWmodel package to explore the geographically weighted summary statistics (GWSS) of the GDPPC field in hunan_sp.
 
 ```{r}
 gwstat <- gwss(data = hunan_sp,
@@ -67,5 +68,3 @@ For the code above:
 ```{r}
 gwstat
 ```
-
-
