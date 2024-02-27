@@ -1,0 +1,438 @@
+---
+title: "Take-home Exercise 2: Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan (Part 1)"
+format: 
+  html: 
+    code-fold: TRUE
+    code-summary: "Show the code"
+execute:
+  echo: TRUE
+  warning: false
+date: "February 25, 2024"
+---
+
+# 1 Overview
+
+# 1.1 Background
+
+Dengue Hemorrhagic Fever (in short dengue fever) is one of the most widespread mosquito-borne diseases in the most tropical and subtropical regions. It is an acute disease caused by dengue virus infection which is transmitted by female Aedes aegypti and Aedes albopictus mosquitoes. In 2015, Taiwan had recorded the most severe dengue fever outbreak with more than 43,000 dengue cases and 228 deaths. Since then, the annual reported dengue fever cases were maintained at the level of not more than 200 cases. However, in 2023, Taiwan recorded 26703 dengue fever cases.
+
+# 1.2 Objectives
+
+In this exercise, we would like to investigate:
+
+-   If the distribution of dengue fever outbreak at Tainan City, Taiwan are independent from space and space and time.
+
+-   If the outbreak is indeed spatial and spatio-temporal dependent,
+
+    -   where the clusters and outliers are, and
+
+    -   where the emerging hot spot/cold spot areas are.
+
+# 1.3 The Task
+
+In this exercise, we will be fulfilling the following tasks:
+
+-   Use appropriate functions of sf and tidyverse to prepare the following geospatial data layer:
+
+    -   a study area layer in sf polygon features. It must be at village level and confined to the D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan.
+
+    -   a dengue fever layer within the study area in sf point features. The dengue fever cases should be confined to epidemiology week 31-50, 2023.
+
+    -   a derived dengue fever layer in spacetime s3 class of sfdep. It should contain, among many other useful information, a data field showing number of dengue fever cases by village and by epidemiology week.
+
+-   Use the extracted data to perform global spatial autocorrelation analysis by using sfdep methods.
+
+-   Use the extracted data to perform local spatial autocorrelation analysis by using sfdep methods.
+
+-   Use the extracted data to perform emerging hotspot analysis by using sfdep methods.
+
+-   Describe the spatial patterns revealed by the analysis.
+
+# 1.4 The Data
+
+For this take-home exercise, we will be using the two data sets:
+
++------------+------------------------------------------------------------+----------------+---------------------------------------------------------------------------+
+| Type       | Content                                                    | Format         | Source                                                                    |
++============+============================================================+================+===========================================================================+
+| Geospatial | TAIWAN_VILLAGE_2020                                        | ESRI shapefile | Historical map data of the village boundary: TWD97 longitude and latitude |
+|            |                                                            |                |                                                                           |
+|            | -   Village boundary of Taiwan                             |                |                                                                           |
+|            |                                                            |                |                                                                           |
+|            | -   In Taiwan Geographic Coordinate System                 |                |                                                                           |
++------------+------------------------------------------------------------+----------------+---------------------------------------------------------------------------+
+| Aspatial   | Dengue_Daily.csv                                           | csv            | Dengue Daily Confirmed Cases Since 1998                                   |
+|            |                                                            |                |                                                                           |
+|            | -   Reported dengue cases in Taiwan since 1998             |                |                                                                           |
+|            |                                                            |                |                                                                           |
+|            | -   Selected fields for study:                             |                |                                                                           |
+|            |                                                            |                |                                                                           |
+|            |     -   發病日: Onset date 最小統計區中心點X: x-coordinate |                |                                                                           |
+|            |                                                            |                |                                                                           |
+|            |     -   最小統計區中心點Y: y-coordinate                    |                |                                                                           |
++------------+------------------------------------------------------------+----------------+---------------------------------------------------------------------------+
+
+# 1.5 Installing and Loading R Packages
+
+In this exercise, the following R packages would be used:
+
+Then, to install and/or load the R packages, we can use p_load() from the **pacman** package.
+
+```{r}
+pacman::p_load(tidyverse, sf, sfdep, tmap, lubridate, plotly)
+```
+
+# 2 Data Preparation (Geospatial)
+
+## 2.1 Data Import
+
+Let’s begin by introducing and preparing our geospatial data set in R!
+
+To import geospatial data, we will be using st_read() from the sf package.
+
+```{r}
+#| eval: false
+taiwan_sf<- st_read(dsn= "data/geospatial",
+                  layer = "TAINAN_VILLAGE")
+```
+
+From the above, we can see that taiwan is in geodetic CRS TWD97.
+
+Then, I will save the taiwan_sf object into my local disk so that I can easily load it again in the future.
+
+```{r}
+#| eval: false
+write_rds(taiwan_sf, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/taiwan_sf.rds")
+```
+
+To open the geospatial data in the future,
+
+```{r}
+taiwan_sf <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/taiwan_sf.rds")
+```
+
+We can do the same for all future objects! However, I will not be displaying every of them in this exercise as it would look lengthy.
+
+## 2.2 Data Pre-Processing
+
+It is important to ensure our geospatial data is clean, in the correct coordinate reference system (CRS) and extracted to contain only relevant data to prevent complications later on.
+
+In this section, we will go through the procedures to prepare our geospatial data.
+
+### 2.2.1 Resolving invalid geometries
+
+Firstly, to check whether our data sets contain invalid geometries, we can apply the following code chunk:
+
+```{r}
+length(which(st_is_valid(taiwan_sf) == FALSE))
+```
+
+st_is_valid() from sf package checks for valid geometries, returning a logical TRUE or FALSE. In the above code, we are checking the number of invalid geometries by looking for those with "FALSE". Thankfully, taiwan_sf has no such invalid geometries, and we can move to the next step.
+
+### 2.2.2 Handling missing values
+
+To check for missing values in our geographic data, we can apply the following code:
+
+```{r}
+taiwan_sf[rowSums(is.na(taiwan_sf)) != 0, ]
+```
+
+Seems like all observations contain missing values, and we could see from the above result that it is due to the "NOTE" field. Let's try checking the data frame again while excluding the "Note" field using select() from the dplyr package.
+
+```{r}
+taiwan_sf[rowSums(is.na(taiwan_sf %>% select(-NOTE))) != 0, ]
+```
+
+Yay, seems like we have no missing values if we exclude the "Note" field!
+
+### 2.2.3 Verifying CRS
+
+To check the CRS of our taiwan_sf data set, we can use st_crs() from sf package as shown below.
+
+```{r}
+st_crs(taiwan_sf)
+```
+
+We can see that our data set is in TWD97 crs (EPSG: 3824).
+
+### 2.2.4 Selecting relevant fields
+
+To speed up our analysis later, we will select and keep only some assumingly relevant fields using select() from the dplyr package. In this step, I will keep VILLCODE, VILLNAME, VILLENG, TOWNID, TOWNCODE and geometry fields.
+
+```{r}
+#| eval: false
+taiwanstudy_sf <- taiwanstudy_sf %>% select(VILLCODE, VILLNAME, VILLENG, TOWNID, TOWNCODE, geometry)
+```
+
+### 2.2.5 Extraction of study area
+
+Next, to extract our study areas D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan, we can use filter() from the dplyr package, and \| which represents "OR".
+
+```{r}
+#| eval: false
+taiwanstudy_sf <- taiwan_sf %>% filter(TOWNID == "D01" | TOWNID == "D02" | TOWNID == "D04" | TOWNID == "D06" | TOWNID == "D07" | TOWNID == "D08" | TOWNID == "D32" | TOWNID == "D39")
+```
+
+```{r}
+#| echo: false
+taiwanstudy_sf <- readRDS( "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/taiwanstudy_sf.rds")
+```
+
+To visualize our study area, we can employ plot() and st_geometry() from sf package.
+
+```{r}
+#| eval: false
+plot(st_geometry(taiwanstudy_sf))
+```
+
+![](images/taiwanstudy_sf geometry.png)
+
+Looks great! We've successfully extracted our study area later in sf polygon features, at the village level confined to the D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan.
+
+# 3 Data Preparation (Aspatial Data)
+
+## 3.1 Data Import
+
+The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the readr package.
+
+```{r}
+#| eval: false
+Dengue_Daily <- read_csv("data/aspatial/Dengue_Daily.csv")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(Dengue_Daily, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/Dengue_Daily.rds")
+```
+
+```{r}
+#| echo: false
+Dengue_Daily <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/Dengue_Daily.rds")
+```
+
+## 3.2 Extraction of study fields
+
+Next, we will use select() from the dplyr package again to select the relevant fields for our study. Here, we would select 發病日 which is the onset date of symptoms, and 最小統計區中心點X and 最小統計區中心點Y which are the x-coordinates and y-coordinates of the dengue cases.
+
+```{r}
+Dengue_Daily <- Dengue_Daily %>% select(發病日, 最小統計區中心點X, 最小統計區中心點Y)
+Dengue_Daily
+```
+
+## 3.3 Checking for missing values
+
+Again, it is always a good practice to check for missing values. From the earlier code, we see that missing values are denoted as "None" in this data set. Hence, we will use filter() from the dplyr package, and look for coordinate values that contain "None".
+
+```{r}
+Dengue_Daily %>% filter(最小統計區中心點X == "None" | 最小統計區中心點Y == "None")
+```
+
+Wow, there are 780 records with no x- and y- coordinates! To prevent complications in later steps of analysis, we should remove them. To do so, we can apply the following code.
+
+```{r}
+Dengue_Daily <- Dengue_Daily %>% filter(最小統計區中心點X != "None" | 最小統計區中心點Y != "None")
+```
+
+Now, we're done removing the records with missing coordinates.
+
+## 3.4 Combine Coordinates
+
+Since our coordinates are in differet columns, it only makes sense to combine them to turn them into useful data. To do so, we can use the st_as_sf from the sf package, with the respective x- and y- coordinates in the "coords" argument, and the crs of the data set in the "crs" argument.
+
+```{r}
+#| eval: false
+DengueDaily_sf <- st_as_sf(Dengue_Daily, coords = c("最小統計區中心點X", "最小統計區中心點Y"), crs = 3824)
+```
+
+```{r}
+#| echo: false
+DengueDaily_sf <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/DengueDaily_sf.rds")
+```
+
+```{r}
+DengueDaily_sf
+```
+
+Nice, our coordinates are sensibly put together now!
+
+## 3.5 Extraction of Study Time Frame
+
+Then, to limit our the study time frame to epidemiology week 31-50, 2023, we once again use filter() from the dplyr package. We also employ year() and epiweek() from the lubridate package to identify and extract our required time frame.
+
+```{r}
+#| eval: false
+Denguedates_sf <- DengueDaily_sf %>% filter(year(發病日) == 2023) %>% filter(epiweek(發病日) >=31 & epiweek(發病日)<= 50)
+```
+
+```{r}
+#| echo: false
+Denguedates <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/Denguedates_sf.rds")
+```
+
+# 4 Joining Geospatial and Aspatial Data
+
+It is time to combine our geospatial and aspatial sf data frames! Here, we will be using st_join() from the dplyr package.
+
+## 4.1 Extraction of dengue observation data points
+
+Firstly, let's extract the Dengue observations that are within the regions of study. To do so, we can apply use st_join() from the sf package and apply the following code.
+
+```{r}
+#| eval: false
+denguepoints_sf <- Denguedates_sf %>% st_join(taiwanstudy_sf, join = st_within)
+```
+
+The above code gives us the dengue fever layer within the study area in sf point features, confined to epidemiology weeks 31-50, 2023. Yay!
+
+```{r}
+#| echo: false
+denguepoints_sf <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/denguepoints_sf.rds")
+```
+
+```{r}
+denguepoints_sf
+```
+
+## 4.2 Aggregating dengue observations based on village boundaries
+
+To find out identify which village each observation is in,
+
+```{r}
+#| eval: false
+dengue_sf <- st_join(taiwanstudy_sf, denguepoints_sf, join = st_contains)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+st_join(taiwanstudy_sf, denguepoints_sf, join = st_contains, left = TRUE)
+```
+
+```{r}
+#| echo: false
+dengue_sf <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/dengue_sf.rds")
+```
+
+To select our relevant columns, we once again use select() from dplyr package.
+
+```{r}
+#| eval: false
+dengue_sf <- dengue_sf %>% select(VILLENG.x, TOWNID.x, 發病日, geometry) %>% rename(VILLENG = VILLENG.x) %>% rename(TOWNID = TOWNID.x)
+```
+
+```{r}
+dengue_sf
+```
+
+You might be wondering, why did we keep the TOWNID column if our study is based on villages? Apparently, there are villages with the same names that are spread across different regions, classified in different towns. Arguably, the geometries column is sufficient to tell us that. However, due to the less readable nature of the geometry values, we might want to preserve our TOWNID first, for easier interpretation of our records.
+
+One example of villages with the same names, located separately is the "成功里" village (VILLENG == "Chenggong Vil.") as shown below
+
+```{r}
+#| eval: false
+plot(st_geometry(filter(taiwanstudy_sf, VILLENG == "Chenggong Vil.")))
+```
+
+![](images/chenggong vil plot.png)
+
+Then, to derive the aggregated dengue observations data (without classifying our data based on date) based on village boundaries and town ID, as polygons sf data frame,
+
+```{r}
+#| eval: false
+dengue_aggregated_sf <- st_join(taiwanstudy_sf, dengue_sf, join = st_contains) %>% group_by (VILLENG.x, TOWNID.x) %>% summarize(total_cases= n())
+```
+
+```{r}
+#| echo: false
+dengue_aggregated_sf <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/dengue_aggregated_sf.rds")
+```
+
+Then, to check if we have prepared our data correctly thus far, we can plot a choropleth map using the various functions from the tmap package. Here, we use dengue_aggregated_sf, which aggregates all observations based on villages, as it probably gives a more intuitive and sensible check.
+
+```{r}
+#| eval: false
+tm_shape(dengue_aggregated_sf) + 
+  tm_polygons("total_cases") + 
+  tm_layout(main.title = "Number of dengue cases by Village", 
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45,
+            legend.width=0.35,
+            frame = TRUE) + 
+  tm_borders(alpha=0.5)
+```
+
+![](images/dengue_aggregated_sf.png)
+
+# 5 Global Spatial Autocorrelation Analysis
+
+What is Global Spatial Autocorrelation Analysis?
+
+Global spatial autocorrelation analysis is a statistical technique used to assess whether spatial patterns (the arrangement of values across geographic locations) in a dataset are **randomly distributed or exhibit clustering or dispersion**. It answers whether similar values tend to be located near each other (positive autocorrelation) or whether dissimilar values tend to be near each other (negative autocorrelation).
+
+-   Key Points:
+
+    -   Focuses on the **overall pattern**: It provides a general impression of spatial clustering or dispersion, not identifying specific clusters or outliers.
+
+    -   Applicable to various data: It can be applied to various types of data with spatial components, such as disease incidence, crime rates, or environmental variables.
+
+    -   Common statistic: A popular statistic used for global spatial autocorrelation is Moran's I. This index ranges from -1 (perfect negative autocorrelation) to 1 (perfect positive autocorrelation), with 0 indicating no spatial autocorrelation.
+
+In this section, we will be performing the global spatial autocorrelation analysis using **sfdep** methods to discover whether the distribution of dengue fever outbreak in Tainan City are randomly distributed, using Moran's I statistic.
+
+Since we are conducting the analysis only in terms of space (ignoring time variables), we can use the aggregated dengue observations based on only village boundaries, which we have derived earlier as dengue_aggregated_sf!
+
+```{r}
+dengue_aggregated_sf
+```
+
+## 5.1: Deriving contiguity weights: Queen's method
+
+To get the contiguity weight matrix of neighbours using the Queen's method, we can apply the following code:
+
+```{r}
+#| eval: false
+wm_q <- dengue_aggregated_sf %>% mutate(nb = st_contiguity(geometry),
+                                        wt = st_weights(nb, 
+                                                        style = "W"),
+                                        .before=1)
+```
+
+```{r}
+#| echo: false
+wm_q <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/wm_q.rds")
+```
+
+```{r}
+wm_q
+```
+
+## 5.2: Performing Global Moran's I test
+
+Next, we can perform the global moran's I test using the code below.
+
+```{r}
+global_moran_test(wm_q$total_cases,
+                  wm_q$nb,
+                  wm_q$wt)
+```
+
+From the test, we can see that under the assumption of spatial random distribution, the p-value \< 2.2e-16. This allows us to infer that the number of dengue cases are not spatially randomly distributed across villages at 95% confidence level, with significant signs of clustering/outliers.
+
+## 5.3: Performing Global Moran's I permutation test
+
+Very importantly, we should also conduct the global moran's I permutation test.
+
+```{r}
+set.seed(1234)
+```
+
+```{r}
+global_moran_perm(wm_q$total_cases,
+                  wm_q$nb,
+                  wm_q$wt,
+                  nsim=79)
+```
+
+From the global moran's I permutation test, under the assumption of spatial random distribution, the p-value \< 2.2e-16. This further confirms that the number of dengue cases are not spatially randomly distributed across villages at 95% confidence level.
