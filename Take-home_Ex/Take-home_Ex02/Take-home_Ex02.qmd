@@ -7,16 +7,16 @@ format:
 execute:
   echo: TRUE
   warning: false
-date: "February 25, 2024"
+date: "February 29, 2024"
 ---
 
 # 1 Overview
 
-# 1.1 Background
+## 1.1 Background
 
 Dengue Hemorrhagic Fever (in short dengue fever) is one of the most widespread mosquito-borne diseases in the most tropical and subtropical regions. It is an acute disease caused by dengue virus infection which is transmitted by female Aedes aegypti and Aedes albopictus mosquitoes. In 2015, Taiwan had recorded the most severe dengue fever outbreak with more than 43,000 dengue cases and 228 deaths. Since then, the annual reported dengue fever cases were maintained at the level of not more than 200 cases. However, in 2023, Taiwan recorded 26703 dengue fever cases.
 
-# 1.2 Objectives
+## 1.2 Objectives
 
 In this exercise, we would like to investigate:
 
@@ -28,7 +28,7 @@ In this exercise, we would like to investigate:
 
     -   where the emerging hot spot/cold spot areas are.
 
-# 1.3 The Task
+## 1.3 The Task
 
 In this exercise, we will be fulfilling the following tasks:
 
@@ -48,7 +48,7 @@ In this exercise, we will be fulfilling the following tasks:
 
 -   Describe the spatial patterns revealed by the analysis.
 
-# 1.4 The Data
+## 1.4 The Data
 
 For this take-home exercise, we will be using the two data sets:
 
@@ -72,7 +72,7 @@ For this take-home exercise, we will be using the two data sets:
 |            |     -   最小統計區中心點Y: y-coordinate                    |                |                                                                           |
 +------------+------------------------------------------------------------+----------------+---------------------------------------------------------------------------+
 
-# 1.5 Installing and Loading R Packages
+## 1.5 Installing and Loading R Packages
 
 In this exercise, the following R packages would be used:
 
@@ -137,7 +137,7 @@ To check for missing values in our geographic data, we can apply the following c
 taiwan_sf[rowSums(is.na(taiwan_sf)) != 0, ]
 ```
 
-Seems like all observations contain missing values, and we could see from the above result that it is due to the "NOTE" field. Let's try checking the data frame again while excluding the "Note" field using select() from the dplyr package.
+Seems like all observations contain missing values, and we could see from the above result that it is due to the "NOTE" field. Let's try checking the data frame again while excluding the "Note" field using select() from the **dplyr** package.
 
 ```{r}
 taiwan_sf[rowSums(is.na(taiwan_sf %>% select(-NOTE))) != 0, ]
@@ -147,7 +147,7 @@ Yay, seems like we have no missing values if we exclude the "Note" field!
 
 ### 2.2.3 Verifying CRS
 
-To check the CRS of our taiwan_sf data set, we can use st_crs() from sf package as shown below.
+To check the CRS of our taiwan_sf data set, we can use st_crs() from **sf** package as shown below.
 
 ```{r}
 st_crs(taiwan_sf)
@@ -157,7 +157,7 @@ We can see that our data set is in TWD97 crs (EPSG: 3824).
 
 ### 2.2.4 Selecting relevant fields
 
-To speed up our analysis later, we will select and keep only some assumingly relevant fields using select() from the dplyr package. In this step, I will keep VILLCODE, VILLNAME, VILLENG, TOWNID, TOWNCODE and geometry fields.
+To speed up our analysis later, we will select and keep only some assumingly relevant fields using select() from the **dplyr** package. In this step, I will keep VILLCODE, VILLNAME, VILLENG, TOWNID, TOWNCODE and geometry fields.
 
 ```{r}
 #| eval: false
@@ -166,7 +166,7 @@ taiwanstudy_sf <- taiwanstudy_sf %>% select(VILLCODE, VILLNAME, VILLENG, TOWNID,
 
 ### 2.2.5 Extraction of study area
 
-Next, to extract our study areas D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan, we can use filter() from the dplyr package, and \| which represents "OR".
+Next, to extract our study areas D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan, we can use filter() from the **dplyr** package, and \| which represents "OR".
 
 ```{r}
 #| eval: false
@@ -178,14 +178,14 @@ taiwanstudy_sf <- taiwan_sf %>% filter(TOWNID == "D01" | TOWNID == "D02" | TOWNI
 taiwanstudy_sf <- readRDS( "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/taiwanstudy_sf.rds")
 ```
 
-To visualize our study area, we can employ plot() and st_geometry() from sf package.
+To visualize our study area, we can employ plot() and st_geometry() from **sf** package.
 
 ```{r}
 #| eval: false
 plot(st_geometry(taiwanstudy_sf))
 ```
 
-![](images/taiwanstudy_sf geometry.png)
+![](images/taiwanstudy_sf%20geometry.png)
 
 Looks great! We've successfully extracted our study area later in sf polygon features, at the village level confined to the D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan.
 
@@ -193,7 +193,7 @@ Looks great! We've successfully extracted our study area later in sf polygon fea
 
 ## 3.1 Data Import
 
-The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the readr package.
+The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the **readr** package.
 
 ```{r}
 #| eval: false
@@ -213,7 +213,7 @@ Dengue_Daily <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02
 
 ## 3.2 Extraction of study fields
 
-Next, we will use select() from the dplyr package again to select the relevant fields for our study. Here, we would select 發病日 which is the onset date of symptoms, and 最小統計區中心點X and 最小統計區中心點Y which are the x-coordinates and y-coordinates of the dengue cases.
+Next, we will use select() from the **dplyr** package again to select the relevant fields for our study. Here, we would select 發病日 which is the onset date of symptoms, and 最小統計區中心點X and 最小統計區中心點Y which are the x-coordinates and y-coordinates of the dengue cases.
 
 ```{r}
 Dengue_Daily <- Dengue_Daily %>% select(發病日, 最小統計區中心點X, 最小統計區中心點Y)
@@ -222,7 +222,7 @@ Dengue_Daily
 
 ## 3.3 Checking for missing values
 
-Again, it is always a good practice to check for missing values. From the earlier code, we see that missing values are denoted as "None" in this data set. Hence, we will use filter() from the dplyr package, and look for coordinate values that contain "None".
+Again, it is always a good practice to check for missing values. From the earlier code, we see that missing values are denoted as "None" in this data set. Hence, we will use filter() from the **dplyr** package, and look for coordinate values that contain "None".
 
 ```{r}
 Dengue_Daily %>% filter(最小統計區中心點X == "None" | 最小統計區中心點Y == "None")
@@ -258,7 +258,7 @@ Nice, our coordinates are sensibly put together now!
 
 ## 3.5 Extraction of Study Time Frame
 
-Then, to limit our the study time frame to epidemiology week 31-50, 2023, we once again use filter() from the dplyr package. We also employ year() and epiweek() from the lubridate package to identify and extract our required time frame.
+Then, to limit our the study time frame to epidemiology week 31-50, 2023, we once again use filter() from the dplyr package. We also employ year() and epiweek() from the **lubridate** package to identify and extract our required time frame.
 
 ```{r}
 #| eval: false
@@ -272,11 +272,11 @@ Denguedates <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/
 
 # 4 Joining Geospatial and Aspatial Data
 
-It is time to combine our geospatial and aspatial sf data frames! Here, we will be using st_join() from the dplyr package.
+It is time to combine our geospatial and aspatial sf data frames! Here, we will be using st_join() from the **dplyr** package.
 
 ## 4.1 Extraction of dengue observation data points
 
-Firstly, let's extract the Dengue observations that are within the regions of study. To do so, we can apply use st_join() from the sf package and apply the following code.
+Firstly, let's extract the Dengue observations that are within the regions of study. To do so, we can apply use st_join() from the **sf** package and apply the following code.
 
 ```{r}
 #| eval: false
@@ -314,7 +314,7 @@ st_join(taiwanstudy_sf, denguepoints_sf, join = st_contains, left = TRUE)
 dengue_sf <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/dengue_sf.rds")
 ```
 
-To select our relevant columns, we once again use select() from dplyr package.
+To select our relevant columns, we once again use select() from **dplyr** package.
 
 ```{r}
 #| eval: false
@@ -327,14 +327,14 @@ dengue_sf
 
 You might be wondering, why did we keep the TOWNID column if our study is based on villages? Apparently, there are villages with the same names that are spread across different regions, classified in different towns. Arguably, the geometries column is sufficient to tell us that. However, due to the less readable nature of the geometry values, we might want to preserve our TOWNID first, for easier interpretation of our records.
 
-One example of villages with the same names, located separately is the "成功里" village (VILLENG == "Chenggong Vil.") as shown below
+One example of villages with the same names, located separately is the "成功里" village (VILLENG == "Chenggong Vil.") as shown below.
 
 ```{r}
 #| eval: false
 plot(st_geometry(filter(taiwanstudy_sf, VILLENG == "Chenggong Vil.")))
 ```
 
-![](images/chenggong vil plot.png)
+![](images/chenggong%20vil%20plot.png)
 
 Then, to derive the aggregated dengue observations data (without classifying our data based on date) based on village boundaries and town ID, as polygons sf data frame,
 
@@ -348,7 +348,7 @@ dengue_aggregated_sf <- st_join(taiwanstudy_sf, dengue_sf, join = st_contains) %
 dengue_aggregated_sf <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/dengue_aggregated_sf.rds")
 ```
 
-Then, to check if we have prepared our data correctly thus far, we can plot a choropleth map using the various functions from the tmap package. Here, we use dengue_aggregated_sf, which aggregates all observations based on villages, as it probably gives a more intuitive and sensible check.
+Then, to check if we have prepared our data correctly thus far, we can plot a choropleth map using the various functions from the **tmap** package. Here, we use dengue_aggregated_sf, which aggregates all observations based on villages, as it probably gives a more intuitive and sensible check.
 
 ```{r}
 #| eval: false
@@ -436,3 +436,5 @@ global_moran_perm(wm_q$total_cases,
 ```
 
 From the global moran's I permutation test, under the assumption of spatial random distribution, the p-value \< 2.2e-16. This further confirms that the number of dengue cases are not spatially randomly distributed across villages at 95% confidence level.
+
+***This exercise is continued at Take-home Exercise 2 (Part 2). Please click on this [link](https://is415-gaa-ongbinhui.netlify.app/take-home_ex/take-home_ex02/take-home_ex02_2) to be directed there.***

@@ -7,8 +7,16 @@ format:
 execute:
   echo: TRUE
   warning: false
-date: "February 25, 2024"
+date: "February 29, 2024"
 ---
+
+***This webpage is a continuation of Take-home Exercise 2 (Part 1), which can be found [here](https://is415-gaa-ongbinhui.netlify.app/take-home_ex/take-home_ex02/take-home_ex02).***
+
+Additional reference link for Section 7.3:
+
+-   [ShinyApp to select and compare Mann-Kendall test results for different villages](https://binhuiong.shinyapps.io/MannKendall_Tainan/)
+
+Moving onto our next steps...
 
 ```{r}
 #| echo: false
@@ -45,7 +53,7 @@ lisa <- wm_q %>% mutate(local_moran = local_moran(
 
 Components of code:
 
--   mutate() to create a new column consisting of local_moran's I statistics
+-   mutate() from **dplyr** package to create a new column consisting of local_moran's I statistics
 
     -   based on
 
@@ -53,7 +61,7 @@ Components of code:
 
         -   number of simulations (79 + 1) = 80
 
--   unnest() to expand the list-coumn containing the resulting data frame of local moran's I statistics into columns
+-   unnest() from base R to expand the list-coumn containing the resulting data frame of local moran's I statistics into columns
 
 Output of code (columns):
 
@@ -77,7 +85,7 @@ Output of code (columns):
 
 ## 6.2: Visualizing local Moran's I
 
-Then, we can create a choropleth map using tmap functions to visualize the local moran statistic ("ii") of different villages.
+Then, we can create a choropleth map using **tmap** functions to visualize the local moran statistic ("ii") of different villages.
 
 ```{r}
 #| eval: false
@@ -88,7 +96,7 @@ tm_shape(lisa) +
             main.title.size = 0.8)
 ```
 
-![](images/local morans i of total cases.png)
+![](images/local%20morans%20i%20of%20total%20cases.png)
 
 Interpreting Local Moran's I ("ii"):
 
@@ -117,13 +125,13 @@ tm_shape(lisa) +
              main.title.size = 0.8)
 ```
 
-![](images/p-value of local morans i.png)
+![](images/p-value%20of%20local%20morans%20i.png)
 
 From the choropleth map of p-values, we can see that many parts (more than half) of clusters and outliers discovered by the local moran's I statistics are not significant at 95% confidence level. However, there are still a larger number of villages, particularly those in the northern and eastern regions, that exhibit significant clustering/outliers at 95% confidence level.
 
 ## 6.4: Visualizing local moran's I and p-value
 
-Putting the local moran's I value and p-value choropleth maps side by side allows to interpret out results more easily, tracing which villages are significant outliers or significant clusters on the map. To do so, we can use tamp_arrange() to put the maps together, as demonstrated in the code chunk below.
+Putting the local moran's I value and p-value choropleth maps side by side allows to interpret out results more easily, tracing which villages are significant outliers or significant clusters on the map. To do so, we can use tmap_arrange() from **tmap** package to put the maps together, as demonstrated in the code chunk below.
 
 ```{r}
 #| eval: false
@@ -144,7 +152,7 @@ local_mapp <- tm_shape(lisa) +
 tmap_arrange(local_mapi, local_mapp, ncol = 2)
 ```
 
-![](images/local morans i.png)
+![](images/local%20morans%20i.png)
 
 An obvious group of regions that exhibit significant cluster patterns (at 95% confidence level) are the north-western regions of Tainan.
 
@@ -166,7 +174,7 @@ tm_shape(lisa) +
   tm_borders(alpha=0.4)
 ```
 
-![](images/lisa map.png)
+![](images/lisa%20map.png)
 
 The choropleth map tells us that :
 
@@ -190,7 +198,7 @@ Key points:
 
 ### 7.1.1 Data manipulation
 
-To begin with, let's combine our dengue observations based on epidemiology weeks. To do so, we can use group_by() and summarize() from dplyr package, and epiweek() from lubridate package.
+To begin with, let's combine our dengue observations based on epidemiology weeks. To do so, we can use group_by() and summarize() from **dplyr** package, and epiweek() from **lubridate** package.
 
 ```{r}
 #| eval: false
@@ -249,13 +257,13 @@ In the above code:
 
 #### Step 2: Join the existing case records to the full grid
 
-Here, we use left_join() from the dplyr package to insert our dengue case records in dengue_epi_sf into dengue_full_sf.
+Here, we use left_join() from the **dplyr** package to insert our dengue case records in dengue_epi_sf into dengue_full_sf.
 
 ```{r}
 dengue_full_sf <- dengue_full_sf %>% left_join(dengue_epi_sf, join_by(VILLENG, TOWNID, `epiweek(發病日)`))  
 ```
 
-Since we do not need the geometry.y column that is redundant and contains missing values, we can remove it using select() from dplyr, and rename geometry.x as geometry since it is our geometry column.
+Since we do not need the geometry.y column that is redundant and contains missing values, we can remove it using select() from **dplyr**, and rename geometry.x as geometry since it is our geometry column.
 
 ```{r}
 dengue_full_sf <- dengue_full_sf %>% select(-geometry.y, -location.y) %>% rename(geometry = geometry.x, location = location.x)
@@ -271,7 +279,7 @@ We can see that after the data wrangling, we have 5160 records, which correspond
 
 #### Step 3: Insert "0" values
 
-Next, we should replace the NA values with 0 to prevent further complications later on, and to make those records appear clearer. To do so, we can use replace_na from the **tidyr** package.
+Next, we should replace the NA values with 0 to prevent further complications later on, and to make those records appear clearer. To do so, we can use replace_na() from the **tidyr** package.
 
 ```{r}
 dengue_full_sf$cases <- replace_na(dengue_full_sf$cases, 0)
@@ -295,7 +303,7 @@ taiwanstudy_sf <- taiwanstudy_sf %>% mutate(location = paste(VILLENG, ",", TOWNI
 
 Step 2: Creating spacetime object
 
-Here, we can create our spacetime object using spacetime() from sfdep.
+Here, we can create our spacetime object using spacetime() from **sfdep**.
 
 ```{r}
 #| eval: false
@@ -331,7 +339,7 @@ YAY! We've successfully created our spacetime cube, which is a spatio-tempotial 
 
 ### 7.2.1 Deriving spatial weight matrix
 
-Before we can compute local Gi\* statistics, we would need to derive a spatial weight matrix. To do so, we can apply the following code below, using the functions of sfdep and dplyr packages.
+Before we can compute local Gi\* statistics, we would need to derive a spatial weight matrix. To do so, we can apply the following code below, using the functions of **sfdep** and **dplyr** packages.
 
 ```{r}
 #| eval: false
@@ -348,7 +356,7 @@ dengue_nb <- dengue_st %>%
 
 In the code above, activate() from dplyr package is used to activate the geometry context
 
--   mutate() from dplyr package is usd to create two new columns nb and wt
+-   mutate() from **dplyr** package is usd to create two new columns nb and wt
 
 -   set_nbs() and set_wts() are used to activate the data context again and copy the values to each time_slice
 
@@ -378,11 +386,11 @@ gi_stars <- dengue_nb %>%
 
 In the above code:
 
--   group the rows by epiweek(發病日), using group_by() from dplyr package
+-   group the rows by epiweek(發病日), using group_by() from **dplyr** package
 
--   create a new column with local_gstar_perm() computations from sfdep package
+-   create a new column with local_gstar_perm() computations from **sfdep** package
 
--   unnest gi_star column of the newly created gi_stars data.frame, using unnest() from tidyr package
+-   unnest gi_star column of the newly created gi_stars data.frame, using unnest() from **tidyr** package
 
 ```{r}
 #| echo: false
@@ -397,7 +405,7 @@ gi_stars
 
 ## 7.3 Mann-Kendall Test
 
-With the Gi\* measures, we can evaluate each location for a trend using the Mann-Kendall test. For instance, we can evaluate the trend for location Andong Vil. , D06 by using the code chunk below.
+With the Gi\* measures, we can evaluate trends in each village using the Mann-Kendall test. For instance, to evaluate the trend for location Andong Village which has TOWNID D06 (denoted by location = Andong Vil. , D06) we can apply the code chunk below.
 
 ```{r}
 #| eval: false
@@ -416,22 +424,48 @@ andong_mktest <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex0
 andong_mktest
 ```
 
-Then, we plot the result using ggplot2 functions.
+Then, we can plot result using **ggplot2** functions to observe the Gi\* statistic across different epidemiology weeks.
 
 ```{r}
 ggplot(data=andong_mktest,
        aes (x=`epiweek(發病日)`,
             y= gi_star)) + 
-         geom_line()
+         geom_line(color="green") +
+  geom_line(y = 0) + 
+  geom_line(y = 1.96) + 
+  geom_line(y = -1.96)
 ```
 
-Alternatively, we can create an interactive plot using ggplotly() of plotly package.
+In the above plot, I have also added a reference lines where
+
+-   Gi\* = 0,
+
+-   Gi\* = 1.96 and
+
+-   Gi \* = -1.96.
+
+How should we interpret the Gi\* statistics? The Gi\* statistic returned for each feature in the dataset is a z-score. Since the value of z-score indicates the significance of the result,
+
+-   The more statistically significant positive (**very positive value**) the Gi\*, the more intense the clustering of high values (**hot spot**).
+
+-   The more statistically significant negative (**very negative value**) the Gi\*, the more intense the clustering of low values (**cold spot**).
+
+With that, we will use the positivity or negativity of the Gi\* statistic to determine if it is a hotspot or a coldspot. Then, we should check if Gi\* \> 1.96 or Gi\* \< -1.96 to determine if the hotspot/coldspot is statistically significant at 95% confidence level.
+
+-   Therefore, for Andong Village, it appears that weeks 40 and 46 are epidemiology weeks of significant hotspots! However, in general, there is no trend as the results for most of the other weeks are statistically insignificant at 95% confidence level.
+
+*As there are too many villages, I am unable to display the result for every single village in this website. However, I have created a **ShinyApp** website in which you can select any combination of and compare the **trends of different villages in Tainan City, Taiwan [here](https://binhuiong.shinyapps.io/MannKendall_Tainan/)**!*
+
+Alternatively, rather than creating static plots, we can create an interactive plot using ggplotly() of **plotly** package to plot the Gi\* results.
 
 ```{r}
 p <- ggplot(data = andong_mktest,
             aes(x = `epiweek(發病日)`,
                 y = gi_star)) +
-  geom_line()
+  geom_line() +
+  geom_line(y = 0) + 
+  geom_line(y = 1.96) + 
+  geom_line(y = -1.96)
 
 ggplotly(p)
 ```
@@ -444,7 +478,7 @@ Now... the exciting part! We would be checking which villages exhibit trends!
 
 ### 7.4.1 Performing EHSA
 
-To perform EHSA, we can use emerging_hotspot_analysis() from the sfdep package.
+To perform EHSA, we can use emerging_hotspot_analysis() from the **sfdep** package.
 
 ```{r}
 #| echo: false
@@ -490,7 +524,7 @@ From the visualization, it seems like all villages have no pattern detected in t
 
 To examine the significance of the conclusion "all villages have no significant trend detected in terms of number of dengue cases", we can visualize the EHSA and it's p-value.
 
-Firstly, we derive the EHSA of each village by using left_join() from the dplyr package to insert the EHSA values to each village in our study area.
+Firstly, we derive the EHSA of each village by using left_join() from the **dplyr** package to insert the EHSA values to each village in our study area.
 
 ```{r}
 #| eval: false
@@ -502,7 +536,7 @@ taiwanstudy_ehsa <- taiwanstudy_sf %>% left_join(ehsa, join_by (location))
 taiwanstudy_ehsa <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/taiwanstudy_ehsa.rds")
 ```
 
-Then, we use tmap functions to create the choropleth map.
+Then, we use **tmap** functions to create the choropleth map.
 
 ```{r}
 #| eval: false

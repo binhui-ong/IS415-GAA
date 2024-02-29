@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-02-25">
+<meta name="dcterms.date" content="2024-02-29">
 
 <title>Bin Hui’s IS415-GAA Journal - Take-home Exercise 2: Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan (Part 1)</title>
 <style>
@@ -227,12 +227,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">1 Overview</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">1 Overview</a>
+  <ul class="collapse">
   <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">1.1 Background</a></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">1.2 Objectives</a></li>
   <li><a href="#the-task" id="toc-the-task" class="nav-link" data-scroll-target="#the-task">1.3 The Task</a></li>
   <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">1.4 The Data</a></li>
   <li><a href="#installing-and-loading-r-packages" id="toc-installing-and-loading-r-packages" class="nav-link" data-scroll-target="#installing-and-loading-r-packages">1.5 Installing and Loading R Packages</a></li>
+  </ul></li>
   <li><a href="#data-preparation-geospatial" id="toc-data-preparation-geospatial" class="nav-link" data-scroll-target="#data-preparation-geospatial">2 Data Preparation (Geospatial)</a>
   <ul class="collapse">
   <li><a href="#data-import" id="toc-data-import" class="nav-link" data-scroll-target="#data-import">2.1 Data Import</a></li>
@@ -283,7 +285,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 25, 2024</p>
+      <p class="date">February 29, 2024</p>
     </div>
   </div>
   
@@ -295,13 +297,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="overview" class="level1">
 <h1>1 Overview</h1>
-</section>
-<section id="background" class="level1">
-<h1>1.1 Background</h1>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">1.1 Background</h2>
 <p>Dengue Hemorrhagic Fever (in short dengue fever) is one of the most widespread mosquito-borne diseases in the most tropical and subtropical regions. It is an acute disease caused by dengue virus infection which is transmitted by female Aedes aegypti and Aedes albopictus mosquitoes. In 2015, Taiwan had recorded the most severe dengue fever outbreak with more than 43,000 dengue cases and 228 deaths. Since then, the annual reported dengue fever cases were maintained at the level of not more than 200 cases. However, in 2023, Taiwan recorded 26703 dengue fever cases.</p>
 </section>
-<section id="objectives" class="level1">
-<h1>1.2 Objectives</h1>
+<section id="objectives" class="level2">
+<h2 class="anchored" data-anchor-id="objectives">1.2 Objectives</h2>
 <p>In this exercise, we would like to investigate:</p>
 <ul>
 <li><p>If the distribution of dengue fever outbreak at Tainan City, Taiwan are independent from space and space and time.</p></li>
@@ -312,8 +313,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul></li>
 </ul>
 </section>
-<section id="the-task" class="level1">
-<h1>1.3 The Task</h1>
+<section id="the-task" class="level2">
+<h2 class="anchored" data-anchor-id="the-task">1.3 The Task</h2>
 <p>In this exercise, we will be fulfilling the following tasks:</p>
 <ul>
 <li><p>Use appropriate functions of sf and tidyverse to prepare the following geospatial data layer:</p>
@@ -328,8 +329,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Describe the spatial patterns revealed by the analysis.</p></li>
 </ul>
 </section>
-<section id="the-data" class="level1">
-<h1>1.4 The Data</h1>
+<section id="the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-data">1.4 The Data</h2>
 <p>For this take-home exercise, we will be using the two data sets:</p>
 <table class="table">
 <colgroup>
@@ -374,8 +375,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="installing-and-loading-r-packages" class="level1">
-<h1>1.5 Installing and Loading R Packages</h1>
+<section id="installing-and-loading-r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="installing-and-loading-r-packages">1.5 Installing and Loading R Packages</h2>
 <p>In this exercise, the following R packages would be used:</p>
 <p>Then, to install and/or load the R packages, we can use p_load() from the <strong>pacman</strong> package.</p>
 <div class="cell">
@@ -384,6 +385,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, sf, sfdep, tmap, lubridate, plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+</section>
 </section>
 <section id="data-preparation-geospatial" class="level1">
 <h1>2 Data Preparation (Geospatial)</h1>
@@ -472,7 +474,7 @@ First 10 features:
 10    D22 67000150 &lt;NA&gt; POLYGON ((120.1201 23.09364...</code></pre>
 </div>
 </div>
-<p>Seems like all observations contain missing values, and we could see from the above result that it is due to the “NOTE” field. Let’s try checking the data frame again while excluding the “Note” field using select() from the dplyr package.</p>
+<p>Seems like all observations contain missing values, and we could see from the above result that it is due to the “NOTE” field. Let’s try checking the data frame again while excluding the “Note” field using select() from the <strong>dplyr</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -491,7 +493,7 @@ Geodetic CRS:  TWD97
 </section>
 <section id="verifying-crs" class="level3">
 <h3 class="anchored" data-anchor-id="verifying-crs">2.2.3 Verifying CRS</h3>
-<p>To check the CRS of our taiwan_sf data set, we can use st_crs() from sf package as shown below.</p>
+<p>To check the CRS of our taiwan_sf data set, we can use st_crs() from <strong>sf</strong> package as shown below.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -525,7 +527,7 @@ GEOGCRS["TWD97",
 </section>
 <section id="selecting-relevant-fields" class="level3">
 <h3 class="anchored" data-anchor-id="selecting-relevant-fields">2.2.4 Selecting relevant fields</h3>
-<p>To speed up our analysis later, we will select and keep only some assumingly relevant fields using select() from the dplyr package. In this step, I will keep VILLCODE, VILLNAME, VILLENG, TOWNID, TOWNCODE and geometry fields.</p>
+<p>To speed up our analysis later, we will select and keep only some assumingly relevant fields using select() from the <strong>dplyr</strong> package. In this step, I will keep VILLCODE, VILLNAME, VILLENG, TOWNID, TOWNCODE and geometry fields.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -535,14 +537,14 @@ GEOGCRS["TWD97",
 </section>
 <section id="extraction-of-study-area" class="level3">
 <h3 class="anchored" data-anchor-id="extraction-of-study-area">2.2.5 Extraction of study area</h3>
-<p>Next, to extract our study areas D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan, we can use filter() from the dplyr package, and | which represents “OR”.</p>
+<p>Next, to extract our study areas D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan, we can use filter() from the <strong>dplyr</strong> package, and | which represents “OR”.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>taiwanstudy_sf <span class="ot">&lt;-</span> taiwan_sf <span class="sc">%&gt;%</span> <span class="fu">filter</span>(TOWNID <span class="sc">==</span> <span class="st">"D01"</span> <span class="sc">|</span> TOWNID <span class="sc">==</span> <span class="st">"D02"</span> <span class="sc">|</span> TOWNID <span class="sc">==</span> <span class="st">"D04"</span> <span class="sc">|</span> TOWNID <span class="sc">==</span> <span class="st">"D06"</span> <span class="sc">|</span> TOWNID <span class="sc">==</span> <span class="st">"D07"</span> <span class="sc">|</span> TOWNID <span class="sc">==</span> <span class="st">"D08"</span> <span class="sc">|</span> TOWNID <span class="sc">==</span> <span class="st">"D32"</span> <span class="sc">|</span> TOWNID <span class="sc">==</span> <span class="st">"D39"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>To visualize our study area, we can employ plot() and st_geometry() from sf package.</p>
+<p>To visualize our study area, we can employ plot() and st_geometry() from <strong>sf</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -558,7 +560,7 @@ GEOGCRS["TWD97",
 <h1>3 Data Preparation (Aspatial Data)</h1>
 <section id="data-import-1" class="level2">
 <h2 class="anchored" data-anchor-id="data-import-1">3.1 Data Import</h2>
-<p>The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the readr package.</p>
+<p>The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the <strong>readr</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -568,7 +570,7 @@ GEOGCRS["TWD97",
 </section>
 <section id="extraction-of-study-fields" class="level2">
 <h2 class="anchored" data-anchor-id="extraction-of-study-fields">3.2 Extraction of study fields</h2>
-<p>Next, we will use select() from the dplyr package again to select the relevant fields for our study. Here, we would select 發病日 which is the onset date of symptoms, and 最小統計區中心點X and 最小統計區中心點Y which are the x-coordinates and y-coordinates of the dengue cases.</p>
+<p>Next, we will use select() from the <strong>dplyr</strong> package again to select the relevant fields for our study. Here, we would select 發病日 which is the onset date of symptoms, and 最小統計區中心點X and 最小統計區中心點Y which are the x-coordinates and y-coordinates of the dengue cases.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -595,7 +597,7 @@ GEOGCRS["TWD97",
 </section>
 <section id="checking-for-missing-values" class="level2">
 <h2 class="anchored" data-anchor-id="checking-for-missing-values">3.3 Checking for missing values</h2>
-<p>Again, it is always a good practice to check for missing values. From the earlier code, we see that missing values are denoted as “None” in this data set. Hence, we will use filter() from the dplyr package, and look for coordinate values that contain “None”.</p>
+<p>Again, it is always a good practice to check for missing values. From the earlier code, we see that missing values are denoted as “None” in this data set. Hence, we will use filter() from the <strong>dplyr</strong> package, and look for coordinate values that contain “None”.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -667,7 +669,7 @@ Geodetic CRS:  TWD97
 </section>
 <section id="extraction-of-study-time-frame" class="level2">
 <h2 class="anchored" data-anchor-id="extraction-of-study-time-frame">3.5 Extraction of Study Time Frame</h2>
-<p>Then, to limit our the study time frame to epidemiology week 31-50, 2023, we once again use filter() from the dplyr package. We also employ year() and epiweek() from the lubridate package to identify and extract our required time frame.</p>
+<p>Then, to limit our the study time frame to epidemiology week 31-50, 2023, we once again use filter() from the dplyr package. We also employ year() and epiweek() from the <strong>lubridate</strong> package to identify and extract our required time frame.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -678,10 +680,10 @@ Geodetic CRS:  TWD97
 </section>
 <section id="joining-geospatial-and-aspatial-data" class="level1">
 <h1>4 Joining Geospatial and Aspatial Data</h1>
-<p>It is time to combine our geospatial and aspatial sf data frames! Here, we will be using st_join() from the dplyr package.</p>
+<p>It is time to combine our geospatial and aspatial sf data frames! Here, we will be using st_join() from the <strong>dplyr</strong> package.</p>
 <section id="extraction-of-dengue-observation-data-points" class="level2">
 <h2 class="anchored" data-anchor-id="extraction-of-dengue-observation-data-points">4.1 Extraction of dengue observation data points</h2>
-<p>Firstly, let’s extract the Dengue observations that are within the regions of study. To do so, we can apply use st_join() from the sf package and apply the following code.</p>
+<p>Firstly, let’s extract the Dengue observations that are within the regions of study. To do so, we can apply use st_join() from the <strong>sf</strong> package and apply the following code.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -727,7 +729,7 @@ Geodetic CRS:  TWD97
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>dengue_sf <span class="ot">&lt;-</span> <span class="fu">st_join</span>(taiwanstudy_sf, denguepoints_sf, <span class="at">join =</span> st_contains)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>To select our relevant columns, we once again use select() from dplyr package.</p>
+<p>To select our relevant columns, we once again use select() from <strong>dplyr</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -760,7 +762,7 @@ First 10 features:
 </div>
 </div>
 <p>You might be wondering, why did we keep the TOWNID column if our study is based on villages? Apparently, there are villages with the same names that are spread across different regions, classified in different towns. Arguably, the geometries column is sufficient to tell us that. However, due to the less readable nature of the geometry values, we might want to preserve our TOWNID first, for easier interpretation of our records.</p>
-<p>One example of villages with the same names, located separately is the “成功里” village (VILLENG == “Chenggong Vil.”) as shown below</p>
+<p>One example of villages with the same names, located separately is the “成功里” village (VILLENG == “Chenggong Vil.”) as shown below.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -775,7 +777,7 @@ First 10 features:
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>dengue_aggregated_sf <span class="ot">&lt;-</span> <span class="fu">st_join</span>(taiwanstudy_sf, dengue_sf, <span class="at">join =</span> st_contains) <span class="sc">%&gt;%</span> <span class="fu">group_by</span> (VILLENG.x, TOWNID.x) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">total_cases=</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Then, to check if we have prepared our data correctly thus far, we can plot a choropleth map using the various functions from the tmap package. Here, we use dengue_aggregated_sf, which aggregates all observations based on villages, as it probably gives a more intuitive and sensible check.</p>
+<p>Then, to check if we have prepared our data correctly thus far, we can plot a choropleth map using the various functions from the <strong>tmap</strong> package. Here, we use dengue_aggregated_sf, which aggregates all observations based on villages, as it probably gives a more intuitive and sensible check.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -930,6 +932,7 @@ alternative hypothesis: two.sided</code></pre>
 </div>
 </div>
 <p>From the global moran’s I permutation test, under the assumption of spatial random distribution, the p-value &lt; 2.2e-16. This further confirms that the number of dengue cases are not spatially randomly distributed across villages at 95% confidence level.</p>
+<p><strong><em>This exercise is continued at Take-home Exercise 2 (Part 2). Please click on this <a href="https://is415-gaa-ongbinhui.netlify.app/take-home_ex/take-home_ex02/take-home_ex02_2">link</a> to be directed there.</em></strong></p>
 
 
 </section>

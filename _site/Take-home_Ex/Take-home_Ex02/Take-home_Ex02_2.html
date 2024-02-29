@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-02-25">
+<meta name="dcterms.date" content="2024-02-29">
 
 <title>Bin Hui’s IS415-GAA Journal - Take-home Exercise 2: Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan (Part 2)</title>
 <style>
@@ -283,7 +283,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 25, 2024</p>
+      <p class="date">February 29, 2024</p>
     </div>
   </div>
   
@@ -293,6 +293,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<p><strong><em>This webpage is a continuation of Take-home Exercise 2 (Part 1), which can be found <a href="https://is415-gaa-ongbinhui.netlify.app/take-home_ex/take-home_ex02/take-home_ex02">here</a>.</em></strong></p>
+<p>Additional reference link for Section 7.3:</p>
+<ul>
+<li><a href="https://binhuiong.shinyapps.io/MannKendall_Tainan/">ShinyApp to select and compare Mann-Kendall test results for different villages</a></li>
+</ul>
+<p>Moving onto our next steps…</p>
 <section id="local-spatial-autocorrelation-analysis" class="level1">
 <h1>6 Local Spatial Autocorrelation Analysis</h1>
 <p>After inferring that the number of dengue cases are not spatially randomly distributed across villages, it would be meaningful to detect clusters and outliers.</p>
@@ -318,7 +324,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Components of code:</p>
 <ul>
-<li><p>mutate() to create a new column consisting of local_moran’s I statistics</p>
+<li><p>mutate() from <strong>dplyr</strong> package to create a new column consisting of local_moran’s I statistics</p>
 <ul>
 <li><p>based on</p>
 <ul>
@@ -326,7 +332,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>number of simulations (79 + 1) = 80</p></li>
 </ul></li>
 </ul></li>
-<li><p>unnest() to expand the list-coumn containing the resulting data frame of local moran’s I statistics into columns</p></li>
+<li><p>unnest() from base R to expand the list-coumn containing the resulting data frame of local moran’s I statistics into columns</p></li>
 </ul>
 <p>Output of code (columns):</p>
 <ul>
@@ -343,7 +349,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="visualizing-local-morans-i" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-local-morans-i">6.2: Visualizing local Moran’s I</h2>
-<p>Then, we can create a choropleth map using tmap functions to visualize the local moran statistic (“ii”) of different villages.</p>
+<p>Then, we can create a choropleth map using <strong>tmap</strong> functions to visualize the local moran statistic (“ii”) of different villages.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -388,7 +394,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="visualizing-local-morans-i-and-p-value" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-local-morans-i-and-p-value">6.4: Visualizing local moran’s I and p-value</h2>
-<p>Putting the local moran’s I value and p-value choropleth maps side by side allows to interpret out results more easily, tracing which villages are significant outliers or significant clusters on the map. To do so, we can use tamp_arrange() to put the maps together, as demonstrated in the code chunk below.</p>
+<p>Putting the local moran’s I value and p-value choropleth maps side by side allows to interpret out results more easily, tracing which villages are significant outliers or significant clusters on the map. To do so, we can use tmap_arrange() from <strong>tmap</strong> package to put the maps together, as demonstrated in the code chunk below.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -450,7 +456,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="preparing-spacetime-data">7.1 Preparing spacetime data</h2>
 <section id="data-manipulation" class="level3">
 <h3 class="anchored" data-anchor-id="data-manipulation">7.1.1 Data manipulation</h3>
-<p>To begin with, let’s combine our dengue observations based on epidemiology weeks. To do so, we can use group_by() and summarize() from dplyr package, and epiweek() from lubridate package.</p>
+<p>To begin with, let’s combine our dengue observations based on epidemiology weeks. To do so, we can use group_by() and summarize() from <strong>dplyr</strong> package, and epiweek() from <strong>lubridate</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -504,14 +510,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="step-2-join-the-existing-case-records-to-the-full-grid" class="level4">
 <h4 class="anchored" data-anchor-id="step-2-join-the-existing-case-records-to-the-full-grid">Step 2: Join the existing case records to the full grid</h4>
-<p>Here, we use left_join() from the dplyr package to insert our dengue case records in dengue_epi_sf into dengue_full_sf.</p>
+<p>Here, we use left_join() from the <strong>dplyr</strong> package to insert our dengue case records in dengue_epi_sf into dengue_full_sf.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dengue_full_sf <span class="ot">&lt;-</span> dengue_full_sf <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(dengue_epi_sf, <span class="fu">join_by</span>(VILLENG, TOWNID, <span class="st">`</span><span class="at">epiweek(發病日)</span><span class="st">`</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Since we do not need the geometry.y column that is redundant and contains missing values, we can remove it using select() from dplyr, and rename geometry.x as geometry since it is our geometry column.</p>
+<p>Since we do not need the geometry.y column that is redundant and contains missing values, we can remove it using select() from <strong>dplyr</strong>, and rename geometry.x as geometry since it is our geometry column.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -545,7 +551,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="step-3-insert-0-values" class="level4">
 <h4 class="anchored" data-anchor-id="step-3-insert-0-values">Step 3: Insert “0” values</h4>
-<p>Next, we should replace the NA values with 0 to prevent further complications later on, and to make those records appear clearer. To do so, we can use replace_na from the <strong>tidyr</strong> package.</p>
+<p>Next, we should replace the NA values with 0 to prevent further complications later on, and to make those records appear clearer. To do so, we can use replace_na() from the <strong>tidyr</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -588,7 +594,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 <p>Step 2: Creating spacetime object</p>
-<p>Here, we can create our spacetime object using spacetime() from sfdep.</p>
+<p>Here, we can create our spacetime object using spacetime() from <strong>sfdep</strong>.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -642,7 +648,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="computing-local-gi-statistics">7.2 Computing local Gi* statistics</h2>
 <section id="deriving-spatial-weight-matrix" class="level3">
 <h3 class="anchored" data-anchor-id="deriving-spatial-weight-matrix">7.2.1 Deriving spatial weight matrix</h3>
-<p>Before we can compute local Gi* statistics, we would need to derive a spatial weight matrix. To do so, we can apply the following code below, using the functions of sfdep and dplyr packages.</p>
+<p>Before we can compute local Gi* statistics, we would need to derive a spatial weight matrix. To do so, we can apply the following code below, using the functions of <strong>sfdep</strong> and <strong>dplyr</strong> packages.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -659,7 +665,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>In the code above, activate() from dplyr package is used to activate the geometry context</p>
 <ul>
-<li><p>mutate() from dplyr package is usd to create two new columns nb and wt</p></li>
+<li><p>mutate() from <strong>dplyr</strong> package is usd to create two new columns nb and wt</p></li>
 <li><p>set_nbs() and set_wts() are used to activate the data context again and copy the values to each time_slice</p></li>
 <li><p>Now, our dataset has neighbours and weights for each time-slice.</p></li>
 </ul>
@@ -697,9 +703,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>In the above code:</p>
 <ul>
-<li><p>group the rows by epiweek(發病日), using group_by() from dplyr package</p></li>
-<li><p>create a new column with local_gstar_perm() computations from sfdep package</p></li>
-<li><p>unnest gi_star column of the newly created gi_stars data.frame, using unnest() from tidyr package</p></li>
+<li><p>group the rows by epiweek(發病日), using group_by() from <strong>dplyr</strong> package</p></li>
+<li><p>create a new column with local_gstar_perm() computations from <strong>sfdep</strong> package</p></li>
+<li><p>unnest gi_star column of the newly created gi_stars data.frame, using unnest() from <strong>tidyr</strong> package</p></li>
 </ul>
 <p>The result of our code is shown below:</p>
 <div class="cell">
@@ -732,7 +738,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="mann-kendall-test" class="level2">
 <h2 class="anchored" data-anchor-id="mann-kendall-test">7.3 Mann-Kendall Test</h2>
-<p>With the Gi* measures, we can evaluate each location for a trend using the Mann-Kendall test. For instance, we can evaluate the trend for location Andong Vil. , D06 by using the code chunk below.</p>
+<p>With the Gi* measures, we can evaluate trends in each village using the Mann-Kendall test. For instance, to evaluate the trend for location Andong Village which has TOWNID D06 (denoted by location = Andong Vil. , D06) we can apply the code chunk below.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -773,33 +779,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 20 Andong Vil. , D06                50  0.493 </code></pre>
 </div>
 </div>
-<p>Then, we plot the result using ggplot2 functions.</p>
+<p>Then, we can plot result using <strong>ggplot2</strong> functions to observe the Gi* statistic across different epidemiology weeks.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>andong_mktest,</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span> (<span class="at">x=</span><span class="st">`</span><span class="at">epiweek(發病日)</span><span class="st">`</span>,</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span> gi_star)) <span class="sc">+</span> </span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">geom_line</span>(<span class="at">color=</span><span class="st">"green"</span>) <span class="sc">+</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">y =</span> <span class="fl">1.96</span>) <span class="sc">+</span> </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">y =</span> <span class="sc">-</span><span class="fl">1.96</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="Take-home_Ex02_2_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Alternatively, we can create an interactive plot using ggplotly() of plotly package.</p>
+<p>In the above plot, I have also added a reference lines where</p>
+<ul>
+<li><p>Gi* = 0,</p></li>
+<li><p>Gi* = 1.96 and</p></li>
+<li><p>Gi * = -1.96.</p></li>
+</ul>
+<p>How should we interpret the Gi* statistics? The Gi* statistic returned for each feature in the dataset is a z-score. Since the value of z-score indicates the significance of the result,</p>
+<ul>
+<li><p>The more statistically significant positive (<strong>very positive value</strong>) the Gi*, the more intense the clustering of high values (<strong>hot spot</strong>).</p></li>
+<li><p>The more statistically significant negative (<strong>very negative value</strong>) the Gi*, the more intense the clustering of low values (<strong>cold spot</strong>).</p></li>
+</ul>
+<p>With that, we will use the positivity or negativity of the Gi* statistic to determine if it is a hotspot or a coldspot. Then, we should check if Gi* &gt; 1.96 or Gi* &lt; -1.96 to determine if the hotspot/coldspot is statistically significant at 95% confidence level.</p>
+<ul>
+<li>Therefore, for Andong Village, it appears that weeks 40 and 46 are epidemiology weeks of significant hotspots! However, in general, there is no trend as the results for most of the other weeks are statistically insignificant at 95% confidence level.</li>
+</ul>
+<p><em>As there are too many villages, I am unable to display the result for every single village in this website. However, I have created a <strong>ShinyApp</strong> website in which you can select any combination of and compare the <strong>trends of different villages in Tainan City, Taiwan <a href="https://binhuiong.shinyapps.io/MannKendall_Tainan/">here</a></strong>!</em></p>
+<p>Alternatively, rather than creating static plots, we can create an interactive plot using ggplotly() of <strong>plotly</strong> package to plot the Gi* results.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> andong_mktest,</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">epiweek(發病日)</span><span class="st">`</span>,</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> gi_star)) <span class="sc">+</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplotly</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">y =</span> <span class="fl">1.96</span>) <span class="sc">+</span> </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">y =</span> <span class="sc">-</span><span class="fl">1.96</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplotly</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-69156449606926ee0949" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-69156449606926ee0949">{"x":{"data":[{"x":[31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"y":[-0.6905617218773169,-0.89487666158684509,-0.58268633022295602,-0.23322181258246677,-0.76017026084778505,-0.064164747325410873,-0.16321853236364853,0.1789180376758196,0.56103819606268013,2.5601304580946689,1.3786703677748946,0.35659029040342077,0.86501436444085433,0.67434066350809363,1.7230775348792646,0.46573363103055343,1.4689480011139728,2.3331787546899858,-0.15302051479043507,0.49287796133018957],"text":["epiweek(發病日): 31<br />gi_star: -0.69056172","epiweek(發病日): 32<br />gi_star: -0.89487666","epiweek(發病日): 33<br />gi_star: -0.58268633","epiweek(發病日): 34<br />gi_star: -0.23322181","epiweek(發病日): 35<br />gi_star: -0.76017026","epiweek(發病日): 36<br />gi_star: -0.06416475","epiweek(發病日): 37<br />gi_star: -0.16321853","epiweek(發病日): 38<br />gi_star:  0.17891804","epiweek(發病日): 39<br />gi_star:  0.56103820","epiweek(發病日): 40<br />gi_star:  2.56013046","epiweek(發病日): 41<br />gi_star:  1.37867037","epiweek(發病日): 42<br />gi_star:  0.35659029","epiweek(發病日): 43<br />gi_star:  0.86501436","epiweek(發病日): 44<br />gi_star:  0.67434066","epiweek(發病日): 45<br />gi_star:  1.72307753","epiweek(發病日): 46<br />gi_star:  0.46573363","epiweek(發病日): 47<br />gi_star:  1.46894800","epiweek(發病日): 48<br />gi_star:  2.33317875","epiweek(發病日): 49<br />gi_star: -0.15302051","epiweek(發病日): 50<br />gi_star:  0.49287796"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.228310502283108,"r":7.3059360730593621,"b":40.182648401826498,"l":37.260273972602747},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[30.050000000000001,50.950000000000003],"tickmode":"array","ticktext":["35","40","45","50"],"tickvals":[35,40,45,50],"categoryorder":"array","categoryarray":["35","40","45","50"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"epiweek(發病日)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1.0676270175709208,2.7328808140787446],"tickmode":"array","ticktext":["-1","0","1","2"],"tickvals":[-1,0,0.99999999999999978,1.9999999999999998],"categoryorder":"array","categoryarray":["-1","0","1","2"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"gi_star","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"47d614433f7e":{"x":{},"y":{},"type":"scatter"}},"cur_data":"47d614433f7e","visdat":{"47d614433f7e":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-c96001c959fd36de4ae4" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-c96001c959fd36de4ae4">{"x":{"data":[{"x":[31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"y":[-0.6905617218773169,-0.89487666158684509,-0.58268633022295602,-0.23322181258246677,-0.76017026084778505,-0.064164747325410873,-0.16321853236364853,0.1789180376758196,0.56103819606268013,2.5601304580946689,1.3786703677748946,0.35659029040342077,0.86501436444085433,0.67434066350809363,1.7230775348792646,0.46573363103055343,1.4689480011139728,2.3331787546899858,-0.15302051479043507,0.49287796133018957],"text":["epiweek(發病日): 31<br />gi_star: -0.69056172","epiweek(發病日): 32<br />gi_star: -0.89487666","epiweek(發病日): 33<br />gi_star: -0.58268633","epiweek(發病日): 34<br />gi_star: -0.23322181","epiweek(發病日): 35<br />gi_star: -0.76017026","epiweek(發病日): 36<br />gi_star: -0.06416475","epiweek(發病日): 37<br />gi_star: -0.16321853","epiweek(發病日): 38<br />gi_star:  0.17891804","epiweek(發病日): 39<br />gi_star:  0.56103820","epiweek(發病日): 40<br />gi_star:  2.56013046","epiweek(發病日): 41<br />gi_star:  1.37867037","epiweek(發病日): 42<br />gi_star:  0.35659029","epiweek(發病日): 43<br />gi_star:  0.86501436","epiweek(發病日): 44<br />gi_star:  0.67434066","epiweek(發病日): 45<br />gi_star:  1.72307753","epiweek(發病日): 46<br />gi_star:  0.46573363","epiweek(發病日): 47<br />gi_star:  1.46894800","epiweek(發病日): 48<br />gi_star:  2.33317875","epiweek(發病日): 49<br />gi_star: -0.15302051","epiweek(發病日): 50<br />gi_star:  0.49287796"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"y":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"text":["epiweek(發病日): 31<br />gi_star: 0","epiweek(發病日): 32<br />gi_star: 0","epiweek(發病日): 33<br />gi_star: 0","epiweek(發病日): 34<br />gi_star: 0","epiweek(發病日): 35<br />gi_star: 0","epiweek(發病日): 36<br />gi_star: 0","epiweek(發病日): 37<br />gi_star: 0","epiweek(發病日): 38<br />gi_star: 0","epiweek(發病日): 39<br />gi_star: 0","epiweek(發病日): 40<br />gi_star: 0","epiweek(發病日): 41<br />gi_star: 0","epiweek(發病日): 42<br />gi_star: 0","epiweek(發病日): 43<br />gi_star: 0","epiweek(發病日): 44<br />gi_star: 0","epiweek(發病日): 45<br />gi_star: 0","epiweek(發病日): 46<br />gi_star: 0","epiweek(發病日): 47<br />gi_star: 0","epiweek(發病日): 48<br />gi_star: 0","epiweek(發病日): 49<br />gi_star: 0","epiweek(發病日): 50<br />gi_star: 0"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"y":[1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96,1.96],"text":["epiweek(發病日): 31<br />gi_star: 1.96","epiweek(發病日): 32<br />gi_star: 1.96","epiweek(發病日): 33<br />gi_star: 1.96","epiweek(發病日): 34<br />gi_star: 1.96","epiweek(發病日): 35<br />gi_star: 1.96","epiweek(發病日): 36<br />gi_star: 1.96","epiweek(發病日): 37<br />gi_star: 1.96","epiweek(發病日): 38<br />gi_star: 1.96","epiweek(發病日): 39<br />gi_star: 1.96","epiweek(發病日): 40<br />gi_star: 1.96","epiweek(發病日): 41<br />gi_star: 1.96","epiweek(發病日): 42<br />gi_star: 1.96","epiweek(發病日): 43<br />gi_star: 1.96","epiweek(發病日): 44<br />gi_star: 1.96","epiweek(發病日): 45<br />gi_star: 1.96","epiweek(發病日): 46<br />gi_star: 1.96","epiweek(發病日): 47<br />gi_star: 1.96","epiweek(發病日): 48<br />gi_star: 1.96","epiweek(發病日): 49<br />gi_star: 1.96","epiweek(發病日): 50<br />gi_star: 1.96"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"y":[-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96,-1.96],"text":["epiweek(發病日): 31<br />gi_star: -1.96","epiweek(發病日): 32<br />gi_star: -1.96","epiweek(發病日): 33<br />gi_star: -1.96","epiweek(發病日): 34<br />gi_star: -1.96","epiweek(發病日): 35<br />gi_star: -1.96","epiweek(發病日): 36<br />gi_star: -1.96","epiweek(發病日): 37<br />gi_star: -1.96","epiweek(發病日): 38<br />gi_star: -1.96","epiweek(發病日): 39<br />gi_star: -1.96","epiweek(發病日): 40<br />gi_star: -1.96","epiweek(發病日): 41<br />gi_star: -1.96","epiweek(發病日): 42<br />gi_star: -1.96","epiweek(發病日): 43<br />gi_star: -1.96","epiweek(發病日): 44<br />gi_star: -1.96","epiweek(發病日): 45<br />gi_star: -1.96","epiweek(發病日): 46<br />gi_star: -1.96","epiweek(發病日): 47<br />gi_star: -1.96","epiweek(發病日): 48<br />gi_star: -1.96","epiweek(發病日): 49<br />gi_star: -1.96","epiweek(發病日): 50<br />gi_star: -1.96"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.228310502283108,"r":7.3059360730593621,"b":40.182648401826498,"l":37.260273972602747},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[30.050000000000001,50.950000000000003],"tickmode":"array","ticktext":["35","40","45","50"],"tickvals":[35,40,45,50],"categoryorder":"array","categoryarray":["35","40","45","50"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"epiweek(發病日)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1.0676270175709208,2.7328808140787446],"tickmode":"array","ticktext":["-1","0","1","2"],"tickvals":[-1,0,0.99999999999999978,1.9999999999999998],"categoryorder":"array","categoryarray":["-1","0","1","2"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"gi_star","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"796e4bd2b257":{"x":{},"y":{},"type":"scatter"},"796e75ba94a4":{"x":{},"y":{}},"796e2c74d75e":{"x":{},"y":{}},"796e2ae7731f":{"x":{},"y":{}}},"cur_data":"796e4bd2b257","visdat":{"796e4bd2b257":["function (y) ","x"],"796e75ba94a4":["function (y) ","x"],"796e2c74d75e":["function (y) ","x"],"796e2ae7731f":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>We can perform the above steps for any village we’re interested in!</p>
@@ -809,7 +837,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Now… the exciting part! We would be checking which villages exhibit trends!</p>
 <section id="performing-ehsa" class="level3">
 <h3 class="anchored" data-anchor-id="performing-ehsa">7.4.1 Performing EHSA</h3>
-<p>To perform EHSA, we can use emerging_hotspot_analysis() from the sfdep package.</p>
+<p>To perform EHSA, we can use emerging_hotspot_analysis() from the <strong>sfdep</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -861,14 +889,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="visualizing-ehsa" class="level3">
 <h3 class="anchored" data-anchor-id="visualizing-ehsa">7.4.3 Visualizing EHSA</h3>
 <p>To examine the significance of the conclusion “all villages have no significant trend detected in terms of number of dengue cases”, we can visualize the EHSA and it’s p-value.</p>
-<p>Firstly, we derive the EHSA of each village by using left_join() from the dplyr package to insert the EHSA values to each village in our study area.</p>
+<p>Firstly, we derive the EHSA of each village by using left_join() from the <strong>dplyr</strong> package to insert the EHSA values to each village in our study area.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>taiwanstudy_ehsa <span class="ot">&lt;-</span> taiwanstudy_sf <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(ehsa, <span class="fu">join_by</span> (location))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Then, we use tmap functions to create the choropleth map.</p>
+<p>Then, we use <strong>tmap</strong> functions to create the choropleth map.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
