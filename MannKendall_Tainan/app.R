@@ -7,7 +7,7 @@
 #    https://shiny.posit.co/
 #
 
-pacman::p_load(shiny, sf, tidyverse, sfdep)
+pacman::p_load(shiny, sf, tidyverse, sfdep, ggplot2)
 
 gi_stars <- readRDS("data/gi_stars.rds")
 
@@ -15,12 +15,9 @@ gi_stars <- readRDS("data/gi_stars.rds")
 
 ui <- fluidPage(
   titlePanel("Mann Kendall Test for Dengue Fever Villages in Tainan City, Taiwan"),
-  p(strong("Interpretation of Gi* values:")),
-  p("Positive Gi*: Potential hotspot (clusters of high number of dengue cases)"),
-  p("Negative Gi*: Potential coldspot (clusters of low number of dengue cases)"),
   sidebarLayout(
     sidebarPanel(
-      actionButton("uncheckButton", "Uncheck Selected"),
+      actionButton("uncheckbutton", "Clear Selection"),
       checkboxGroupInput(
         inputId = "locations",
         label = "Locations (Village, Town ID):",
@@ -30,7 +27,11 @@ ui <- fluidPage(
       
     ),
     mainPanel(
-      plotOutput("villagePlot")
+      plotOutput("villagePlot"),
+      p(strong("Interpretation of Gi* values:")),
+      p("Positive Gi*: Potential hotspot (clusters of high number of dengue cases)"),
+      p("Negative Gi*: Potential coldspot (clusters of low number of dengue cases)"),
+      p(em("The hotspot (coldspot) is significant if Gi* > 1.96 ( < 1.96) (dashed lines as lines of reference), at 95% confidence level."))
     )
   )
 )
@@ -40,14 +41,13 @@ server <- function(input, output, session) {
   
   observe({
     # Update choices dynamically based on the 'location' column of your data
-    updateCheckboxGroupInput(session, "locations", choices = unique(gi_stars$location))
+    updateCheckboxGroupInput(session, "locations", choices = (unique(gi_stars$location)))
   })
-  observeEvent(input$uncheckButton, {
+  
+  observeEvent(input$uncheckbutton, {
     # Uncheck the selected locations
-    updateCheckboxGroupInput(session, "locations", selected = NULL)
+    updateCheckboxGroupInput(session, "locations", selected = character(0))
   })
-  
-  
   
   output$villagePlot <- renderPlot({
     
@@ -68,7 +68,9 @@ server <- function(input, output, session) {
              x = "Epiweek",
              y = "Gi* Value",
              color = "Location") +
-        geom_line(y=0, color = "black")
+        geom_line(y=0, color = "black") + 
+        geom_line(y=1.96, color = "#383938", linetype = "dashed") +
+        geom_line(y=-1.96, color = "#383938", linetype = "dashed")
       
     } else {
       # Handle the case when no location is selected

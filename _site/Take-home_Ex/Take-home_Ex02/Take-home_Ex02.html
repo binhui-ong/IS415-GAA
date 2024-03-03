@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-02-29">
+<meta name="dcterms.date" content="2024-03-03">
 
 <title>Bin Hui’s IS415-GAA Journal - Take-home Exercise 2: Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan (Part 1)</title>
 <style>
@@ -285,7 +285,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 29, 2024</p>
+      <p class="date">March 3, 2024</p>
     </div>
   </div>
   
@@ -382,9 +382,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, sf, sfdep, tmap, lubridate, plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, sf, sfdep, tmap, lubridate, ggplot2, plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<p>Purpose of packages:</p>
+<ul>
+<li><p><strong>tidyverse</strong>: to read, manipulate and create tidy data, and to create data graphics</p></li>
+<li><p><strong>sf</strong>: to provide simple features access to represent and work with spatial vector data such as points and polygons</p></li>
+<li><p><strong>sfdep</strong>: an interface to ‘spdep’ to integrate with ‘sf’ objects and the ‘tidyverse’.</p></li>
+<li><p><strong>tmap</strong>: to create thematic and high-quality cartographic maps</p></li>
+<li><p><strong>lubridate</strong>: to parse and manipulate dates</p></li>
+<li><p><strong>ggplot2</strong>: to create data visualizations</p></li>
+<li><p>plotly: to create interactive data visualizations</p></li>
+</ul>
 </section>
 </section>
 <section id="data-preparation-geospatial" class="level1">
@@ -932,6 +942,7 @@ alternative hypothesis: two.sided</code></pre>
 </div>
 </div>
 <p>From the global moran’s I permutation test, under the assumption of spatial random distribution, the p-value &lt; 2.2e-16. This further confirms that the number of dengue cases are not spatially randomly distributed across villages at 95% confidence level.</p>
+<p>We’re done with the Global Spatial Autocorrelation Analysis!</p>
 <p><strong><em>This exercise is continued at Take-home Exercise 2 (Part 2). Please click on this <a href="https://is415-gaa-ongbinhui.netlify.app/take-home_ex/take-home_ex02/take-home_ex02_2">link</a> to be directed there.</em></strong></p>
 
 

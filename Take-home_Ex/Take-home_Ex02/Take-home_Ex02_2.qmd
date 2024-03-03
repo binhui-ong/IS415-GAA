@@ -7,7 +7,7 @@ format:
 execute:
   echo: TRUE
   warning: false
-date: "February 29, 2024"
+date: "March 3, 2024"
 ---
 
 ***This webpage is a continuation of Take-home Exercise 2 (Part 1), which can be found [here](https://is415-gaa-ongbinhui.netlify.app/take-home_ex/take-home_ex02/take-home_ex02).***
@@ -20,7 +20,7 @@ Moving onto our next steps...
 
 ```{r}
 #| echo: false
-pacman::p_load(tidyverse, sf, sfdep, tmap, lubridate, plotly)
+pacman::p_load(tidyverse, sf, sfdep, tmap, lubridate, ggplot2, plotly)
 ```
 
 # 6 Local Spatial Autocorrelation Analysis
@@ -55,6 +55,8 @@ Components of code:
 
 -   mutate() from **dplyr** package to create a new column consisting of local_moran's I statistics
 
+-   local_moran() to compute local_moran's I statistics
+
     -   based on
 
         -   variable: total cases
@@ -67,21 +69,21 @@ Output of code (columns):
 
 -   ii: local moran statistic
 
--   eii: expectation of local moran statistic; for localmoran_permthe permutation sample means
+-   eii: expectation of local moran statistic; for localmoran_perm permutation sample means
 
--   var_ii: variance of local moran statistic; for localmoran_permthe permutation sample standard deviations
+-   var_ii: variance of local moran statistic; for localmoran_perm permutation sample standard deviations
 
--   z_ii: standard deviate of local moran statistic; for localmoran_perm based on permutation sample means and standard deviations
+-   z_ii: standard deviation of local moran statistic; for localmoran_perm based on permutation sample means and standard deviations
 
--   p_ii: p-value of local moran statistic using pnorm(); for localmoran_perm using standard deviatse based on permutation sample means and standard deviations
+-   p_ii: p-value of local moran statistic using pnorm(); for localmoran_perm using standard deviations based on permutation sample means and standard deviations
 
 -   p_ii_sim: For localmoran_perm(), rank() and punif() of observed statistic rank for \[0, 1\] p-values using alternative hypothesis
 
 -   p_folded_sim: the simulation folded \[0, 0.5\] range ranked p-value (based on https://github.com/pysal/esda/blob/4a63e0b5df1e754b17b5f1205b cadcbecc5e061/esda/crand.py#L211-L213)
 
--   skewness: For localmoran_perm, the output of e1071::skewness() for the permutation samples underlying the standard deviates
+-   skewness: For localmoran_perm, the output of e1071::skewness() for the permutation samples underlying the standard deviations
 
--   kurtosis: For localmoran_perm, the output of e1071::kurtosis() for the permutation samples underlying the standard deviates.
+-   kurtosis: For localmoran_perm, the output of e1071::kurtosis() for the permutation samples underlying the standard deviations
 
 ## 6.2: Visualizing local Moran's I
 
@@ -165,7 +167,31 @@ In lisa sf data.frame, we can find three fields contain the LISA categories. The
 ```{r}
 #| eval: false
 lisa_sig <- lisa %>% filter(p_ii <0.05)
+```
 
+```{r}
+#| echo: false
+lisa <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/lisa.rds")
+lisa_sig <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/lisa_sig.rds")
+```
+
+
+```{r}
+tmap_mode("view")
+tm_shape(lisa) + 
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+  tm_text("VILLENG.x", size = 0.4) +
+  tm_shape(lisa_sig) +
+  tm_fill("mean") +
+  tm_borders(alpha=0.4)
+```
+
+Alternatively, to create a static map to see the distribution clearly as a whole,
+
+```{r}
+#| eval: false
+tmap_mode("plot")
 tm_shape(lisa) + 
   tm_polygons() +
   tm_borders(alpha = 0.5) +
@@ -173,6 +199,7 @@ tm_shape(lisa) +
   tm_fill("mean") +
   tm_borders(alpha=0.4)
 ```
+
 
 ![](images/lisa%20map.png)
 
@@ -183,6 +210,27 @@ The choropleth map tells us that :
 -   On the other hand, some villages in the middle regions (red) make up significant clusters of "high-high" values, implying that they are clusters of high numbers of dengue cases.
 
 -   There are a few villages of "low-high" outliers (purple), showing that they are villages with low numbers of dengue cases, surrounded by villages with higher numbers of dengue cases.
+
+To derive the list of the above villages with significant clusters, we can simply apply the following code.
+
+For High-High clusters (with positive ii) (i.e. clusters with high numbers of dengue cases),
+```{r}
+lisa_sig %>% filter(ii > 0 & mean == "High-High") %>% select(VILLENG.x)
+```
+
+For Low-Low clusters (with positive ii) (i.e. clusters with low numbers of dengue cases),
+```{r}
+lisa_sig %>% filter(ii > 0 & mean == "Low-Low") %>% select(VILLENG.x)
+```
+
+For outliers (with negative ii),
+```{r}
+lisa_sig %>% filter(ii < 0) %>% select(VILLENG.x, mean)
+```
+The above outliers are villages with low numbers of dengue cases, surrounded by neighbouring villages with high numbers of dengue cases.
+
+
+Tadah! We're done with our Local Spatial Autocorrelation Analysis. Let's move on to the next sextion to see how the clusters evolve over time.
 
 # 7 Emerging Hotspot Analysis (EHSA)
 
@@ -213,7 +261,7 @@ In the above code,
 
 -   summarize() creates a new field, returning one row of aggregated value for each combination of grouped variables
 
--   epiweek() extrac
+-   epiweek() extracts the epidemiology weeks of the onset dates (發病日) of each observation
 
 To build a space-time cube later, we can only define one field as the location field. Hence, we will need to create a new location field which is composed of VILLENG and TOWNID, separated by a comma. A new column can be created using mutate() of dplyr package, and the VILLENG and TOWNID fields can be combined using paste() from base R.
 
@@ -536,24 +584,51 @@ taiwanstudy_ehsa <- taiwanstudy_sf %>% left_join(ehsa, join_by (location))
 taiwanstudy_ehsa <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/taiwanstudy_ehsa.rds")
 ```
 
-Then, we use **tmap** functions to create the choropleth map.
+Then, we extract the village records where EHSA are significant.
+
+```{r}
+#| echo: false
+ehsa_sig <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/ehsa_sig.rds")
+```
 
 ```{r}
 #| eval: false
 ehsa_sig <- taiwanstudy_ehsa %>%
   filter(p_value < 0.05)
-tmap_mode("plot")
+```
+
+To create an interactive choropleth map using **tmap** functions, we can apply the code below.
+
+```{r}
+tmap_mode("view")
+
 tm_shape(taiwanstudy_ehsa) + 
   tm_polygons() +
   tm_borders(alpha = 0.5) +
+  tm_text("VILLENG", size = 0.4) +
   tm_shape(ehsa_sig) + 
   tm_fill("classification") +
   tm_borders(alpha = 0.4)
 ```
 
+Otherwise, to create a static map, we can use the following code.
+
+```{r}
+#| eval: false
+tmap_mode("plot")
+
+tm_shape(taiwanstudy_ehsa) + 
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+  tm_shape(ehsa_sig) + 
+  tm_fill("classification") +
+  tm_borders(alpha = 0.4)+
+  tm_text("VILLENG", size = 0.3)
+```
+
 ![](images/ehsa_sig.png)
 
-In the above code, we are highlighting only regions that exhibit significance in having "no trend detected". It seems that there are a large number of villages (in turquoise) with no significant trends detected over the epidemiology weeks of 35-50 in year 2023!
+In the above codes for creating the maps, we are highlighting only regions that exhibit significance in having "no trend detected". It seems that there are a large number of villages (in turquoise) with no significant trends detected over the epidemiology weeks of 35-50 in year 2023!
 
 On the other hand, the grey villages do not exhibit significance in having "no trend detected" over the epidemiology weeks of 35-50 in year 2023.
 

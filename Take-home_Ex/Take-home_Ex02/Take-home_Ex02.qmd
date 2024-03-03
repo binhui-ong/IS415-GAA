@@ -7,7 +7,7 @@ format:
 execute:
   echo: TRUE
   warning: false
-date: "February 29, 2024"
+date: "March 3, 2024"
 ---
 
 # 1 Overview
@@ -79,8 +79,24 @@ In this exercise, the following R packages would be used:
 Then, to install and/or load the R packages, we can use p_load() from the **pacman** package.
 
 ```{r}
-pacman::p_load(tidyverse, sf, sfdep, tmap, lubridate, plotly)
+pacman::p_load(tidyverse, sf, sfdep, tmap, lubridate, ggplot2, plotly)
 ```
+
+Purpose of packages:
+
+-   **tidyverse**: to read, manipulate and create tidy data, and to create data graphics
+
+-   **sf**: to provide simple features access to represent and work with spatial vector data such as points and polygons
+
+-   **sfdep**: an interface to 'spdep' to integrate with 'sf' objects and the 'tidyverse'.
+
+-   **tmap**: to create thematic and high-quality cartographic maps
+
+-   **lubridate**: to parse and manipulate dates
+
+-   **ggplot2**: to create data visualizations
+
+-   plotly: to create interactive data visualizations
 
 # 2 Data Preparation (Geospatial)
 
@@ -436,5 +452,7 @@ global_moran_perm(wm_q$total_cases,
 ```
 
 From the global moran's I permutation test, under the assumption of spatial random distribution, the p-value \< 2.2e-16. This further confirms that the number of dengue cases are not spatially randomly distributed across villages at 95% confidence level.
+
+We're done with the Global Spatial Autocorrelation Analysis!
 
 ***This exercise is continued at Take-home Exercise 2 (Part 2). Please click on this [link](https://is415-gaa-ongbinhui.netlify.app/take-home_ex/take-home_ex02/take-home_ex02_2) to be directed there.***
