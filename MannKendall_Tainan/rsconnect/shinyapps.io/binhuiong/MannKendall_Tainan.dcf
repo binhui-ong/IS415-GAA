@@ -5,7 +5,7 @@ account: binhuiong
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 11356243
-bundleId: 8321717
+bundleId: 8322604
 url: https://binhuiong.shinyapps.io/MannKendall_Tainan/
 version: 1
 asMultiple: FALSE

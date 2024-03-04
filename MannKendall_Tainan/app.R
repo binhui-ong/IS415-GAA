@@ -28,10 +28,11 @@ ui <- fluidPage(
     ),
     mainPanel(
       plotOutput("villagePlot"),
+      p(em("dashed lines as lines of reference, where Gi* = 1.96 and Gi* = -1.96")),
       p(strong("Interpretation of Gi* values:")),
       p("Positive Gi*: Potential hotspot (clusters of high number of dengue cases)"),
       p("Negative Gi*: Potential coldspot (clusters of low number of dengue cases)"),
-      p(em("The hotspot (coldspot) is significant if Gi* > 1.96 ( < 1.96) (dashed lines as lines of reference), at 95% confidence level."))
+      p(strong("The hotspot (coldspot) is significant if Gi* > 1.96 ( < 1.96) at 95% confidence level."))
     )
   )
 )

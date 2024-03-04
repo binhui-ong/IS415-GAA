@@ -7,6 +7,7 @@ format:
 execute:
   echo: TRUE
   warning: false
+  freeze: TRUE
 date: "March 3, 2024"
 ---
 
@@ -175,7 +176,6 @@ lisa <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rd
 lisa_sig <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex02/data/rds/lisa_sig.rds")
 ```
 
-
 ```{r}
 tmap_mode("view")
 tm_shape(lisa) + 
@@ -200,7 +200,6 @@ tm_shape(lisa) +
   tm_borders(alpha=0.4)
 ```
 
-
 ![](images/lisa%20map.png)
 
 The choropleth map tells us that :
@@ -214,21 +213,24 @@ The choropleth map tells us that :
 To derive the list of the above villages with significant clusters, we can simply apply the following code.
 
 For High-High clusters (with positive ii) (i.e. clusters with high numbers of dengue cases),
+
 ```{r}
 lisa_sig %>% filter(ii > 0 & mean == "High-High") %>% select(VILLENG.x)
 ```
 
 For Low-Low clusters (with positive ii) (i.e. clusters with low numbers of dengue cases),
+
 ```{r}
 lisa_sig %>% filter(ii > 0 & mean == "Low-Low") %>% select(VILLENG.x)
 ```
 
 For outliers (with negative ii),
+
 ```{r}
 lisa_sig %>% filter(ii < 0) %>% select(VILLENG.x, mean)
 ```
-The above outliers are villages with low numbers of dengue cases, surrounded by neighbouring villages with high numbers of dengue cases.
 
+The above outliers are villages with low numbers of dengue cases, surrounded by neighbouring villages with high numbers of dengue cases.
 
 Tadah! We're done with our Local Spatial Autocorrelation Analysis. Let's move on to the next sextion to see how the clusters evolve over time.
 
