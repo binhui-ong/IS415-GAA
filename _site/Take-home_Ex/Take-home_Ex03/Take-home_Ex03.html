@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2024-03-16">
+
+<title>Bin Hui’s IS415-GAA Journal - Take-home Exercise 3: Prototyping Modules for Geospatial Analytics Shiny Application (not done)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Bin Hui’s IS415-GAA Journal</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Hands-on Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 5</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 6</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 7</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-in-class-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">In-class Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-in-class-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex02/In-class_Ex02.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex03/In-class_Ex03.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex04/In-class_Ex04.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex05/In-class_Ex05.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 5</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex06/In-class_Ex06.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 6</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex07/In-class_Ex07.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 7</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex08/In-class_Ex08.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 8</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-take-home-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Take-home Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-take-home-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html" rel="" target="">
+ <span class="dropdown-text">Take-home Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html" rel="" target="">
+ <span class="dropdown-text">Take-home Exercise 2 (Part 1)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex02/Take-home_Ex02_2.html" rel="" target="">
+ <span class="dropdown-text">Take-home Exercise 2 (Part 2)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex03/Take-home_Ex03.html" rel="" target="">
+ <span class="dropdown-text">Take-home Exercise 3</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About Me</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">1 Overview</a>
+  <ul class="collapse">
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">1.1 Background</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">1.2 Objectives</a></li>
+  <li><a href="#the-task" id="toc-the-task" class="nav-link" data-scroll-target="#the-task">1.3 The Task</a></li>
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">1.4 The Data</a></li>
+  <li><a href="#installing-and-loading-r-packages" id="toc-installing-and-loading-r-packages" class="nav-link" data-scroll-target="#installing-and-loading-r-packages">1.5 Installing and Loading R Packages</a></li>
+  </ul></li>
+  <li><a href="#data-preparation-geospatial" id="toc-data-preparation-geospatial" class="nav-link" data-scroll-target="#data-preparation-geospatial">2 Data Preparation (Geospatial)</a>
+  <ul class="collapse">
+  <li><a href="#data-import" id="toc-data-import" class="nav-link" data-scroll-target="#data-import">2.1 Data Import</a></li>
+  <li><a href="#data-pre-processing" id="toc-data-pre-processing" class="nav-link" data-scroll-target="#data-pre-processing">2.2 Data Pre-Processing</a>
+  <ul class="collapse">
+  <li><a href="#dropping-z-dimension" id="toc-dropping-z-dimension" class="nav-link" data-scroll-target="#dropping-z-dimension">2.2.1 Dropping Z-dimension</a></li>
+  <li><a href="#resolving-invalid-geometries" id="toc-resolving-invalid-geometries" class="nav-link" data-scroll-target="#resolving-invalid-geometries">2.2.2 Resolving invalid geometries</a></li>
+  <li><a href="#handling-missing-values" id="toc-handling-missing-values" class="nav-link" data-scroll-target="#handling-missing-values">2.2.3 Handling missing values</a></li>
+  <li><a href="#changing-and-verifying-crs" id="toc-changing-and-verifying-crs" class="nav-link" data-scroll-target="#changing-and-verifying-crs">2.2.4 Changing and verifying CRS</a></li>
+  <li><a href="#extraction-of-relevant-columns" id="toc-extraction-of-relevant-columns" class="nav-link" data-scroll-target="#extraction-of-relevant-columns">2.2.6 Extraction of relevant columns</a></li>
+  <li><a href="#creating-hexagon-data-need-to-work-here" id="toc-creating-hexagon-data-need-to-work-here" class="nav-link" data-scroll-target="#creating-hexagon-data-need-to-work-here">2.2.7 Creating hexagon data (******** NEED TO WORK HERE*****)</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#data-preparation-distance-matrix" id="toc-data-preparation-distance-matrix" class="nav-link" data-scroll-target="#data-preparation-distance-matrix">3 Data Preparation (Distance Matrix)</a>
+  <ul class="collapse">
+  <li><a href="#computing-distance-matrix" id="toc-computing-distance-matrix" class="nav-link" data-scroll-target="#computing-distance-matrix">3.1 Computing Distance Matrix</a>
+  <ul class="collapse">
+  <li><a href="#converting-from-sf-data.table-to-spatialpolygonsdataframe" id="toc-converting-from-sf-data.table-to-spatialpolygonsdataframe" class="nav-link" data-scroll-target="#converting-from-sf-data.table-to-spatialpolygonsdataframe">3.1.1 Converting from sf data.table to SpatialPolygonsDataFrame</a></li>
+  <li><a href="#computing-the-distance-matrix" id="toc-computing-the-distance-matrix" class="nav-link" data-scroll-target="#computing-the-distance-matrix">3.1.2 Computing the distance matrix</a></li>
+  <li><a href="#labelling-column-and-row-headers-of-a-distance-matrix" id="toc-labelling-column-and-row-headers-of-a-distance-matrix" class="nav-link" data-scroll-target="#labelling-column-and-row-headers-of-a-distance-matrix">3.1.3 Labelling column and row headers of a distance matrix</a></li>
+  <li><a href="#pivoting-distance-value-by-subzone-name" id="toc-pivoting-distance-value-by-subzone-name" class="nav-link" data-scroll-target="#pivoting-distance-value-by-subzone-name">3.1.4 Pivoting distance value by SUBZONE name</a></li>
+  <li><a href="#updating-intra-zonal-distances" id="toc-updating-intra-zonal-distances" class="nav-link" data-scroll-target="#updating-intra-zonal-distances">3.1.5 Updating intra-zonal distances</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#modelling-and-visualizing-accesssibility-using-hansen-method-requires-hexagon" id="toc-modelling-and-visualizing-accesssibility-using-hansen-method-requires-hexagon" class="nav-link" data-scroll-target="#modelling-and-visualizing-accesssibility-using-hansen-method-requires-hexagon">4 Modelling and Visualizing Accesssibility using Hansen Method (requires hexagon)</a>
+  <ul class="collapse">
+  <li><a href="#computing-hansens-accessibility-requires-hexagon" id="toc-computing-hansens-accessibility-requires-hexagon" class="nav-link" data-scroll-target="#computing-hansens-accessibility-requires-hexagon">4.1 Computing Hansen’s accessibility (requires hexagon)</a></li>
+  <li><a href="#visualizing-hansens-accessibility" id="toc-visualizing-hansens-accessibility" class="nav-link" data-scroll-target="#visualizing-hansens-accessibility">4.2 Visualizing Hansen’s accessibility</a>
+  <ul class="collapse">
+  <li><a href="#extracting-map-extend-requires-hexagon" id="toc-extracting-map-extend-requires-hexagon" class="nav-link" data-scroll-target="#extracting-map-extend-requires-hexagon">4.2.1 Extracting map extend (requires hexagon)</a></li>
+  <li><a href="#statistical-graphic-visualization" id="toc-statistical-graphic-visualization" class="nav-link" data-scroll-target="#statistical-graphic-visualization">4.3 Statistical graphic visualization</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Take-home Exercise 3: Prototyping Modules for Geospatial Analytics Shiny Application (not done)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 16, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="overview" class="level1">
+<h1>1 Overview</h1>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">1.1 Background</h2>
+</section>
+<section id="objectives" class="level2">
+<h2 class="anchored" data-anchor-id="objectives">1.2 Objectives</h2>
+</section>
+<section id="the-task" class="level2">
+<h2 class="anchored" data-anchor-id="the-task">1.3 The Task</h2>
+</section>
+<section id="the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-data">1.4 The Data</h2>
+</section>
+<section id="installing-and-loading-r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="installing-and-loading-r-packages">1.5 Installing and Loading R Packages</h2>
+<p>In this exercise, the following R packages would be used:</p>
+<p>Then, to install and/or load the R packages, we can use p_load() from the pacman package.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse, tmap, SpatialAcc, ggplot2, ggstatsplot, spDist, spNetwork, reshape2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="data-preparation-geospatial" class="level1">
+<h1>2 Data Preparation (Geospatial)</h1>
+<section id="data-import" class="level2">
+<h2 class="anchored" data-anchor-id="data-import">2.1 Data Import</h2>
+<p>Let’s begin by introducing and preparing our geospatial data set in R!</p>
+<p>To import geospatial data, we will be using st_read() from the sf package.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mpsz2019 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/MasterPlan2019SubzoneBoundaryNoSeaGEOJSON.geojson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mpsz2019</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 332 features and 2 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY, XYZ
+Bounding box:  xmin: 103.6057 ymin: 1.158699 xmax: 104.0885 ymax: 1.470775
+z_range:       zmin: 0 zmax: 0
+Geodetic CRS:  WGS 84
+First 10 features:
+     Name
+1   kml_1
+2   kml_2
+3   kml_3
+4   kml_4
+5   kml_5
+6   kml_6
+7   kml_7
+8   kml_8
+9   kml_9
+10 kml_10
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Description
+1          &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;12&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;DEPOT ROAD&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;BMSZ12&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;N&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;BUKIT MERAH&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;BM&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;C22DED671DE2A940&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+2          &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;2&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;BUKIT MERAH&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;BMSZ02&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;N&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;BUKIT MERAH&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;BM&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;085EF219A5A1AEAD&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+3                 &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;3&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;CHINATOWN&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;OTSZ03&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;Y&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;OUTRAM&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;OT&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;EF2B9A91AF49E025&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+4            &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;4&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;PHILLIP&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;DTSZ04&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;Y&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;DOWNTOWN CORE&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;DT&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;615D4EDDEF809F8E&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+5      &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;5&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;RAFFLES PLACE&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;DTSZ05&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;Y&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;DOWNTOWN CORE&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;DT&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;72107B11807074F4&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+6              &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;4&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;CHINA SQUARE&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;OTSZ04&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;Y&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;OUTRAM&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;OT&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;B609DF5587626C8F&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+7         &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;10&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;TIONG BAHRU&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;BMSZ10&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;N&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;BUKIT MERAH&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;BM&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;A0FB4B68155D164A&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+8  &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;12&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;BAYFRONT SUBZONE&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;DTSZ12&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;Y&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;DOWNTOWN CORE&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;DT&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;197F5E664DA4D5E1&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+9  &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;4&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;TIONG BAHRU STATION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;BMSZ04&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;N&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;BUKIT MERAH&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;BM&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;91FFE927ABE3E4DB&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+10     &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;6&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;CLIFFORD PIER&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;DTSZ06&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;Y&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;DOWNTOWN CORE&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;DT&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;945CC212CA80626F&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;
+                         geometry
+1  MULTIPOLYGON Z (((103.8145 ...
+2  MULTIPOLYGON Z (((103.8221 ...
+3  MULTIPOLYGON Z (((103.8438 ...
+4  MULTIPOLYGON Z (((103.8496 ...
+5  MULTIPOLYGON Z (((103.8525 ...
+6  MULTIPOLYGON Z (((103.8486 ...
+7  MULTIPOLYGON Z (((103.8311 ...
+8  MULTIPOLYGON Z (((103.8589 ...
+9  MULTIPOLYGON Z (((103.8283 ...
+10 MULTIPOLYGON Z (((103.8552 ...</code></pre>
+</div>
+</div>
+<p>From the above, we can see that the mpsz2019 data is a multipolygon data in geodetic CRS WGS84, with Z dimensions.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>eldercare_services <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data"</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">layer =</span> <span class="st">"ELDERCARE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>eldercare_services</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 133 features and 18 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 14481.92 ymin: 28218.43 xmax: 41665.14 ymax: 46804.9
+Projected CRS: SVY21
+First 10 features:
+   OBJECTID ADDRESSBLO ADDRESSBUI ADDRESSPOS
+1         1       &lt;NA&gt;       &lt;NA&gt;     601318
+2         2       &lt;NA&gt;       &lt;NA&gt;     462509
+3         3       &lt;NA&gt;       &lt;NA&gt;     640190
+4         4       &lt;NA&gt;       &lt;NA&gt;     190005
+5         5       &lt;NA&gt;       &lt;NA&gt;     160044
+6         6       &lt;NA&gt;       &lt;NA&gt;     160117
+7         7       &lt;NA&gt;       &lt;NA&gt;     523499
+8         8       &lt;NA&gt;       &lt;NA&gt;     731569
+9         9       &lt;NA&gt;       &lt;NA&gt;     651210
+10       10       &lt;NA&gt;       &lt;NA&gt;     540182
+                              ADDRESSSTR ADDRESSTYP DESCRIPTIO HYPERLINK
+1      318A Jurong East Avenue 1 #02-308       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+2  Blk 509B Bedok North Street 3 #02-157       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+3         Blk 190 Boon Lay Drive #01-242       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+4                    5 Beach Rd #02-4943       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+5             Blk 44 Beo Crescent #01-67       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+6     Blk 117 Jalan Bukit Merah #01-1683       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+7            499C Tampines Ave 9 #01-256       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+8              569A Champion Way #01-346       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+9         210A Bukit Batok St 21 #01-294       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+10   Blk 182 Rivervale Crescent\n#01-311       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+   LANDXADDRE LANDYADDRE
+1           0          0
+2           0          0
+3           0          0
+4           0          0
+5           0          0
+6           0          0
+7           0          0
+8           0          0
+9           0          0
+10          0          0
+                                                           NAME PHOTOURL
+1                                  Yuhua Senior Activity Centre     &lt;NA&gt;
+2                                          THK SAC @ Kaki Bukit     &lt;NA&gt;
+3                                            THK SAC @ Boon Lay     &lt;NA&gt;
+4                        PEACE-Connect Senior Activity Centre@5     &lt;NA&gt;
+5                                        THK SAC @ Beo Crescent     &lt;NA&gt;
+6                                      Silver ACE @ Bukit Merah     &lt;NA&gt;
+7  Lions Befrienders Senior Activity Centre @ Tampines Blk 499C     &lt;NA&gt;
+8                    Care Corner Senior Activity Centre (WL569)     &lt;NA&gt;
+9           Fei Yue Senior Activity Centre (Bukit Batok Branch)     &lt;NA&gt;
+10       COMNET Senior Activity Centre @ 182 Rivervale Crescent     &lt;NA&gt;
+   ADDRESSFLO          INC_CRC FMEL_UPD_D ADDRESSUNI   X_ADDR   Y_ADDR
+1        &lt;NA&gt; 2B0DB92FDD914FFC 2016-07-28       &lt;NA&gt; 16614.08 36639.12
+2        &lt;NA&gt; 82728FA30612F3FD 2016-07-28       &lt;NA&gt; 38803.81 35098.78
+3        &lt;NA&gt; DE7A8D4EA0BD1D9B 2016-07-28       &lt;NA&gt; 14481.92 36357.61
+4        &lt;NA&gt; A2C058FC5785F7FE 2016-07-28       &lt;NA&gt; 31505.35 31853.52
+5        &lt;NA&gt; 9DBFD51E056AEE70 2016-07-28       &lt;NA&gt; 27218.35 30135.49
+6        &lt;NA&gt; 169DABA5B6ECEA87 2016-07-28       &lt;NA&gt; 27278.94 29350.17
+7        &lt;NA&gt; 5DB6B9F0BF276F6D 2016-07-28       &lt;NA&gt; 41665.14 37956.92
+8        &lt;NA&gt; 4DC6800E9BB385BE 2016-07-28       &lt;NA&gt; 23147.94 45761.17
+9        &lt;NA&gt; EFBD712DA5DD6FEC 2016-07-28       &lt;NA&gt; 18820.58 36396.32
+10       &lt;NA&gt; 6BB0D7698D7B4C7D 2016-07-28       &lt;NA&gt; 36446.37 41376.90
+                    geometry
+1  POINT (16614.08 36639.12)
+2  POINT (38803.81 35098.78)
+3  POINT (14481.92 36357.61)
+4  POINT (31505.35 31853.52)
+5  POINT (27218.35 30135.49)
+6  POINT (27278.94 29350.17)
+7  POINT (41665.14 37956.92)
+8  POINT (23147.94 45761.17)
+9  POINT (18820.58 36396.32)
+10  POINT (36446.37 41376.9)</code></pre>
+</div>
+</div>
+<p>The eldercare_services data set is point data, with dimensions XY and CRS SVY21.</p>
+<p>Let’s visualize how it looks like using plot() and st_geometry() from the sf package.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(mpsz2019))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(eldercare_services))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="data-pre-processing" class="level2">
+<h2 class="anchored" data-anchor-id="data-pre-processing">2.2 Data Pre-Processing</h2>
+<section id="dropping-z-dimension" class="level3">
+<h3 class="anchored" data-anchor-id="dropping-z-dimension">2.2.1 Dropping Z-dimension</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_zm</span>(mpsz2019)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="resolving-invalid-geometries" class="level3">
+<h3 class="anchored" data-anchor-id="resolving-invalid-geometries">2.2.2 Resolving invalid geometries</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">which</span>(<span class="fu">st_is_valid</span>(mpsz) <span class="sc">==</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">which</span>(<span class="fu">st_is_valid</span>(eldercare_services) <span class="sc">==</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_make_valid</span>(mpsz)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">which</span>(<span class="fu">st_is_valid</span>(mpsz) <span class="sc">==</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+</section>
+<section id="handling-missing-values" class="level3">
+<h3 class="anchored" data-anchor-id="handling-missing-values">2.2.3 Handling missing values</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>mpsz[<span class="fu">rowSums</span>(<span class="fu">is.na</span>(mpsz)) <span class="sc">!=</span> <span class="dv">0</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 0 features and 2 fields
+Bounding box:  xmin: NA ymin: NA xmax: NA ymax: NA
+Geodetic CRS:  WGS 84
+[1] Name        Description geometry   
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>eldercare_services[<span class="fu">rowSums</span>(<span class="fu">is.na</span>(eldercare_services)) <span class="sc">!=</span> <span class="dv">0</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 133 features and 18 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 14481.92 ymin: 28218.43 xmax: 41665.14 ymax: 46804.9
+Projected CRS: SVY21
+First 10 features:
+   OBJECTID ADDRESSBLO ADDRESSBUI ADDRESSPOS
+1         1       &lt;NA&gt;       &lt;NA&gt;     601318
+2         2       &lt;NA&gt;       &lt;NA&gt;     462509
+3         3       &lt;NA&gt;       &lt;NA&gt;     640190
+4         4       &lt;NA&gt;       &lt;NA&gt;     190005
+5         5       &lt;NA&gt;       &lt;NA&gt;     160044
+6         6       &lt;NA&gt;       &lt;NA&gt;     160117
+7         7       &lt;NA&gt;       &lt;NA&gt;     523499
+8         8       &lt;NA&gt;       &lt;NA&gt;     731569
+9         9       &lt;NA&gt;       &lt;NA&gt;     651210
+10       10       &lt;NA&gt;       &lt;NA&gt;     540182
+                              ADDRESSSTR ADDRESSTYP DESCRIPTIO HYPERLINK
+1      318A Jurong East Avenue 1 #02-308       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+2  Blk 509B Bedok North Street 3 #02-157       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+3         Blk 190 Boon Lay Drive #01-242       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+4                    5 Beach Rd #02-4943       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+5             Blk 44 Beo Crescent #01-67       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+6     Blk 117 Jalan Bukit Merah #01-1683       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+7            499C Tampines Ave 9 #01-256       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+8              569A Champion Way #01-346       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+9         210A Bukit Batok St 21 #01-294       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+10   Blk 182 Rivervale Crescent\n#01-311       &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+   LANDXADDRE LANDYADDRE
+1           0          0
+2           0          0
+3           0          0
+4           0          0
+5           0          0
+6           0          0
+7           0          0
+8           0          0
+9           0          0
+10          0          0
+                                                           NAME PHOTOURL
+1                                  Yuhua Senior Activity Centre     &lt;NA&gt;
+2                                          THK SAC @ Kaki Bukit     &lt;NA&gt;
+3                                            THK SAC @ Boon Lay     &lt;NA&gt;
+4                        PEACE-Connect Senior Activity Centre@5     &lt;NA&gt;
+5                                        THK SAC @ Beo Crescent     &lt;NA&gt;
+6                                      Silver ACE @ Bukit Merah     &lt;NA&gt;
+7  Lions Befrienders Senior Activity Centre @ Tampines Blk 499C     &lt;NA&gt;
+8                    Care Corner Senior Activity Centre (WL569)     &lt;NA&gt;
+9           Fei Yue Senior Activity Centre (Bukit Batok Branch)     &lt;NA&gt;
+10       COMNET Senior Activity Centre @ 182 Rivervale Crescent     &lt;NA&gt;
+   ADDRESSFLO          INC_CRC FMEL_UPD_D ADDRESSUNI   X_ADDR   Y_ADDR
+1        &lt;NA&gt; 2B0DB92FDD914FFC 2016-07-28       &lt;NA&gt; 16614.08 36639.12
+2        &lt;NA&gt; 82728FA30612F3FD 2016-07-28       &lt;NA&gt; 38803.81 35098.78
+3        &lt;NA&gt; DE7A8D4EA0BD1D9B 2016-07-28       &lt;NA&gt; 14481.92 36357.61
+4        &lt;NA&gt; A2C058FC5785F7FE 2016-07-28       &lt;NA&gt; 31505.35 31853.52
+5        &lt;NA&gt; 9DBFD51E056AEE70 2016-07-28       &lt;NA&gt; 27218.35 30135.49
+6        &lt;NA&gt; 169DABA5B6ECEA87 2016-07-28       &lt;NA&gt; 27278.94 29350.17
+7        &lt;NA&gt; 5DB6B9F0BF276F6D 2016-07-28       &lt;NA&gt; 41665.14 37956.92
+8        &lt;NA&gt; 4DC6800E9BB385BE 2016-07-28       &lt;NA&gt; 23147.94 45761.17
+9        &lt;NA&gt; EFBD712DA5DD6FEC 2016-07-28       &lt;NA&gt; 18820.58 36396.32
+10       &lt;NA&gt; 6BB0D7698D7B4C7D 2016-07-28       &lt;NA&gt; 36446.37 41376.90
+                    geometry
+1  POINT (16614.08 36639.12)
+2  POINT (38803.81 35098.78)
+3  POINT (14481.92 36357.61)
+4  POINT (31505.35 31853.52)
+5  POINT (27218.35 30135.49)
+6  POINT (27278.94 29350.17)
+7  POINT (41665.14 37956.92)
+8  POINT (23147.94 45761.17)
+9  POINT (18820.58 36396.32)
+10  POINT (36446.37 41376.9)</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>eldercare_services[<span class="fu">rowSums</span>(<span class="fu">is.na</span>(eldercare_services <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="dv">11</span>,<span class="dv">19</span>))) <span class="sc">!=</span> <span class="dv">0</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 0 features and 18 fields
+Bounding box:  xmin: NA ymin: NA xmax: NA ymax: NA
+Projected CRS: SVY21
+ [1] OBJECTID   ADDRESSBLO ADDRESSBUI ADDRESSPOS ADDRESSSTR ADDRESSTYP
+ [7] DESCRIPTIO HYPERLINK  LANDXADDRE LANDYADDRE NAME       PHOTOURL  
+[13] ADDRESSFLO INC_CRC    FMEL_UPD_D ADDRESSUNI X_ADDR     Y_ADDR    
+[19] geometry  
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+</div>
+</div>
+</section>
+<section id="changing-and-verifying-crs" class="level3">
+<h3 class="anchored" data-anchor-id="changing-and-verifying-crs">2.2.4 Changing and verifying CRS</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(mpsz)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: WGS 84 
+  wkt:
+GEOGCRS["WGS 84",
+    DATUM["World Geodetic System 1984",
+        ELLIPSOID["WGS 84",6378137,298.257223563,
+            LENGTHUNIT["metre",1]]],
+    PRIMEM["Greenwich",0,
+        ANGLEUNIT["degree",0.0174532925199433]],
+    CS[ellipsoidal,2],
+        AXIS["geodetic latitude (Lat)",north,
+            ORDER[1],
+            ANGLEUNIT["degree",0.0174532925199433]],
+        AXIS["geodetic longitude (Lon)",east,
+            ORDER[2],
+            ANGLEUNIT["degree",0.0174532925199433]],
+    ID["EPSG",4326]]</code></pre>
+</div>
+</div>
+<p>The mpsz data set is not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject it.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(eldercare_services)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: SVY21 
+  wkt:
+PROJCRS["SVY21",
+    BASEGEOGCRS["SVY21[WGS84]",
+        DATUM["World Geodetic System 1984",
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]],
+            ID["EPSG",6326]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["Degree",0.0174532925199433]]],
+    CONVERSION["unnamed",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",1.36666666666667,
+            ANGLEUNIT["Degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",103.833333333333,
+            ANGLEUNIT["Degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",1,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",28001.642,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",38744.572,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1,
+                ID["EPSG",9001]]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1,
+                ID["EPSG",9001]]]]</code></pre>
+</div>
+</div>
+<p>The eldercare_services data set does not have the correct EPSG code (3414). Hence, we must reassign the EPSG code to it.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>mpsz_sf <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(mpsz, <span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> <span class="fu">st_set_crs</span>(eldercare_services, <span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="extraction-of-relevant-columns" class="level3">
+<h3 class="anchored" data-anchor-id="extraction-of-relevant-columns">2.2.6 Extraction of relevant columns</h3>
+<section id="extraction-of-subzone-and-planning-area-names-in-mpsz_sf" class="level4">
+<h4 class="anchored" data-anchor-id="extraction-of-subzone-and-planning-area-names-in-mpsz_sf">2.2.6.1 Extraction of subzone and planning area names in mpsz_sf</h4>
+<p>For subzone:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>mpsz_sf <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span>  </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SUBZONE=</span> <span class="fu">str_extract</span>(<span class="st">`</span><span class="at">Description</span><span class="st">`</span>, <span class="st">"&lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;(.*?)&lt;/td&gt;"</span>)) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>mpsz_sf<span class="sc">$</span>SUBZONE <span class="ot">&lt;-</span> <span class="fu">str_remove_all</span>(mpsz_sf<span class="sc">$</span>SUBZONE, <span class="st">"&lt;.*?&gt;|SUBZONE_N"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>For planning area:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>mpsz_sf <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span>  </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">PLAN_AREA=</span> <span class="fu">str_extract</span>(<span class="st">`</span><span class="at">Description</span><span class="st">`</span>, <span class="st">"&lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;(.*?)&lt;/td&gt;"</span>)) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>mpsz_sf<span class="sc">$</span>PLAN_AREA <span class="ot">&lt;-</span> <span class="fu">str_remove_all</span>(mpsz_sf<span class="sc">$</span>PLAN_AREA, <span class="st">"&lt;.*?&gt;|PLN_AREA_N"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>mpsz_sf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 332 features and 4 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.537 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
+Projected CRS: SVY21 / Singapore TM
+# A tibble: 332 × 5
+   Name   Description                                 geometry SUBZONE PLAN_AREA
+ * &lt;chr&gt;  &lt;chr&gt;                             &lt;MULTIPOLYGON [m]&gt; &lt;chr&gt;   &lt;chr&gt;    
+ 1 kml_1  "&lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th c… (((25880.34 29441.11, 25… " DEPO… " BUKIT …
+ 2 kml_2  "&lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th c… (((26750.09 29224.02, 26… " BUKI… " BUKIT …
+ 3 kml_3  "&lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th c… (((29147.2 29734.55, 291… " CHIN… " OUTRAM"
+ 4 kml_4  "&lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th c… (((29814.87 29619.28, 29… " PHIL… " DOWNTO…
+ 5 kml_5  "&lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th c… (((30118.74 29880.81, 30… " RAFF… " DOWNTO…
+ 6 kml_6  "&lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th c… (((29701.93 29421.63, 29… " CHIN… " OUTRAM"
+ 7 kml_7  "&lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th c… (((27628.62 29979.7, 275… " TION… " BUKIT …
+ 8 kml_8  "&lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th c… (((30895.45 29098.9, 309… " BAYF… " DOWNTO…
+ 9 kml_9  "&lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th c… (((27413.67 29966.31, 27… " TION… " BUKIT …
+10 kml_10 "&lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th c… (((30444.3 29529.22, 304… " CLIF… " DOWNTO…
+# ℹ 322 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="keeping-only-relevant-columns-in-eldercare" class="level4">
+<h4 class="anchored" data-anchor-id="keeping-only-relevant-columns-in-eldercare">2.2.6.2 Keeping only relevant columns in eldercare</h4>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> eldercare <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="dv">11</span>,<span class="dv">19</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>eldercare</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 133 features and 1 field
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 14481.92 ymin: 28218.43 xmax: 41665.14 ymax: 46804.9
+Projected CRS: SVY21 / Singapore TM
+First 10 features:
+                                                           NAME
+1                                  Yuhua Senior Activity Centre
+2                                          THK SAC @ Kaki Bukit
+3                                            THK SAC @ Boon Lay
+4                        PEACE-Connect Senior Activity Centre@5
+5                                        THK SAC @ Beo Crescent
+6                                      Silver ACE @ Bukit Merah
+7  Lions Befrienders Senior Activity Centre @ Tampines Blk 499C
+8                    Care Corner Senior Activity Centre (WL569)
+9           Fei Yue Senior Activity Centre (Bukit Batok Branch)
+10       COMNET Senior Activity Centre @ 182 Rivervale Crescent
+                    geometry
+1  POINT (16614.08 36639.12)
+2  POINT (38803.81 35098.78)
+3  POINT (14481.92 36357.61)
+4  POINT (31505.35 31853.52)
+5  POINT (27218.35 30135.49)
+6  POINT (27278.94 29350.17)
+7  POINT (41665.14 37956.92)
+8  POINT (23147.94 45761.17)
+9  POINT (18820.58 36396.32)
+10  POINT (36446.37 41376.9)</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="creating-hexagon-data-need-to-work-here" class="level3">
+<h3 class="anchored" data-anchor-id="creating-hexagon-data-need-to-work-here">2.2.7 Creating hexagon data (******** NEED TO WORK HERE*****)</h3>
+</section>
+</section>
+</section>
+<section id="data-preparation-distance-matrix" class="level1">
+<h1>3 Data Preparation (Distance Matrix)</h1>
+<p>The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the readr package.</p>
+<section id="computing-distance-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="computing-distance-matrix">3.1 Computing Distance Matrix</h2>
+<section id="converting-from-sf-data.table-to-spatialpolygonsdataframe" class="level3">
+<h3 class="anchored" data-anchor-id="converting-from-sf-data.table-to-spatialpolygonsdataframe">3.1.1 Converting from sf data.table to SpatialPolygonsDataFrame</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mpsz_sp <span class="ot">&lt;-</span> <span class="fu">as</span>(mpsz_sf, <span class="st">"Spatial"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>mpsz_sp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatialPolygonsDataFrame 
+features    : 332 
+extent      : 2667.537, 56396.44, 15748.72, 50256.33  (xmin, xmax, ymin, ymax)
+crs         : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs 
+variables   : 4
+names       :   Name,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       Description,    SUBZONE,   PLAN_AREA 
+min values  :  kml_1, &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;1&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;ANAK BUKIT&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;BTSZ01&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;N&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;BUKIT TIMAH&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;BT&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;CENTRAL REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;CR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;4BAD8B2C9CEBF3F2&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;,  ADMIRALTY,  ANG MO KIO 
+max values  : kml_99,       &lt;center&gt;&lt;table&gt;&lt;tr&gt;&lt;th colspan='2' align='center'&gt;&lt;em&gt;Attributes&lt;/em&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_NO&lt;/th&gt; &lt;td&gt;9&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;SUBZONE_N&lt;/th&gt; &lt;td&gt;YISHUN WEST&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;SUBZONE_C&lt;/th&gt; &lt;td&gt;YSSZ09&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;CA_IND&lt;/th&gt; &lt;td&gt;N&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;PLN_AREA_N&lt;/th&gt; &lt;td&gt;YISHUN&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;PLN_AREA_C&lt;/th&gt; &lt;td&gt;YS&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;REGION_N&lt;/th&gt; &lt;td&gt;NORTH REGION&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;REGION_C&lt;/th&gt; &lt;td&gt;NR&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor="#E3E3F3"&gt; &lt;th&gt;INC_CRC&lt;/th&gt; &lt;td&gt;95C11920195B86C7&lt;/td&gt; &lt;/tr&gt;&lt;tr bgcolor=""&gt; &lt;th&gt;FMEL_UPD_D&lt;/th&gt; &lt;td&gt;20191223152313&lt;/td&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/center&gt;,     YUNNAN,      YISHUN </code></pre>
+</div>
+</div>
+</section>
+<section id="computing-the-distance-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="computing-the-distance-matrix">3.1.2 Computing the distance matrix</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>dist_matrix <span class="ot">&lt;-</span> <span class="fu">spDists</span>(mpsz_sp, <span class="at">longlat =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dist_matrix, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      DEPOT ROAD  BUKIT MERAH  CHINATOWN   PHILLIP
+ DEPOT ROAD                0.000    1116.5222  3917.3813 4474.9751
+ BUKIT MERAH            1116.522       0.0000  2802.3046 3365.3170
+ CHINATOWN              3917.381    2802.3046     0.0000  806.1938
+ PHILLIP                4474.975    3365.3170   806.1938    0.0000
+ RAFFLES PLACE          4727.007    3612.7458   914.1374  313.4049
+ CHINA SQUARE           4271.839    3159.7516   604.1898  220.3051
+ TIONG BAHRU            2547.759    1439.7243  1434.9775 1927.2539
+ BAYFRONT SUBZONE       5563.087    4447.8391  1693.6594 1120.2910
+ TIONG BAHRU STATION    2042.758     943.3764  1929.4646 2433.1646
+ CLIFFORD PIER          5148.250    4037.8038  1372.7121  673.5165
+                      RAFFLES PLACE  CHINA SQUARE  TIONG BAHRU
+ DEPOT ROAD               4727.0065     4271.8390    2547.7587
+ BUKIT MERAH              3612.7458     3159.7516    1439.7243
+ CHINATOWN                 914.1374      604.1898    1434.9775
+ PHILLIP                   313.4049      220.3051    1927.2539
+ RAFFLES PLACE               0.0000      464.8507    2183.0161
+ CHINA SQUARE              464.8507        0.0000    1724.8823
+ TIONG BAHRU              2183.0161     1724.8823       0.0000
+ BAYFRONT SUBZONE          838.7051     1301.7999    3021.1681
+ TIONG BAHRU STATION      2691.3674     2232.5240     508.4764
+ CLIFFORD PIER             458.5921      879.5155    2600.4915
+                      BAYFRONT SUBZONE  TIONG BAHRU STATION  CLIFFORD PIER
+ DEPOT ROAD                  5563.0874            2042.7580      5148.2501
+ BUKIT MERAH                 4447.8391             943.3764      4037.8038
+ CHINATOWN                   1693.6594            1929.4646      1372.7121
+ PHILLIP                     1120.2910            2433.1646       673.5165
+ RAFFLES PLACE                838.7051            2691.3674       458.5921
+ CHINA SQUARE                1301.7999            2232.5240       879.5155
+ TIONG BAHRU                 3021.1681             508.4764      2600.4915
+ BAYFRONT SUBZONE               0.0000            3529.6090       492.6994
+ TIONG BAHRU STATION         3529.6090               0.0000      3106.6555
+ CLIFFORD PIER                492.6994            3106.6555         0.0000</code></pre>
+</div>
+</div>
+</section>
+<section id="labelling-column-and-row-headers-of-a-distance-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="labelling-column-and-row-headers-of-a-distance-matrix">3.1.3 Labelling column and row headers of a distance matrix</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>sz_names <span class="ot">&lt;-</span> mpsz_sf<span class="sc">$</span>SUBZONE</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(dist_matrix) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(sz_names)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(dist_matrix) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(sz_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="pivoting-distance-value-by-subzone-name" class="level3">
+<h3 class="anchored" data-anchor-id="pivoting-distance-value-by-subzone-name">3.1.4 Pivoting distance value by SUBZONE name</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(distPair)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          origin        dest     dist
+1     DEPOT ROAD  DEPOT ROAD    0.000
+2    BUKIT MERAH  DEPOT ROAD 1116.522
+3      CHINATOWN  DEPOT ROAD 3917.381
+4        PHILLIP  DEPOT ROAD 4474.975
+5  RAFFLES PLACE  DEPOT ROAD 4727.007
+6   CHINA SQUARE  DEPOT ROAD 4271.839</code></pre>
+</div>
+</div>
+</section>
+<section id="updating-intra-zonal-distances" class="level3">
+<h3 class="anchored" data-anchor-id="updating-intra-zonal-distances">3.1.5 Updating intra-zonal distances</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>distPair <span class="sc">%&gt;%</span> <span class="fu">filter</span>(dist <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            origin                   dest             dist        
+  DEPOT ROAD   :   331    DEPOT ROAD   :   331   Min.   :  173.8  
+  BUKIT MERAH  :   331    BUKIT MERAH  :   331   1st Qu.: 7149.5  
+  CHINATOWN    :   331    CHINATOWN    :   331   Median :11890.0  
+  PHILLIP      :   331    PHILLIP      :   331   Mean   :12229.4  
+  RAFFLES PLACE:   331    RAFFLES PLACE:   331   3rd Qu.:16401.7  
+  CHINA SQUARE :   331    CHINA SQUARE :   331   Max.   :49894.4  
+ (Other)       :107906   (Other)       :107906                    </code></pre>
+</div>
+</div>
+<p>From the results, we can see that the minimum distance is 173.8m.</p>
+<p>Next, a constant distance of 50m is added into the intra-zones distance.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>distPair<span class="sc">$</span>dist <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(distPair<span class="sc">$</span>dist <span class="sc">==</span> <span class="dv">0</span>, <span class="dv">50</span>, distPair<span class="sc">$</span>dist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The code below can be used to check the result data.frame.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>distPair <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            origin                   dest             dist      
+  DEPOT ROAD   :   332    DEPOT ROAD   :   332   Min.   :   50  
+  BUKIT MERAH  :   332    BUKIT MERAH  :   332   1st Qu.: 7097  
+  CHINATOWN    :   332    CHINATOWN    :   332   Median :11864  
+  PHILLIP      :   332    PHILLIP      :   332   Mean   :12193  
+  RAFFLES PLACE:   332    RAFFLES PLACE:   332   3rd Qu.:16388  
+  CHINA SQUARE :   332    CHINA SQUARE :   332   Max.   :49894  
+ (Other)       :108232   (Other)       :108232                  </code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>distmat_km <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dist_matrix<span class="sc">/</span><span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+</section>
+<section id="modelling-and-visualizing-accesssibility-using-hansen-method-requires-hexagon" class="level1">
+<h1>4 Modelling and Visualizing Accesssibility using Hansen Method (requires hexagon)</h1>
+<section id="computing-hansens-accessibility-requires-hexagon" class="level2">
+<h2 class="anchored" data-anchor-id="computing-hansens-accessibility-requires-hexagon">4.1 Computing Hansen’s accessibility (requires hexagon)</h2>
+</section>
+<section id="visualizing-hansens-accessibility" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-hansens-accessibility">4.2 Visualizing Hansen’s accessibility</h2>
+<section id="extracting-map-extend-requires-hexagon" class="level3">
+<h3 class="anchored" data-anchor-id="extracting-map-extend-requires-hexagon">4.2.1 Extracting map extend (requires hexagon)</h3>
+</section>
+<section id="statistical-graphic-visualization" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-graphic-visualization">4.3 Statistical graphic visualization</h3>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
