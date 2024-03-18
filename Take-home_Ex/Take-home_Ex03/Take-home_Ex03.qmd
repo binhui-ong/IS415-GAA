@@ -28,7 +28,7 @@ In this exercise, the following R packages would be used:
 Then, to install and/or load the R packages, we can use p_load() from the pacman package.
 
 ```{r}
-pacman::p_load(sf, tidyverse, tmap, SpatialAcc, ggplot2, ggstatsplot, spDist, spNetwork, reshape2)
+pacman::p_load(sf, tidyverse, tmap, SpatialAcc, ggplot2, ggstatsplot, sp, spNetwork, reshape2)
 ```
 
 # 2 Data Preparation (Geospatial)
@@ -43,6 +43,7 @@ To import geospatial data, we will be using st_read() from the sf package.
 #| eval: false
 mpsz2019 <- st_read("data/MasterPlan2019SubzoneBoundaryNoSeaGEOJSON.geojson")
 ```
+
 ```{r}
 #| eval: false
 #| echo: false
@@ -80,6 +81,7 @@ eldercare_services <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-hom
 ```{r}
 eldercare_services
 ```
+
 The eldercare_services data set is point data, with dimensions XY and CRS SVY21.
 
 Let's visualize how it looks like using plot() and st_geometry() from the sf package.
@@ -93,7 +95,6 @@ plot(st_geometry(mpsz2019))
 #| eval: false
 plot(st_geometry(eldercare_services))
 ```
-
 
 ## 2.2 Data Pre-Processing
 
@@ -116,7 +117,6 @@ mpsz <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rd
 ```
 
 ### 2.2.2 Resolving invalid geometries
-
 
 ```{r}
 length(which(st_is_valid(mpsz) == FALSE))
@@ -153,6 +153,7 @@ eldercare_services[rowSums(is.na(eldercare_services %>% select(11,19))) != 0, ]
 ```{r}
 st_crs(mpsz)
 ```
+
 The mpsz data set is not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject it.
 
 ```{r}
@@ -175,7 +176,8 @@ eldercare <- st_set_crs(eldercare_services, 3414)
 
 #### 2.2.6.1 Extraction of subzone and planning area names in mpsz_sf
 
-For subzone: 
+For subzone:
+
 ```{r}
 #| eval: false
 mpsz_sf <- mpsz_sf %>%  
@@ -189,6 +191,7 @@ mpsz_sf$SUBZONE <- str_remove_all(mpsz_sf$SUBZONE, "<.*?>|SUBZONE_N")
 ```
 
 For planning area:
+
 ```{r}
 #| eval: false
 mpsz_sf <- mpsz_sf %>%  
@@ -217,6 +220,7 @@ mpsz_sf
 ```
 
 #### 2.2.6.2 Keeping only relevant columns in eldercare
+
 ```{r}
 #| eval: false
 eldercare <- eldercare %>% select(11,19)
@@ -237,12 +241,12 @@ eldercare <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/da
 eldercare
 ```
 
-### 2.2.7 Creating hexagon data (******** NEED TO WORK HERE*****)
+### 2.2.7 Creating hexagon data (\*\*\*\*\*\*\*\* NEED TO WORK HERE\*\*\*\*\*)
 
 ```{r}
 #| eval: false
 #| echo: false
-hexagon <- st_make_grid(mpsz_sf, cellsize = 250, what = "polygons", square = FALSE)
+hexagon <- st_make_grid(mpsz_sf, cellsize = 500, what = "polygons", square = FALSE)
 ```
 
 ```{r}
@@ -256,7 +260,6 @@ hexagon
 #| echo: false
 plot(st_geometry(hexagon))
 ```
-
 
 # 3 Data Preparation (Distance Matrix)
 
@@ -318,7 +321,6 @@ sz_names <- mpsz_sf$SUBZONE
 colnames(dist_matrix) <- paste0(sz_names)
 rownames(dist_matrix) <- paste0(sz_names)
 ```
-
 
 ### 3.1.4 Pivoting distance value by SUBZONE name
 
@@ -391,7 +393,7 @@ distmat_km <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/d
 
 ```
 
-## 4.2 Visualizing Hansen's accessibility 
+## 4.2 Visualizing Hansen's accessibility
 
 ### 4.2.1 Extracting map extend (requires hexagon)
 
@@ -404,5 +406,3 @@ distmat_km <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/d
 ```
 
 ### 4.3 Statistical graphic visualization
-
-

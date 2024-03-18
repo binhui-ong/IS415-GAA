@@ -1,0 +1,340 @@
+---
+title: "In-class Exercise 9: Geographically Weighted Predictive Models"
+format: 
+  html: 
+    code-fold: true
+    code-summary: "Show the code"
+execute:
+  freeze: true
+  warning: false
+editor: visual
+date: "March 18, 2024"
+---
+
+# 1 Installing and loading R Packages
+
+This code chunk performs 3 tasks:
+
+-   A list called packages will be created and will consists of all the R packages required to accomplish this exercise.
+
+-   Check if R packages on package have been installed in R and if not, they will be installed.
+
+-   After all the R packages have been installed, they will be loaded.
+
+```{r}
+pacman::p_load(sf, spdep, GWmodel, SpatialML, 
+               tmap, rsample, tidyverse, tidymodels, gtsummary, rpart, rpart.plot, ggstatsplot, performance)
+```
+
+New packages:
+
+-   rpart and rpart.plot for recursive partitioning
+
+# 2 Data Preparation
+
+## 2.1 Reading rds data sets into R
+
+Reading the input data sets. It is in simple feature data frame.
+
+```{r}
+rs_sf <- read_rds("data/rds/HDB_resale.rds")
+```
+
+Next, the code chunk below is used to reveal the properties of *rs_sf* object.
+
+## 2.2 Converting
+
+```{r}
+#| eval: false
+set.seed(1234)
+resale_split <- initial_split(
+  rs_sf,
+  prop = 5/10,)
+train_sf <- training(resale_split)
+test_sf <- testing(resale_split)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(train_sf, "data/rds/train_sf.rds")
+write_rds(test_sf, "data/rds/test_sf.rds")
+```
+
+```{r}
+#| echo: false
+train_sf <- readRDS("data/rds/train_sf.rds")
+test_sf <- readRDS("data/rds/test_sf.rds")
+```
+
+## 2.3 Retrieving
+
+```{r}
+#| eval: false
+train_df <- train_sf %>%
+  st_drop_geometry() %>%
+  as.data.frame()
+
+test_df <- test_sf %>%
+  st_drop_geometry() %>%
+  as.data.frame()
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(train_df, "data/rds/train_df.rds")
+write_rds(test_df, "data/rds/test_df.rds")
+```
+
+```{r}
+#| echo: false
+train_df <- readRDS("data/rds/train_df.rds")
+test_df <- readRDS("data/rds/test_df.rds")
+```
+
+To check our object classes,
+
+```{r}
+class(train_sf)
+class(train_df)
+```
+
+# 3 Computing Correlation Matrix
+
+Before, ???
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+rs_sf1 <- rs_sf %>% 
+  st_drop_geometry()
+ggcorrmat(rs_sf1[,2:17])
+```
+
+The above is for the purpose of applying statistical learning.
+
+# 4 Building a non-spatial multiple linear regression
+
+## 4.1 Revising mlr model
+
+```{r}
+train_df <- train_df %>%
+  select(-c(PROX_CHAS))
+train_sf <- train_sf %>%
+  select(-c(PROX_CHAS))
+
+test_df <- test_df %>%
+  select(-c(PROX_CHAS))
+test_sf <- test_sf %>%
+  select(-c(PROX_CHAS))
+```
+
+```{r}
+#| eval: false
+rs_mlr <- lm(formula = RESALE_PRICE ~.,
+                data=train_df)
+```
+
+As seen from the above code, we can use \~. instead of listing all of the independent variables to include them in the formula.
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(rs_mlr, "data/rds/rs_mlr.rds")
+```
+
+```{r}
+#| echo: false
+rs_mlr <- readRDS("data/rds/rs_mlr.rds")
+```
+
+```{r}
+coords <- st_coordinates(rs_sf)
+coords_train <- st_coordinates(train_sf)
+coords_test <- st_coordinates(test_sf)
+```
+
+# 5 Calibrating Predictive Model
+
+```{r}
+rs_rp <- rpart(formula = RESALE_PRICE ~., data = train_df)
+rs_rp
+```
+
+```{r}
+rpart.plot(rs_rp)
+```
+
+# 6 Calibrating Random Forest
+
+```{r}
+rs_rf <- ranger(formula = RESALE_PRICE ~.,
+                data = train_df,
+                importance = "impurity")
+rs_rf
+```
+
+Notes:
+
+-   *Very important*:  importance is retained using ranger() 
+
+-   "impurity" is always used first in regression
+
+```{r}
+vi <- as.data.frame(rs_rf$variable.importance)
+
+vi$variables <- rownames(vi)
+vi <- vi %>%
+  rename(vi = "rs_rf$variable.importance")
+```
+
+```{r}
+ggplot(data = vi, 
+       aes(x=vi, 
+           y = reorder(variables, vi))) +
+  geom_bar(stat = "identity")
+```
+
+Notes:
+
+-   stat = identity treats every row as a single observation
+-   if only one variable has an extremely high vi, while all other variables have extremely low vi, there could be complete separation issue! To resolve the issue, we must exclude the variable with the extreme high vi first, and then check if the other variables work well without it.
+
+To compute the Geographically Weighted Random Forest, 
+
+```{r}
+#| eval: false
+rs_grf <- grf(formula = RESALE_PRICE ~., data = train_df)
+```
+
+```{r}
+rs_grf <- readRDS("data/models/rs_grf.rds")
+```
+
+```{r}
+test_df <- cbind(test_sf, coords_test) %>% 
+  st_drop_geometry()
+```
+
+
+# 7 Predicting with test data 
+Next, predict.grf() of spatialML package will be used to predict the resale value by using the test data and gwRF_adaptive model calibrated earlier.
+
+```{r}
+#| eval: false
+grf_pred <- predict.grf(rs_grf,
+                        test_df,
+                        x.var.name = "X",
+                        y.var.name, 
+                        local.w = 1, 
+                        global.w = 0)
+```
+
+```{r}
+grf_pred <- readRDS("data/models/grf_pred.rds")
+grf_pred_df <- as.data.frame(grf_pred)
+```
+
+In the code chunk below, cbind() is used to append the predicted values onto test_df.
+
+```{r}
+#| eval: false
+test_pred <- test_df %>%
+  select(RESALE_PRICE) %>%
+  cbind(grf_pred_df)
+```
+
+```{r}
+#| eval: false
+rf_pred <- predict(rs_rf, test_df)
+```
+
+```{r}
+#| eval: false
+rf_pred_df <- as.data.frame(rf_pred$predictions) %>%
+  rename(rf_pred = "rf_pred$predictions")
+```
+
+```{r}
+#| eval: false
+test_pred <- cbind(test_pred, rf_pred_df)
+```
+
+```{r}
+#| eval: false
+mlr_pred <- predict(rs_mlr, test_df)
+```
+
+```{r}
+#| eval: false 
+mlr_pred_df <- as.data.frame(mlr_pred) %>%
+  rename(mlr_pred = "mlr_pred")
+```
+
+```{r}
+#| eval: false
+test_pred <- cbind(test_pred, mlr_pred_df)
+```
+
+```{r}
+test_pred <- readRDS("data/models/test_pred.rds")
+```
+
+```{r}
+yardstick::rmse(test_pred,
+                RESALE_PRICE,
+                grf_pred)
+```
+
+```{r}
+yardstick::rmse(test_pred,
+                RESALE_PRICE,
+                rf_pred)
+```
+
+```{r}
+yardstick::rmse(test_pred,
+                RESALE_PRICE,
+                mlr_pred)
+```
+
+Among the methods, 
+
+```{r}
+mc <- test_pred %>% pivot_longer(cols = c(2:4),
+                                 names_to = "models",
+                                 values_to = "predicted")
+
+```
+
+# 8 Visualizing the predicted values
+
+Alternatively, scatterplot can be used to visualize the actual resale price and the predicted resale price by using the code chunk below.
+
+For grf_pred, 
+```{r}
+ggplot(data=test_pred,
+       aes(x = grf_pred,
+           y = RESALE_PRICE)) +
+  geom_point()
+```
+
+For rf_pred, 
+```{r}
+ggplot(data=test_pred,
+       aes(x = rf_pred,
+           y = RESALE_PRICE)) +
+  geom_point()
+```
+
+
+For mlr_pred, 
+```{r}
+ggplot(data=test_pred,
+       aes(x = mlr_pred,
+           y = RESALE_PRICE)) +
+  geom_point()
+```
+
+
