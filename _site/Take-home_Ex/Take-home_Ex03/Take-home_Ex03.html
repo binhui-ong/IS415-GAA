@@ -443,11 +443,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="installing-and-loading-r-packages" class="level2">
 <h2 class="anchored" data-anchor-id="installing-and-loading-r-packages">1.5 Installing and Loading R Packages</h2>
 <p>In this exercise, the following R packages would be used:</p>
-<p>Then, to install and/or load the R packages, we can use p_load() from the pacman package.</p>
+<p>Then, to install and/or load the R packages, we can use p_load() from the <strong>pacman</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse, tmap, SpatialAcc, ggplot2, ggstatsplot, sp, spNetwork, reshape2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse, tmap, SpatialAcc, ggplot2, ggstatsplot, sp, reshape2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -457,7 +457,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="data-import" class="level2">
 <h2 class="anchored" data-anchor-id="data-import">2.1 Data Import</h2>
 <p>Let’s begin by introducing and preparing our geospatial data set in R!</p>
-<p>To import geospatial data, we will be using st_read() from the sf package.</p>
+<p>To import geospatial data, we will be using st_read() from the <strong>sf</strong> package.</p>
 <section id="master-plan-2019" class="level3">
 <h3 class="anchored" data-anchor-id="master-plan-2019">2.1.1 Master Plan 2019</h3>
 <div class="cell">
@@ -514,7 +514,7 @@ First 10 features:
 10 MULTIPOLYGON Z (((103.8552 ...</code></pre>
 </div>
 </div>
-<p>From the above, we can see that the mpsz2019 data is a multipolygon data in geodetic CRS WGS84, with Z dimensions.</p>
+<p>From the above, we can see that the <strong>mpsz2019</strong> data is a multipolygon data in geodetic CRS WGS84, with Z dimensions.</p>
 </section>
 <section id="eldercare-services" class="level3">
 <h3 class="anchored" data-anchor-id="eldercare-services">2.1.2 Eldercare services</h3>
@@ -663,7 +663,7 @@ First 10 features:
 10 POINT Z (103.9318 1.356087 0)</code></pre>
 </div>
 </div>
-<p>We see that the gardens data set is of point data type, has XYZ dimension, and CRS is WGS84.</p>
+<p>We see that the <strong>gardens</strong> data set is of point data type, has XYZ dimension, and CRS is WGS84.</p>
 </section>
 <section id="chas-clinics" class="level3">
 <h3 class="anchored" data-anchor-id="chas-clinics">2.1.4 CHAS clinics</h3>
@@ -732,7 +732,7 @@ First 10 features:
 10 POINT Z (103.8551 1.364542 0)</code></pre>
 </div>
 </div>
-<p>We see that the chassg data set is of point data type, has XYZ dimension, and CRS is WGS84.</p>
+<p>We see that the <strong>chassg</strong> data set is of point data type, has XYZ dimension, and CRS is WGS84.</p>
 </section>
 <section id="other-amenities-hospitals-community-centres-parks" class="level3">
 <h3 class="anchored" data-anchor-id="other-amenities-hospitals-community-centres-parks">2.1.5 Other amenities (Hospitals, Community Centres, Parks)</h3>
@@ -779,12 +779,12 @@ First 10 features:
 10 MULTIPOLYGON (((101.5427 3....</code></pre>
 </div>
 </div>
-<p>We see that the other_amenities data is point data, with dimensions XY and CRS WGS84.</p>
+<p>We see that the <strong>other_amenities</strong> data is point data, with dimensions XY and CRS WGS84.</p>
 </section>
 </section>
 <section id="visualization-of-imported-data" class="level2">
 <h2 class="anchored" data-anchor-id="visualization-of-imported-data">2.2 Visualization of imported data</h2>
-<p>Let’s visualize how it looks like using plot() and st_geometry() from the sf package.</p>
+<p>Let’s visualize how it looks like using plot() and st_geometry() from the <strong>sf</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -825,8 +825,8 @@ First 10 features:
 <h2 class="anchored" data-anchor-id="data-pre-processing">2.3 Data Pre-Processing</h2>
 <section id="dropping-z-dimension" class="level3">
 <h3 class="anchored" data-anchor-id="dropping-z-dimension">2.3.1 Dropping Z-dimension</h3>
-<p>Earlier, we established that mpsz, gardens and chassg contain the Z-dimension.</p>
-<p>To remove the Z-dimension which would potentially hinder our analysis, we can use st_zm() from sf package as shown in the codes below.</p>
+<p>Earlier, we established that <strong>mpsz</strong>, <strong>gardens</strong> and <strong>chassg</strong> contain the Z-dimension.</p>
+<p>To remove the Z-dimension which would potentially hinder our analysis, we can use st_zm() from <strong>sf</strong> package as shown in the codes below.</p>
 <p>For mpsz2019,</p>
 <div class="cell">
 <details>
@@ -897,7 +897,7 @@ First 10 features:
 <pre><code>[1] 0</code></pre>
 </div>
 </div>
-<p>Among all of the geospatial data, only mpsz has invalid geometries. To resolve the invalid geometry, we use st_make_valid() from sf package as shown in the code below.</p>
+<p>Among all of the geospatial data, only mpsz has invalid geometries. To resolve the invalid geometry, we use st_make_valid() from <strong>sf</strong> package as shown in the code below.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1012,7 +1012,7 @@ First 10 features:
 10  POINT (36446.37 41376.9)</code></pre>
 </div>
 </div>
-<p>Seems like eldercare_services contain missing values in all rows, likely attributed to certain columns that consist of fully NA values. Let’s focus on checking only the relevant columns, NAME and geometry.</p>
+<p>Seems like <strong>eldercare_services</strong> contain missing values in all rows, likely attributed to certain columns that consist of fully NA values. Let’s focus on checking only the relevant columns, NAME and geometry.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1082,7 +1082,7 @@ First 10 features:
 41 23046326 2252      pitch &lt;NA&gt; MULTIPOLYGON (((101.5028 3....</code></pre>
 </div>
 </div>
-<p>Similarly, other_amenities contain NA values in many rows. From the output, we can attribute it to the name column. Let’s exclude the name column in our check:</p>
+<p>Similarly, <strong>other_amenities</strong> contain NA values in many rows. From the output, we can attribute it to the name column. Let’s exclude the name column in our check:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1101,7 +1101,7 @@ Geodetic CRS:  WGS 84
 </section>
 <section id="changing-and-verifying-crs" class="level3">
 <h3 class="anchored" data-anchor-id="changing-and-verifying-crs">2.3.4 Changing and verifying CRS</h3>
-<p>It is very important to ensure our geospatial data is in the appropriate and common CRS. To check for crs of each data set, we can use st_crs() from sf package.</p>
+<p>It is very important to ensure our geospatial data is in the appropriate and common CRS. To check for crs of each data set, we can use st_crs() from <strong>sf</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1127,7 +1127,7 @@ GEOGCRS["WGS 84",
     ID["EPSG",4326]]</code></pre>
 </div>
 </div>
-<p>The mpsz data set is not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject it.</p>
+<p>The <strong>mpsz</strong> data set is not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject it.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1174,7 +1174,7 @@ PROJCRS["SVY21",
                 ID["EPSG",9001]]]]</code></pre>
 </div>
 </div>
-<p>The eldercare_services data set does not have the correct EPSG code (3414). Hence, we must reassign the EPSG code to it.</p>
+<p>The <strong>eldercare_services</strong> data set does not have the correct EPSG code (3414). Hence, we must reassign the EPSG code to it.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1250,8 +1250,8 @@ GEOGCRS["WGS 84",
     ID["EPSG",4326]]</code></pre>
 </div>
 </div>
-<p>The garden, chas_sg and other_amenities data sets are also not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject them too.</p>
-<p>To reproject data sets from one CRS to another CRS, we apply st_transform() from sf package as shown in the following three code chunks.</p>
+<p>The <strong>garden</strong>, <strong>chas_sg</strong> and <strong>other_amenities</strong> data sets are also not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject them too.</p>
+<p>To reproject data sets from one CRS to another CRS, we apply st_transform() from <strong>sf</strong> package as shown in the following three code chunks.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1276,7 +1276,7 @@ GEOGCRS["WGS 84",
 <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>others <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(other_amenities, <span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>For eldercare_services, we should assign the correct EPSG code using st_set_crs() from sf package instead.</p>
+<p>For <strong>eldercare_services</strong>, we should assign the correct EPSG code using st_set_crs() from <strong>sf</strong> package instead.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1288,7 +1288,7 @@ GEOGCRS["WGS 84",
 <h3 class="anchored" data-anchor-id="extraction-of-relevant-columns">2.3.6 Extraction of relevant columns</h3>
 <section id="extraction-of-subzone-and-planning-area-names-in-mpsz_sf" class="level4">
 <h4 class="anchored" data-anchor-id="extraction-of-subzone-and-planning-area-names-in-mpsz_sf">2.3.6.1 Extraction of subzone and planning area names in mpsz_sf</h4>
-<p>Currently, our mpsz_sg data is pretty messy. The subzone and planning area names are hidden in the Description field. To extract them, we should follow the codes below.</p>
+<p>Currently, our <strong>mpsz_sg</strong> data is pretty messy. The subzone and planning area names are hidden in the Description field. To extract them, we should follow the codes below.</p>
 <p>For subzone:</p>
 <div class="cell">
 <details>
@@ -1360,7 +1360,7 @@ Projected CRS: SVY21 / Singapore TM
 </section>
 <section id="extraction-of-chas-clinic-names-in-chas" class="level4">
 <h4 class="anchored" data-anchor-id="extraction-of-chas-clinic-names-in-chas">2.3.6.2 Extraction of CHAS clinic names in chas</h4>
-<p>Similarly, the chas data set has the clinic names hidden in the Description field. We apply the same steps as shown below to extract the clinic names.</p>
+<p>Similarly, the <strong>chas</strong> data set has the clinic names hidden in the Description field. We apply the same steps as shown below to extract the clinic names.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1384,15 +1384,15 @@ Projected CRS: SVY21 / Singapore TM
 </section>
 <section id="extracting-columns" class="level4">
 <h4 class="anchored" data-anchor-id="extracting-columns">2.3.6.2 Extracting columns</h4>
-<p>To simplify our analysis and speed up our computation, we should only retain relevant fields in our data sets. Hence, we use select() from dplyr package to select the fields that we want to keep.</p>
-<p>mpsz:</p>
+<p>To simplify our analysis and speed up our computation, we should only retain relevant fields in our data sets. Hence, we use select() from <strong>dplyr</strong> package to select the fields that we want to keep.</p>
+<p><strong>mpsz</strong>:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>mpszsg <span class="ot">&lt;-</span> mpszsg <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>eldercare:</p>
+<p><strong>eldercare</strong>:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1435,7 +1435,7 @@ First 10 features:
 10  POINT (36446.37 41376.9)</code></pre>
 </div>
 </div>
-<p>chas:</p>
+<p><strong>chas</strong>:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1475,7 +1475,7 @@ Projected CRS: SVY21 / Singapore TM
 <h3 class="anchored" data-anchor-id="extraction-of-study-area">2.3.7 Extraction of study area</h3>
 <section id="extracting-singapore-main-island-boundaries-from-mpszsg-data-set" class="level4">
 <h4 class="anchored" data-anchor-id="extracting-singapore-main-island-boundaries-from-mpszsg-data-set">2.3.7.1 Extracting Singapore main island boundaries from mpszsg data set</h4>
-<p>Let’s take a look at our mpszsg data set.</p>
+<p>Let’s take a look at our <strong>mpszsg</strong> data set.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1522,7 +1522,7 @@ Projected CRS: SVY21 / Singapore TM
 </div>
 </div>
 <p>From here, we can see that the outer islands are classified as ” NORTH-EASTERN ISLANDS”, ” WESTERN ISLANDS”, ” SOUTHERN ISLANDS” under PLAN_AREA. All other plan areas are in or connected to the main island of Singapore.</p>
-<p>To remove these islands from our data set, we can use filter() from the dplyr package and apply the following code chunk, removing records that contain the string “ISLANDS” in the PLAN_AREA column.</p>
+<p>To remove these islands from our data set, we can use filter() from the <strong>dplyr</strong> package and apply the following code chunk, removing records that contain the string “ISLANDS” in the PLAN_AREA column.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1553,7 +1553,7 @@ Projected CRS: SVY21 / Singapore TM
 </section>
 <section id="extracting-singapore-data-from-chas-data-set" class="level4">
 <h4 class="anchored" data-anchor-id="extracting-singapore-data-from-chas-data-set">2.2.7.2 Extracting Singapore data from chas data set</h4>
-<p>From our understanding, chas data set contains one data point at one of Singapore’s outer islands. Hence, we want to extract rows that contain only data within Singapore main island. To do so, we use the following code.</p>
+<p>From our understanding, <strong>chas</strong> data set contains one data point at one of Singapore’s outer islands. Hence, we want to extract rows that contain only data within Singapore main island. To do so, we use the following code.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1571,14 +1571,14 @@ Projected CRS: SVY21 / Singapore TM
 </section>
 <section id="extracting-singapore-data-from-others-data-set" class="level4">
 <h4 class="anchored" data-anchor-id="extracting-singapore-data-from-others-data-set">2.2.7.2 Extracting Singapore data from others data set</h4>
-<p>From our understanding, others data set contains the data of other neighbouring countries and islands outside of Singapore main island. Hence, we want to extract rows that contain only data within Singapore main island. To do so, we use the following code.</p>
+<p>From our understanding, <strong>others</strong> data set contains the data of other neighbouring countries and islands outside of Singapore main island. Hence, we want to extract rows that contain only data within Singapore main island. To do so, we use the following code.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>amenities <span class="ot">&lt;-</span> others[<span class="fu">unlist</span>(<span class="fu">st_contains</span>(sgboundary_sf, others)),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Here, we check whether we have achieved our desired result for amenities.</p>
+<p>Here, we check whether we have achieved our desired result for <strong>amenities</strong>.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1590,7 +1590,7 @@ Projected CRS: SVY21 / Singapore TM
 </section>
 <section id="checking-of-geospatial-data-sets" class="level4">
 <h4 class="anchored" data-anchor-id="checking-of-geospatial-data-sets">2.3.7.3 Checking of geospatial data sets</h4>
-<p>To confirm that all records in our eldercare and garden data sets are within the boundaries of Singapore main island, we can apply the following code.</p>
+<p>To confirm that all records in our <strong>eldercare</strong> and <strong>garden</strong> data sets are within the boundaries of Singapore main island, we can apply the following code.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1617,14 +1617,14 @@ Projected CRS: SVY21 / Singapore TM
 &lt;0 rows&gt; (or 0-length row.names)</code></pre>
 </div>
 </div>
-<p>In the above codes, we are checking for eldercare and garden records that are not contained by sgboundary_sf.</p>
+<p>In the above codes, we are checking for <strong>eldercare</strong> and <strong>garden</strong> records that are not contained by <strong>sgboundary_sf</strong>.</p>
 <p>Since the results return 0 row for both data sets, we are certain these data sets are confined to within Singapore’s main island.</p>
 </section>
 </section>
 </section>
 <section id="extracting-types-of-other-amenities" class="level2">
 <h2 class="anchored" data-anchor-id="extracting-types-of-other-amenities">2.4 Extracting types of other amenities</h2>
-<p>The amenities data set consists of different types of amenities recorded in different rows. To extract each of them (hospital, community centres, parks), we apply the codes below.</p>
+<p>The <strong>amenities</strong> data set consists of different types of amenities recorded in different rows. To extract each of them (hospital, community centres, parks), we apply the codes below.</p>
 <p>Hospital:</p>
 <div class="cell">
 <details>
@@ -1650,7 +1650,7 @@ Projected CRS: SVY21 / Singapore TM
 <section id="inserting-capacity-columns-into-facilities-data-frames" class="level2">
 <h2 class="anchored" data-anchor-id="inserting-capacity-columns-into-facilities-data-frames">2.5 Inserting capacity columns into facilities data frames</h2>
 <p>For our accessibility analysis, we would need the capacity (supply) of each facility.</p>
-<p>For eldercare, we use an estimated capacity of 100, implying that each eldercare centre can hold 100 elderly people at any point of time.</p>
+<p>For <strong>eldercare</strong>, we use an estimated capacity of 100, implying that each eldercare centre can hold 100 elderly people at any point of time.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1696,7 +1696,7 @@ Projected CRS: SVY21 / Singapore TM
 </section>
 <section id="data-preparation-aspatial-data" class="level1">
 <h1>3 Data Preparation (Aspatial Data)</h1>
-<p>The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the readr package.</p>
+<p>The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the <strong>readr</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1734,7 +1734,7 @@ $ Time &lt;int&gt; 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2
 [16] "75_to_79"    "80_to_84"    "85_to_89"    "90_and_Over"</code></pre>
 </div>
 </div>
-<p>Then, to extract only rows that contain residents aged 55 and above, and name this new data set as elderly, we can apply the following code.</p>
+<p>Then, to extract only rows that contain residents aged 55 and above, and name this new data set as <strong>elderly</strong>, we can apply the following code.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1832,8 +1832,8 @@ Projected CRS: SVY21 / Singapore TM
 # ℹ 322 more rows</code></pre>
 </div>
 </div>
-<p>From the above, we see that the subzone and planning area values in elderly data set are not in full uppercase, while that in mpsz_sf data set is in full uppercase. Since R is case sensitive, this would hinder our join.</p>
-<p>Hence, we can change the values in elderly data set to full uppercase, so that it can match with the values in mpsz_sf. To do so, we can use toupper() as shown below.</p>
+<p>From the above, we see that the subzone and planning area values in <strong>elderly</strong> data set are not in full uppercase, while that in <strong>mpsz_sf</strong> data set is in full uppercase. Since R is case sensitive, this would hinder our join.</p>
+<p>Hence, we can change the values in <strong>elderly</strong> data set to full uppercase, so that it can match with the values in <strong>mpsz_sf</strong>. To do so, we can use toupper() as shown below.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1846,7 +1846,7 @@ Projected CRS: SVY21 / Singapore TM
 <div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a>elderly<span class="sc">$</span>SZ <span class="ot">&lt;-</span> <span class="fu">toupper</span>(elderly<span class="sc">$</span>SZ)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Now that we have changed the values to uppercase, we can use left_join() from dplyr package to conduct our join, using subzone and planning area values.</p>
+<p>Now that we have changed the values to uppercase, we can use left_join() from <strong>dplyr</strong> package to conduct our join, using subzone and planning area values.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1880,20 +1880,26 @@ Projected CRS: SVY21 / Singapore TM
 # ℹ 316 more rows</code></pre>
 </div>
 </div>
-<p>We’ve succesfully combined our data! Now, we can easily map the demand of each region geometrically for analysis later.</p>
+<p>We’ve successfully combined our data! Now, we can easily map the demand of each region geometrically for analysis later.</p>
 </section>
 <section id="creating-hexagon-data" class="level1">
 <h1>5 Creating hexagon data</h1>
 <p>Accessibility analysis can be done with hexagon data as individual subzones might be too large. In this section, we will create hexagon data.</p>
 <section id="making-a-hexagon-object" class="level2">
 <h2 class="anchored" data-anchor-id="making-a-hexagon-object">5.1 Making a hexagon object</h2>
-<p>To make a hexagon object, we use st_make_grid() from sf package.</p>
+<p>To make a hexagon object, we use st_make_grid() from <strong>sf</strong> package.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> <span class="fu">st_make_grid</span>(mpsz_sf, <span class="at">cellsize =</span> <span class="dv">250</span>, <span class="at">what =</span> <span class="st">"polygons"</span>, <span class="at">square =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<p>In the above code, we set</p>
+<ul>
+<li><p>cellsize = 250, such that distance between opposite edges is 250m</p></li>
+<li><p>what = “polygons” to create polygons</p></li>
+<li><p>square = FALSE to create hexagonal grid instead of square grid</p></li>
+</ul>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1944,7 +1950,7 @@ Projected CRS: SVY21 / Singapore TM
 <pre><code>[1] "sfc_GEOMETRY" "sfc"         </code></pre>
 </div>
 </div>
-<p>From the results, we see that hexagon is in sfc class. To convert it into an sf object for easier manipulation, we can use st_sf() as shown in the following code, and name the new sf object as hexagon_sf.</p>
+<p>From the results, we see that hexagon is in sfc class. To convert it into an sf object for easier manipulation, we can use st_sf() from <strong>sf</strong> as shown in the following code, and name the new sf object as <strong>hexagon_sf</strong>.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1976,13 +1982,14 @@ Projected CRS: SVY21 / Singapore TM
 </div>
 </div>
 <p><strong>Step 2: Inserting planning area and subzone names</strong></p>
-<p>Here, we use st_join() and st_within() from sf package to combine the aggregated demand for each subzone into the hexagon_sf data frame.</p>
+<p>Here, we use st_join() and st_overlaps() from <strong>sf</strong> package to combine the aggregated demand for each subzone into the <strong>hexagon_sf</strong> data frame.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb140"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a>hex <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_sf, mpsz_demand, st_overlaps)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<p>st_overlaps() allows us to join <strong>mpsz_demand</strong> to <strong>hexagon_sf</strong> as long as there is an area of overlap, including cases where geometries share boundaries or overlap partially.</p>
 <p>Since many hexagons can make up a single subzone, and the current demand field in the hexagon_demand represents the demand for one entire subzone, we have to divide the aggregated demand across the different hexagons in each subzone.</p>
 <p>To do so, we first find out the count of hexagons contained in each subzone by using the following code.</p>
 <div class="cell">
@@ -1991,7 +1998,7 @@ Projected CRS: SVY21 / Singapore TM
 <div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a>hex_count <span class="ot">&lt;-</span> <span class="fu">st_drop_geometry</span>(hex) <span class="sc">%&gt;%</span> <span class="fu">count</span>(SUBZONE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Then, we use left_join() from dplyr to include the total number of hexagons sharing the same subzone as the hexagon of that row.</p>
+<p>Then, we use left_join() from <strong>dplyr</strong> to include the total number of hexagons sharing the same subzone as the hexagon of that row.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2034,7 +2041,7 @@ First 10 features:
 </section>
 <section id="preparing-distance-matrix" class="level1">
 <h1>6 Preparing Distance Matrix</h1>
-<p>We need the distance matrix between the residential areas (reflected in mpsz_demand) and each facility to determine the accessibility to the latter.</p>
+<p>We need the distance matrix between the residential areas (reflected in <strong>mpsz_demand</strong>) and each facility to determine the accessibility to the latter.</p>
 <p>To do so, we have to apply the steps in the following sections.</p>
 <section id="convert-from-sf-data.table-to-spatialpolygonsdataframe" class="level3">
 <h3 class="anchored" data-anchor-id="convert-from-sf-data.table-to-spatialpolygonsdataframe">6.1.1 Convert from sf data.table to SpatialPolygonsDataFrame</h3>
@@ -2147,7 +2154,7 @@ max values  :               Zion Home For The Aged,      100 </code></pre>
 </details>
 </div>
 <p>We put the longlat argument as FALSE as our data set geometries are not in longlat format.</p>
-<p>To have an understanding of how the distance looks like, we can apply the following code to see the first 10 rows and columns of eldercare_dist_matrix.</p>
+<p>To have an understanding of how the distance looks like, we can apply the following code to see the first 10 rows and columns of <strong>eldercare_dist_matrix.</strong></p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2227,7 +2234,7 @@ max values  :               Zion Home For The Aged,      100 </code></pre>
 <span id="cb165-6"><a href="#cb165-6" aria-hidden="true" tabindex="-1"></a>park_distmat_km <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(park_dist_matrix<span class="sc">/</span><span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Let’s take a look at the first 3 rows and columns of the eldercare_distmat_km matrix to have a rough idea of how it looks like.</p>
+<p>Let’s take a look at the first 3 rows and columns of the <strong>eldercare_distmat_km</strong> matrix to have a rough idea of how it looks like.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2596,10 +2603,10 @@ DEPOT ROAD             16.28901                                     9.480600</co
 </section>
 <section id="modelling-and-visualizing-accesssibility-using-hansen-method" class="level1">
 <h1>7 Modelling and Visualizing Accesssibility using Hansen Method</h1>
-<p>To compute Hansen’s accessibility, we use ac() of SpatialAcc package.</p>
+<p>To compute Hansen’s accessibility, we use ac() of <strong>SpatialAcc</strong> package.</p>
 <section id="computing-hansens-accessibility" class="level2">
 <h2 class="anchored" data-anchor-id="computing-hansens-accessibility">7.1 Computing Hansen’s accessibility</h2>
-<p>Here, we compute the accessibility of eldercare centres (eldercare) from each hexagon, and convert it to a data frame.</p>
+<p>Here, we compute the accessibility of eldercare centres (<strong>eldercare</strong>) from each hexagon, and convert it to a data frame.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2624,7 +2631,7 @@ DEPOT ROAD             16.28901                                     9.480600</co
 <div class="sourceCode cell-code" id="cb170"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb170-1"><a href="#cb170-1" aria-hidden="true" tabindex="-1"></a>eldercare_acc_hansen <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(eldercare_acc_hansen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Next, we bind the columns of hex_sf and eldercare_acc_hansen so that we can find out the respective eldercare_acc_hansen values for each hexagon in hex_sf in a very clear manner, using bind_cols().</p>
+<p>Next, we bind the columns of <strong>hex_sf</strong> and <strong>eldercare_acc_hansen</strong> so that we can find out the respective eldercare_acc_hansen values for each hexagon in <strong>hex_sf</strong> in a very clear manner, using bind_cols().</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2756,14 +2763,14 @@ DEPOT ROAD             16.28901                                     9.480600</co
 </details>
 </div>
 <p><img src="images/ac garden hansen.png" class="img-fluid"></p>
-<p>Of course, we can adjust the options in tm_fill however we like. n represents the number of classifications for our accessibility values, and style represents how they should be classified.</p>
+<p>Of course, we can adjust the options in tm_fill() however we like. n represents the number of classifications for our accessibility values, and style represents how they should be classified.</p>
 </section>
 </section>
 <section id="statistical-graphic-visualization" class="level2">
 <h2 class="anchored" data-anchor-id="statistical-graphic-visualization">7.3 Statistical graphic visualization</h2>
 <p>A statistical graphic visualization might be very helpful to give a concise big picture of our data too.</p>
 <p>Since we want a simpler view, we can perhaps choose to depict our data by regions as it consists of less variables.</p>
-<p>To derive the region name of each hexagon, we can use left_join() from dplyr as shown below, bringing region names in from mpsz, and joining both data sets using subzone names.</p>
+<p>To derive the region name of each hexagon, we can use left_join() from <strong>dplyr</strong> as shown below, bringing region names in from mpsz, and joining both data sets using subzone names.</p>
 <p>Eldercare:</p>
 <div class="cell">
 <details>
@@ -2774,7 +2781,7 @@ DEPOT ROAD             16.28901                                     9.480600</co
 </details>
 </div>
 <p>In the above, we also selected relevant columns only, to keep our output simple.</p>
-<p>Then, we use the relevant ggplot2 functions to construct a boxplot of accessibility values by regions as shown below.</p>
+<p>Then, we use the relevant <strong>ggplot2</strong> functions to construct a boxplot of accessibility values by regions as shown below.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2816,7 +2823,7 @@ DEPOT ROAD             16.28901                                     9.480600</co
 </section>
 <section id="modelling-and-visualizing-accesssibility-using-kd2sfca-method" class="level1">
 <h1>8 Modelling and Visualizing Accesssibility using KD2SFCA Method</h1>
-<p>Similar to Hansen method, we would be using ac() from SpatialAcc package. We would also mostly apply the same steps throughout the analysis, with the only change being the family argument used in ac().</p>
+<p>Similar to Hansen method, we would be using ac() from <strong>SpatialAcc</strong> package. We would also mostly apply the same steps throughout the analysis, with the only change being the family argument used in ac().</p>
 <section id="computing-kd2sfcas-accessibility" class="level2">
 <h2 class="anchored" data-anchor-id="computing-kd2sfcas-accessibility">8.1 Computing KD2SFCA’s accessibility</h2>
 <p>However, KD2SFCA method does not allow NA values. Hence, we replace the NA values with ‘0’ as shown below before beginning our analysis.</p>

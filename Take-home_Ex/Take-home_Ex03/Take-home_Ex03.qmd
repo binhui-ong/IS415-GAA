@@ -107,10 +107,10 @@ Through this exercise, we will conduct the following procedures
 
 In this exercise, the following R packages would be used:
 
-Then, to install and/or load the R packages, we can use p_load() from the pacman package.
+Then, to install and/or load the R packages, we can use p_load() from the **pacman** package.
 
 ```{r}
-pacman::p_load(sf, tidyverse, tmap, SpatialAcc, ggplot2, ggstatsplot, sp, spNetwork, reshape2)
+pacman::p_load(sf, tidyverse, tmap, SpatialAcc, ggplot2, ggstatsplot, sp, reshape2)
 ```
 
 # 2 Data Preparation (Geospatial)
@@ -119,7 +119,7 @@ pacman::p_load(sf, tidyverse, tmap, SpatialAcc, ggplot2, ggstatsplot, sp, spNetw
 
 Let’s begin by introducing and preparing our geospatial data set in R!
 
-To import geospatial data, we will be using st_read() from the sf package.
+To import geospatial data, we will be using st_read() from the **sf** package.
 
 ### 2.1.1 Master Plan 2019
 
@@ -143,7 +143,7 @@ mpsz2019 <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/dat
 mpsz2019
 ```
 
-From the above, we can see that the mpsz2019 data is a multipolygon data in geodetic CRS WGS84, with Z dimensions.
+From the above, we can see that the **mpsz2019** data is a multipolygon data in geodetic CRS WGS84, with Z dimensions.
 
 ### 2.1.2 Eldercare services
 
@@ -192,7 +192,7 @@ gardensg <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/dat
 gardensg
 ```
 
-We see that the gardens data set is of point data type, has XYZ dimension, and CRS is WGS84.
+We see that the **gardens** data set is of point data type, has XYZ dimension, and CRS is WGS84.
 
 ### 2.1.4 CHAS clinics
 
@@ -215,7 +215,7 @@ chassg <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/
 chassg
 ```
 
-We see that the chassg data set is of point data type, has XYZ dimension, and CRS is WGS84.
+We see that the **chassg** data set is of point data type, has XYZ dimension, and CRS is WGS84.
 
 ### 2.1.5 Other amenities (Hospitals, Community Centres, Parks)
 
@@ -240,11 +240,11 @@ other_amenities <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_E
 other_amenities
 ```
 
-We see that the other_amenities data is point data, with dimensions XY and CRS WGS84.
+We see that the **other_amenities** data is point data, with dimensions XY and CRS WGS84.
 
 ## 2.2 Visualization of imported data
 
-Let's visualize how it looks like using plot() and st_geometry() from the sf package.
+Let's visualize how it looks like using plot() and st_geometry() from the **sf** package.
 
 ```{r}
 #| eval: false
@@ -285,9 +285,9 @@ plot(st_geometry(other_amenities))
 
 ### 2.3.1 Dropping Z-dimension
 
-Earlier, we established that mpsz, gardens and chassg contain the Z-dimension.
+Earlier, we established that **mpsz**, **gardens** and **chassg** contain the Z-dimension.
 
-To remove the Z-dimension which would potentially hinder our analysis, we can use st_zm() from sf package as shown in the codes below.
+To remove the Z-dimension which would potentially hinder our analysis, we can use st_zm() from **sf** package as shown in the codes below.
 
 For mpsz2019,
 
@@ -367,7 +367,7 @@ length(which(st_is_valid(chas_sg) == FALSE))
 length(which(st_is_valid(other_amenities) == FALSE))
 ```
 
-Among all of the geospatial data, only mpsz has invalid geometries. To resolve the invalid geometry, we use st_make_valid() from sf package as shown in the code below.
+Among all of the geospatial data, only mpsz has invalid geometries. To resolve the invalid geometry, we use st_make_valid() from **sf** package as shown in the code below.
 
 ```{r}
 mpsz <- st_make_valid(mpsz)
@@ -393,7 +393,7 @@ mpsz[rowSums(is.na(mpsz)) != 0, ]
 eldercare_services[rowSums(is.na(eldercare_services)) != 0, ]
 ```
 
-Seems like eldercare_services contain missing values in all rows, likely attributed to certain columns that consist of fully NA values. Let's focus on checking only the relevant columns, NAME and geometry.
+Seems like **eldercare_services** contain missing values in all rows, likely attributed to certain columns that consist of fully NA values. Let's focus on checking only the relevant columns, NAME and geometry.
 
 ```{r}
 eldercare_services[rowSums(is.na(eldercare_services %>% select(11,19))) != 0, ]
@@ -415,7 +415,7 @@ chas_sg[rowSums(is.na(chas_sg)) != 0, ]
 other_amenities[rowSums(is.na(other_amenities)) != 0, ]
 ```
 
-Similarly, other_amenities contain NA values in many rows. From the output, we can attribute it to the name column. Let's exclude the name column in our check:
+Similarly, **other_amenities** contain NA values in many rows. From the output, we can attribute it to the name column. Let's exclude the name column in our check:
 
 ```{r}
 other_amenities[rowSums(is.na(other_amenities %>% select(-name))) != 0, ]
@@ -427,19 +427,19 @@ We're done with handling the missing values in our geospatial data!
 
 ### 2.3.4 Changing and verifying CRS
 
-It is very important to ensure our geospatial data is in the appropriate and common CRS. To check for crs of each data set, we can use st_crs() from sf package.
+It is very important to ensure our geospatial data is in the appropriate and common CRS. To check for crs of each data set, we can use st_crs() from **sf** package.
 
 ```{r}
 st_crs(mpsz)
 ```
 
-The mpsz data set is not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject it.
+The **mpsz** data set is not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject it.
 
 ```{r}
 st_crs(eldercare_services)
 ```
 
-The eldercare_services data set does not have the correct EPSG code (3414). Hence, we must reassign the EPSG code to it.
+The **eldercare_services** data set does not have the correct EPSG code (3414). Hence, we must reassign the EPSG code to it.
 
 ```{r}
 st_crs(gardens)
@@ -453,9 +453,9 @@ st_crs(chas_sg)
 st_crs(other_amenities)
 ```
 
-The garden, chas_sg and other_amenities data sets are also not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject them too.
+The **garden**, **chas_sg** and **other_amenities** data sets are also not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject them too.
 
-To reproject data sets from one CRS to another CRS, we apply st_transform() from sf package as shown in the following three code chunks.
+To reproject data sets from one CRS to another CRS, we apply st_transform() from **sf** package as shown in the following three code chunks.
 
 ```{r}
 #| eval: false
@@ -477,7 +477,7 @@ chas <- st_transform(chas_sg, 3414)
 others <- st_transform(other_amenities, 3414)
 ```
 
-For eldercare_services, we should assign the correct EPSG code using st_set_crs() from sf package instead.
+For **eldercare_services**, we should assign the correct EPSG code using st_set_crs() from **sf** package instead.
 
 ```{r}
 #| eval: false
@@ -499,7 +499,7 @@ garden <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/
 
 #### 2.3.6.1 Extraction of subzone and planning area names in mpsz_sf
 
-Currently, our mpsz_sg data is pretty messy. The subzone and planning area names are hidden in the Description field. To extract them, we should follow the codes below.
+Currently, our **mpsz_sg** data is pretty messy. The subzone and planning area names are hidden in the Description field. To extract them, we should follow the codes below.
 
 For subzone:
 
@@ -556,7 +556,7 @@ head(mpszsg, 10)
 
 #### 2.3.6.2 Extraction of CHAS clinic names in chas
 
-Similarly, the chas data set has the clinic names hidden in the Description field. We apply the same steps as shown below to extract the clinic names.
+Similarly, the **chas** data set has the clinic names hidden in the Description field. We apply the same steps as shown below to extract the clinic names.
 
 ```{r}
 #| eval: false
@@ -577,16 +577,16 @@ chas$NAME <- str_remove_all(chas$NAME, "^\\s+")
 
 #### 2.3.6.2 Extracting columns
 
-To simplify our analysis and speed up our computation, we should only retain relevant fields in our data sets. Hence, we use select() from dplyr package to select the fields that we want to keep.
+To simplify our analysis and speed up our computation, we should only retain relevant fields in our data sets. Hence, we use select() from **dplyr** package to select the fields that we want to keep.
 
-mpsz:
+**mpsz**:
 
 ```{r}
 #| eval: false
 mpszsg <- mpszsg %>% select(3:5)
 ```
 
-eldercare:
+**eldercare**:
 
 ```{r}
 #| eval: false
@@ -608,7 +608,7 @@ eldercare <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/da
 eldercare
 ```
 
-chas:
+**chas**:
 
 ```{r}
 #| eval: false
@@ -634,7 +634,7 @@ chas
 
 #### 2.3.7.1 Extracting Singapore main island boundaries from mpszsg data set
 
-Let's take a look at our mpszsg data set.
+Let's take a look at our **mpszsg** data set.
 
 ```{r}
 #| eval: false
@@ -653,7 +653,7 @@ unique(mpszsg$PLAN_AREA)
 
 From here, we can see that the outer islands are classified as " NORTH-EASTERN ISLANDS", " WESTERN ISLANDS", " SOUTHERN ISLANDS" under PLAN_AREA. All other plan areas are in or connected to the main island of Singapore.
 
-To remove these islands from our data set, we can use filter() from the dplyr package and apply the following code chunk, removing records that contain the string "ISLANDS" in the PLAN_AREA column.
+To remove these islands from our data set, we can use filter() from the **dplyr** package and apply the following code chunk, removing records that contain the string "ISLANDS" in the PLAN_AREA column.
 
 ```{r}
 #| eval: false
@@ -706,7 +706,7 @@ plot(st_geometry(sgboundary_sf))
 
 #### 2.2.7.2 Extracting Singapore data from chas data set
 
-From our understanding, chas data set contains one data point at one of Singapore's outer islands. Hence, we want to extract rows that contain only data within Singapore main island. To do so, we use the following code.
+From our understanding, **chas** data set contains one data point at one of Singapore's outer islands. Hence, we want to extract rows that contain only data within Singapore main island. To do so, we use the following code.
 
 ```{r}
 #| eval: false
@@ -735,7 +735,7 @@ plot(st_geometry(chas))
 
 #### 2.2.7.2 Extracting Singapore data from others data set
 
-From our understanding, others data set contains the data of other neighbouring countries and islands outside of Singapore main island. Hence, we want to extract rows that contain only data within Singapore main island. To do so, we use the following code.
+From our understanding, **others** data set contains the data of other neighbouring countries and islands outside of Singapore main island. Hence, we want to extract rows that contain only data within Singapore main island. To do so, we use the following code.
 
 ```{r}
 #| eval: false
@@ -753,7 +753,7 @@ write_rds(amenities, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/da
 amenities <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/amenities.rds")
 ```
 
-Here, we check whether we have achieved our desired result for amenities.
+Here, we check whether we have achieved our desired result for **amenities**.
 
 ```{r}
 #| eval: false
@@ -766,7 +766,7 @@ We've successfully extracted them!
 
 #### 2.3.7.3 Checking of geospatial data sets
 
-To confirm that all records in our eldercare and garden data sets are within the boundaries of Singapore main island, we can apply the following code.
+To confirm that all records in our **eldercare** and **garden** data sets are within the boundaries of Singapore main island, we can apply the following code.
 
 ```{r}
 eldercare[!unlist(st_contains(sgboundary_sf, eldercare)),]
@@ -776,13 +776,13 @@ eldercare[!unlist(st_contains(sgboundary_sf, eldercare)),]
 garden[!unlist(st_contains(sgboundary_sf, garden)),]
 ```
 
-In the above codes, we are checking for eldercare and garden records that are not contained by sgboundary_sf.
+In the above codes, we are checking for **eldercare** and **garden** records that are not contained by **sgboundary_sf**.
 
 Since the results return 0 row for both data sets, we are certain these data sets are confined to within Singapore's main island.
 
 ## 2.4 Extracting types of other amenities
 
-The amenities data set consists of different types of amenities recorded in different rows. To extract each of them (hospital, community centres, parks), we apply the codes below.
+The **amenities** data set consists of different types of amenities recorded in different rows. To extract each of them (hospital, community centres, parks), we apply the codes below.
 
 Hospital:
 
@@ -839,7 +839,7 @@ park <- read_rds("data/rds/park.rds")
 
 For our accessibility analysis, we would need the capacity (supply) of each facility.
 
-For eldercare, we use an estimated capacity of 100, implying that each eldercare centre can hold 100 elderly people at any point of time.
+For **eldercare**, we use an estimated capacity of 100, implying that each eldercare centre can hold 100 elderly people at any point of time.
 
 ```{r}
 eldercare <- eldercare %>% mutate(capacity = 100)
@@ -877,7 +877,7 @@ park <- park %>% mutate(capacity = 500)
 
 # 3 Data Preparation (Aspatial Data)
 
-The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the readr package.
+The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the **readr** package.
 
 ```{r}
 residents <- read.csv("data/respopagesextod2023.csv")
@@ -895,7 +895,7 @@ Since the data has an AG (age) field broken down into several age groups, let's 
 unique(residents$AG)
 ```
 
-Then, to extract only rows that contain residents aged 55 and above, and name this new data set as elderly, we can apply the following code.
+Then, to extract only rows that contain residents aged 55 and above, and name this new data set as **elderly**, we can apply the following code.
 
 ```{r}
 #| eval: false
@@ -943,9 +943,9 @@ mpsz_sf
 elderly
 ```
 
-From the above, we see that the subzone and planning area values in elderly data set are not in full uppercase, while that in mpsz_sf data set is in full uppercase. Since R is case sensitive, this would hinder our join.
+From the above, we see that the subzone and planning area values in **elderly** data set are not in full uppercase, while that in **mpsz_sf** data set is in full uppercase. Since R is case sensitive, this would hinder our join.
 
-Hence, we can change the values in elderly data set to full uppercase, so that it can match with the values in mpsz_sf. To do so, we can use toupper() as shown below.
+Hence, we can change the values in **elderly** data set to full uppercase, so that it can match with the values in **mpsz_sf**. To do so, we can use toupper() as shown below.
 
 ```{r}
 #| eval: false
@@ -957,7 +957,7 @@ elderly$PA <- toupper(elderly$PA)
 elderly$SZ <- toupper(elderly$SZ)
 ```
 
-Now that we have changed the values to uppercase, we can use left_join() from dplyr package to conduct our join, using subzone and planning area values.
+Now that we have changed the values to uppercase, we can use left_join() from **dplyr** package to conduct our join, using subzone and planning area values.
 
 ```{r}
 #| eval: false
@@ -979,7 +979,7 @@ mpsz_demand <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/
 mpsz_demand
 ```
 
-We've succesfully combined our data! Now, we can easily map the demand of each region geometrically for analysis later.
+We've successfully combined our data! Now, we can easily map the demand of each region geometrically for analysis later.
 
 # 5 Creating hexagon data
 
@@ -987,12 +987,20 @@ Accessibility analysis can be done with hexagon data as individual subzones migh
 
 ## 5.1 Making a hexagon object
 
-To make a hexagon object, we use st_make_grid() from sf package.
+To make a hexagon object, we use st_make_grid() from **sf** package.
 
 ```{r}
 #| eval: false
 hexagons <- st_make_grid(mpsz_sf, cellsize = 250, what = "polygons", square = FALSE)
 ```
+
+In the above code, we set
+
+-   cellsize = 250, such that distance between opposite edges is 250m
+
+-   what = "polygons" to create polygons
+
+-   square = FALSE to create hexagonal grid instead of square grid
 
 ```{r}
 #| eval: false
@@ -1055,7 +1063,7 @@ Alternatively, we can use class() to determine the object class of hexagon.
 class(hexagon)
 ```
 
-From the results, we see that hexagon is in sfc class. To convert it into an sf object for easier manipulation, we can use st_sf() as shown in the following code, and name the new sf object as hexagon_sf.
+From the results, we see that hexagon is in sfc class. To convert it into an sf object for easier manipulation, we can use st_sf() from **sf** as shown in the following code, and name the new sf object as **hexagon_sf**.
 
 ```{r}
 #| eval: false
@@ -1085,12 +1093,14 @@ plot(st_geometry(hexagon_sf))
 
 **Step 2: Inserting planning area and subzone names**
 
-Here, we use st_join() and st_within() from sf package to combine the aggregated demand for each subzone into the hexagon_sf data frame.
+Here, we use st_join() and st_overlaps() from **sf** package to combine the aggregated demand for each subzone into the **hexagon_sf** data frame.
 
 ```{r}
 #| eval: false
 hex <- st_join(hexagon_sf, mpsz_demand, st_overlaps)
 ```
+
+st_overlaps() allows us to join **mpsz_demand** to **hexagon_sf** as long as there is an area of overlap, including cases where geometries share boundaries or overlap partially.
 
 ```{r}
 #| eval: false
@@ -1125,7 +1135,7 @@ write_rds(hex_count, "data/rds/hex_count.rds")
 hex_count <- readRDS("data/rds/hex_count.rds")
 ```
 
-Then, we use left_join() from dplyr to include the total number of hexagons sharing the same subzone as the hexagon of that row.
+Then, we use left_join() from **dplyr** to include the total number of hexagons sharing the same subzone as the hexagon of that row.
 
 ```{r}
 #| eval: false
@@ -1167,7 +1177,7 @@ hex_sf <- readRDS("data/rds/hex_sf.rds")
 
 # 6 Preparing Distance Matrix
 
-We need the distance matrix between the residential areas (reflected in mpsz_demand) and each facility to determine the accessibility to the latter.
+We need the distance matrix between the residential areas (reflected in **mpsz_demand**) and each facility to determine the accessibility to the latter.
 
 To do so, we have to apply the steps in the following sections.
 
@@ -1333,7 +1343,7 @@ write_rds(eldercare_dist_matrix, "data/rds/eldercare_dist_matrix.rds")
 eldercare_dist_matrix <- readRDS("data/rds/eldercare_dist_matrix.rds")
 ```
 
-To have an understanding of how the distance looks like, we can apply the following code to see the first 10 rows and columns of eldercare_dist_matrix.
+To have an understanding of how the distance looks like, we can apply the following code to see the first 10 rows and columns of **eldercare_dist_matrix.**
 
 ```{r}
 head(eldercare_dist_matrix, n = c(5,5))
@@ -1510,7 +1520,7 @@ communitycentre_distmat_km <- readRDS("data/rds/communitycentre_distmat_km.rds")
 park_distmat_km <- readRDS("data/rds/park_distmat_km.rds")
 ```
 
-Let's take a look at the first 3 rows and columns of the eldercare_distmat_km matrix to have a rough idea of how it looks like.
+Let's take a look at the first 3 rows and columns of the **eldercare_distmat_km** matrix to have a rough idea of how it looks like.
 
 ```{r}
 head(eldercare_distmat_km, 3, 3)
@@ -1518,11 +1528,11 @@ head(eldercare_distmat_km, 3, 3)
 
 # 7 Modelling and Visualizing Accesssibility using Hansen Method
 
-To compute Hansen's accessibility, we use ac() of SpatialAcc package.
+To compute Hansen's accessibility, we use ac() of **SpatialAcc** package.
 
 ## 7.1 Computing Hansen's accessibility
 
-Here, we compute the accessibility of eldercare centres (eldercare) from each hexagon, and convert it to a data frame.
+Here, we compute the accessibility of eldercare centres (**eldercare**) from each hexagon, and convert it to a data frame.
 
 ```{r}
 #| eval: false
@@ -1558,7 +1568,7 @@ write_rds(eldercare_acc_hansen, "data/rds/eldercare_acc_hansen.rds")
 eldercare_acc_hansen <- readRDS("data/rds/eldercare_acc_hansen.rds")
 ```
 
-Next, we bind the columns of hex_sf and eldercare_acc_hansen so that we can find out the respective eldercare_acc_hansen values for each hexagon in hex_sf in a very clear manner, using bind_cols().
+Next, we bind the columns of **hex_sf** and **eldercare_acc_hansen** so that we can find out the respective eldercare_acc_hansen values for each hexagon in **hex_sf** in a very clear manner, using bind_cols().
 
 ```{r}
 #| eval: false
@@ -1748,7 +1758,7 @@ tm_shape(garden) +
 
 ![](images/ac%20garden%20hansen.png)
 
-Of course, we can adjust the options in tm_fill however we like. n represents the number of classifications for our accessibility values, and style represents how they should be classified.
+Of course, we can adjust the options in tm_fill() however we like. n represents the number of classifications for our accessibility values, and style represents how they should be classified.
 
 ## 7.3 Statistical graphic visualization
 
@@ -1756,7 +1766,7 @@ A statistical graphic visualization might be very helpful to give a concise big 
 
 Since we want a simpler view, we can perhaps choose to depict our data by regions as it consists of less variables.
 
-To derive the region name of each hexagon, we can use left_join() from dplyr as shown below, bringing region names in from mpsz, and joining both data sets using subzone names.
+To derive the region name of each hexagon, we can use left_join() from **dplyr** as shown below, bringing region names in from mpsz, and joining both data sets using subzone names.
 
 Eldercare:
 
@@ -1769,7 +1779,7 @@ eldercare_hansen <- left_join(eldercare_hexagon_hansen, st_drop_geometry(mpsz),
 
 In the above, we also selected relevant columns only, to keep our output simple.
 
-Then, we use the relevant ggplot2 functions to construct a boxplot of accessibility values by regions as shown below.
+Then, we use the relevant **ggplot2** functions to construct a boxplot of accessibility values by regions as shown below.
 
 ```{r}
 #| eval: false
@@ -1810,7 +1820,7 @@ ggplot(data=garden_hansen,
 
 # 8 Modelling and Visualizing Accesssibility using KD2SFCA Method
 
-Similar to Hansen method, we would be using ac() from SpatialAcc package. We would also mostly apply the same steps throughout the analysis, with the only change being the family argument used in ac().
+Similar to Hansen method, we would be using ac() from **SpatialAcc** package. We would also mostly apply the same steps throughout the analysis, with the only change being the family argument used in ac().
 
 ## 8.1 Computing KD2SFCA's accessibility
 
