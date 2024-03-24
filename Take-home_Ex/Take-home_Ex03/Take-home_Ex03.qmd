@@ -1,5 +1,5 @@
 ---
-title: "Take-home Exercise 3: Prototyping Modules for Geospatial Analytics Shiny Application (not done)"
+title: "Take-home Exercise 3: Prototyping Modules for Geospatial Analytics Shiny Application"
 format: 
   html: 
     code-fold: true
@@ -8,18 +8,100 @@ execute:
   freeze: true
   warning: false
 editor: visual
-date: "March 16, 2024"
+date: "March 24, 2024"
 ---
 
 # 1 Overview
 
 ## 1.1 Background
 
+Singapore is experiencing an ageing population, with an increasing proportion of the citizens aged 65 and older [by 11.7% compared to 10 years ago](https://www.cnbc.com/2023/10/30/as-singapores-aging-population-grows-businesses-court-older-spenders.html). In addition, the life expectancy of Singaporeans has been steadily [rising over the past five decades](https://smartwealth.sg/life-expectancy/). This has prompted the government to commit to building more eldercare facilities nationwide. Alongside this has come a push for [Active Ageing](https://www.moh.gov.sg/ifeelyoungsg/how-can-i-age-actively/stay-healthy/active-ageing-programmes) to encourage the elderly to “stay active, healthy and socially engaged”. To achieve this goal, the government has also been trying to [increase the number of active ageing centres](https://www.straitstimes.com/singapore/politics/ndr-2023-active-ageing-centres-to-be-expanded-to-help-seniors-stay-active-and-healthy) and possible locations for activities to make it more accessible to seniors.
+
+Our project would like to understand what the current distribution of eldercare facilities and amenities is across Singapore and selected planning areas within Singapore. We want to investigate whether there are enough facilities and amenities to ensure that the elderly not just age healthily, but age well. We also want to understand whether the facilities are spatially randomly distributed, and whether they are accessible from places of demand. In this particular take-home exercise, out focus will be on the accesibility of the following facilities from residential areas of elderly demand:
+
+Eldercare centres: Shared places of activities and bonding targeted at the elderly
+
+Community gardens: Community gardens where the elderly can pursue their gardening hobbies, or hang out with other residents
+
+Community Centres: Shared places in the residential area, where residents from different walks can and bond over activities. There are activities targeted specifically at the elderly, such as cooking workshops and dancing classes, helping them maintain
+
+Parks: Shared public places where the elderly can engage in outdoor physical activities to maintain an active lifestyle
+
+CHAS clinics: Clinics with CHAS (Community Health Assist Scheme), which allow eligible elderly to get access to medical services at subsidized rates.
+
+Hospitals: Hospitals that provide more thorough and comprehensive health services to the elderly.
+
 ## 1.2 Objectives
+
+In this take-home exercise, our objective is to model geographical accessibility of the abovementioned 6 facilities relevant to the elderly using R's geospatial analysis packages.
 
 ## 1.3 The Task
 
+Through this exercise, we will conduct the following procedures
+
+-   Install and load relevant R packages
+
+-   Import data of various formats (shapefile, geojson, kml, csv)
+
+-   Clean and wrangle data into our desired formats
+
+-   Compute accessibility measure using Hansen's potential model, KD2SFCA model, and Spatial Accessibility Method
+
+-   Visualize accessibility measures using tmap and ggplot2 packages
+
 ## 1.4 The Data
+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+| Dataset                                                                                                                                                                                                      | Notes                                                                                                                                            |
++==============================================================================================================================================================================================================+==================================================================================================================================================+
+| [Singapore Residents by Planning Area / Subzone, Age Group, Sex and Type of Dwelling, June 2023](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesextod2023.ashx) | -   Source: Department of Statistics, Singapore                                                                                                  |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Content: Attribute data containing the number of Singapore residents by planning area, subzone, age group, sex and type of dwelling, in 2023 |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Type: Polygon Data                                                                                                                           |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Format: csv                                                                                                                                  |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+| [Master Plan 2019 Subzone Boundary (No Sea)](https://beta.data.gov.sg/collections/1749/view)                                                                                                                 | -   Source: Urban Redevelopment Authority (URA)                                                                                                  |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Content: Geospatial data containing Singapore subzones, planning areas, and regions                                                          |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Type: Polygon Data                                                                                                                           |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Format: geojson                                                                                                                              |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+| [Eldercare Services](https://beta.data.gov.sg/collections/714/datasets/d_3545b068e3f3506c56b2cb6b6117b884/view)                                                                                              | -   Source: Ministry of Health, Singapore                                                                                                        |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Content: Geospatial and attribute data containing the records of eldercare services in Singapore as of February 29, 2024                     |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Type: Point Data                                                                                                                             |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Format: shapefile                                                                                                                            |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+| [Pois Data Set](https://download.geofabrik.de/)                                                                                                                                                              | -   Source: OpenStreetMap of Geofabrik server                                                                                                    |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Content: Facilties in Malaysia, Singapore and Brunei (e.g. parks, community centres, hospital)                                               |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Type: Polygon Data                                                                                                                           |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Format: shapefile                                                                                                                            |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+| [Community in Bloom](https://beta.data.gov.sg/collections/1479/view) (CIB)                                                                                                                                   | -   Source: National Parks Board, Singapore                                                                                                      |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Content: Community gardens in Singapore                                                                                                      |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Type: Point Data                                                                                                                             |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Format: kml                                                                                                                                  |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+| [CHAS clinics](https://beta.data.gov.sg/collections/2036/view)                                                                                                                                               | -   Source: Ministry of Health, Singapore                                                                                                        |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Content: CHAS clinics in Singapore                                                                                                           |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Type: Point Data                                                                                                                             |
+|                                                                                                                                                                                                              |                                                                                                                                                  |
+|                                                                                                                                                                                                              | -   Format: geojson                                                                                                                              |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## 1.5 Installing and Loading R Packages
 
@@ -88,7 +170,7 @@ eldercare_services
 
 The eldercare_services data set is point data, with dimensions XY and CRS SVY21.
 
-### 2.1.3 Community Gardens 
+### 2.1.3 Community Gardens
 
 ```{r}
 #| eval: false
@@ -109,6 +191,7 @@ gardensg <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/dat
 ```{r}
 gardensg
 ```
+
 We see that the gardens data set is of point data type, has XYZ dimension, and CRS is WGS84.
 
 ### 2.1.4 CHAS clinics
@@ -168,32 +251,46 @@ Let's visualize how it looks like using plot() and st_geometry() from the sf pac
 plot(st_geometry(mpsz2019))
 ```
 
+![](images/mpsz2019.png)
+
 ```{r}
 #| eval: false
 plot(st_geometry(eldercare_services))
 ```
+
+![](images/eldercare_services.png)
 
 ```{r}
 #| eval: false
 plot(st_geometry(gardensg))
 ```
 
+![](images/gardensg.png)
+
 ```{r}
 #| eval: false
 plot(st_geometry(chassg))
 ```
+
+![](images/chassg.png)
 
 ```{r}
 #| eval: false
 plot(st_geometry(other_amenities))
 ```
 
+![](images/other_amenities.png)
 
 ## 2.3 Data Pre-Processing
 
 ### 2.3.1 Dropping Z-dimension
 
-For mpsz2019, 
+Earlier, we established that mpsz, gardens and chassg contain the Z-dimension.
+
+To remove the Z-dimension which would potentially hinder our analysis, we can use st_zm() from sf package as shown in the codes below.
+
+For mpsz2019,
+
 ```{r}
 #| eval: false
 mpsz <- st_zm(mpsz2019)
@@ -210,7 +307,8 @@ write_rds(mpsz, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rd
 mpsz <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/mpsz.rds")
 ```
 
-For gardens, 
+For gardens,
+
 ```{r}
 #| eval: false
 gardens <- st_zm(gardensg)
@@ -227,7 +325,8 @@ write_rds(gardens, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data
 gardens <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/gardens.rds")
 ```
 
-For chassg, 
+For chassg,
+
 ```{r}
 #| eval: false
 chas_sg <- st_zm(chassg)
@@ -245,6 +344,8 @@ chas_sg <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data
 ```
 
 ### 2.3.2 Resolving invalid geometries
+
+To check for invalid geometries, we can apply the following codes.
 
 ```{r}
 length(which(st_is_valid(mpsz) == FALSE))
@@ -266,16 +367,23 @@ length(which(st_is_valid(chas_sg) == FALSE))
 length(which(st_is_valid(other_amenities) == FALSE))
 ```
 
+Among all of the geospatial data, only mpsz has invalid geometries. To resolve the invalid geometry, we use st_make_valid() from sf package as shown in the code below.
 
 ```{r}
 mpsz <- st_make_valid(mpsz)
 ```
 
+Now, let's check the result.
+
 ```{r}
 length(which(st_is_valid(mpsz) == FALSE))
 ```
 
+Nice, all our geospatial data consist of fully valid geometries now!
+
 ### 2.2.3 Handling missing values
+
+Here, we can apply the following codes to check for missing values in our data sets.
 
 ```{r}
 mpsz[rowSums(is.na(mpsz)) != 0, ]
@@ -285,9 +393,15 @@ mpsz[rowSums(is.na(mpsz)) != 0, ]
 eldercare_services[rowSums(is.na(eldercare_services)) != 0, ]
 ```
 
+Seems like eldercare_services contain missing values in all rows, likely attributed to certain columns that consist of fully NA values. Let's focus on checking only the relevant columns, NAME and geometry.
+
 ```{r}
 eldercare_services[rowSums(is.na(eldercare_services %>% select(11,19))) != 0, ]
 ```
+
+Yay, they seem to be alright!
+
+Then, we continue checking the other data sets.
 
 ```{r}
 gardens[rowSums(is.na(gardens)) != 0, ]
@@ -301,11 +415,19 @@ chas_sg[rowSums(is.na(chas_sg)) != 0, ]
 other_amenities[rowSums(is.na(other_amenities)) != 0, ]
 ```
 
+Similarly, other_amenities contain NA values in many rows. From the output, we can attribute it to the name column. Let's exclude the name column in our check:
+
 ```{r}
 other_amenities[rowSums(is.na(other_amenities %>% select(-name))) != 0, ]
 ```
 
+Excluding the name column, which is not very important for our analysis, we can conclude that there is no other missing values.
+
+We're done with handling the missing values in our geospatial data!
+
 ### 2.3.4 Changing and verifying CRS
+
+It is very important to ensure our geospatial data is in the appropriate and common CRS. To check for crs of each data set, we can use st_crs() from sf package.
 
 ```{r}
 st_crs(mpsz)
@@ -333,7 +455,8 @@ st_crs(other_amenities)
 
 The garden, chas_sg and other_amenities data sets are also not in our desired coordinate system (SVY21; EPSG: 3414). Hence, we need to reproject them too.
 
-To reproject data sets from one CRS to another CRS, we apply st_transform() as shown in the following three code chunks.
+To reproject data sets from one CRS to another CRS, we apply st_transform() from sf package as shown in the following three code chunks.
+
 ```{r}
 #| eval: false
 mpszsg <- st_transform(mpsz, 3414)
@@ -354,7 +477,7 @@ chas <- st_transform(chas_sg, 3414)
 others <- st_transform(other_amenities, 3414)
 ```
 
-For eldercare_services, we should assign the correct EPSG code using st_set_crs() instead.
+For eldercare_services, we should assign the correct EPSG code using st_set_crs() from sf package instead.
 
 ```{r}
 #| eval: false
@@ -376,6 +499,8 @@ garden <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/
 
 #### 2.3.6.1 Extraction of subzone and planning area names in mpsz_sf
 
+Currently, our mpsz_sg data is pretty messy. The subzone and planning area names are hidden in the Description field. To extract them, we should follow the codes below.
+
 For subzone:
 
 ```{r}
@@ -394,7 +519,6 @@ mpszsg$SUBZONE <- str_remove_all(mpszsg$SUBZONE, "<.*?>|SUBZONE_N")
 #| eval: false
 mpszsg$SUBZONE <- str_remove(mpszsg$SUBZONE, "^\\s+")
 ```
-
 
 For planning area:
 
@@ -415,7 +539,6 @@ mpszsg$PLAN_AREA <- str_remove_all(mpszsg$PLAN_AREA, "<.*?>|PLN_AREA_N")
 mpszsg$PLAN_AREA <- str_remove(mpszsg$PLAN_AREA, "^\\s+")
 ```
 
-
 ```{r}
 #| eval: false
 #| echo: false
@@ -432,6 +555,8 @@ head(mpszsg, 10)
 ```
 
 #### 2.3.6.2 Extraction of CHAS clinic names in chas
+
+Similarly, the chas data set has the clinic names hidden in the Description field. We apply the same steps as shown below to extract the clinic names.
 
 ```{r}
 #| eval: false
@@ -451,6 +576,8 @@ chas$NAME <- str_remove_all(chas$NAME, "^\\s+")
 ```
 
 #### 2.3.6.2 Extracting columns
+
+To simplify our analysis and speed up our computation, we should only retain relevant fields in our data sets. Hence, we use select() from dplyr package to select the fields that we want to keep.
 
 mpsz:
 
@@ -510,8 +637,11 @@ chas
 Let's take a look at our mpszsg data set.
 
 ```{r}
+#| eval: false
 plot(st_geometry(mpszsg))
 ```
+
+![](images/mpszsg.png)
 
 From the above, we can see that the data set contains geometries of the outer islands of Singapore. In our research, however, we do not need these data as we are focusing on the main island of Singapore.
 
@@ -526,12 +656,17 @@ From here, we can see that the outer islands are classified as " NORTH-EASTERN I
 To remove these islands from our data set, we can use filter() from the dplyr package and apply the following code chunk, removing records that contain the string "ISLANDS" in the PLAN_AREA column.
 
 ```{r}
+#| eval: false
 mpsz_sf <- mpszsg %>% filter(!str_detect(PLAN_AREA, "ISLANDS"))
 ```
 
 ```{r}
+#| eval: false
 plot(st_geometry(mpsz_sf))
+
 ```
+
+![](images/mpsz_sf.png)
 
 ```{r}
 #| eval: false
@@ -567,6 +702,8 @@ sgboundary_sf <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex0
 plot(st_geometry(sgboundary_sf))
 ```
 
+![](images/sgboundary_sf.png)
+
 #### 2.2.7.2 Extracting Singapore data from chas data set
 
 From our understanding, chas data set contains one data point at one of Singapore's outer islands. Hence, we want to extract rows that contain only data within Singapore main island. To do so, we use the following code.
@@ -587,10 +724,14 @@ write_rds(chas, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rd
 chas <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/chas.rds")
 ```
 
+Let's take a look at our extracted chas data.
+
 ```{r}
 #| eval: false
 plot(st_geometry(chas))
 ```
+
+![](images/chas.png)
 
 #### 2.2.7.2 Extracting Singapore data from others data set
 
@@ -612,14 +753,20 @@ write_rds(amenities, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/da
 amenities <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/amenities.rds")
 ```
 
+Here, we check whether we have achieved our desired result for amenities.
+
 ```{r}
 #| eval: false
 plot(st_geometry(amenities))
 ```
 
-#### 2.3.7.3 Checking of geospatial data sets 
+![](images/amenities.png)
 
-To confirm that all records in our eldercare and garden data sets are within the boundaries of Singapore main island, we can apply the following code. 
+We've successfully extracted them!
+
+#### 2.3.7.3 Checking of geospatial data sets
+
+To confirm that all records in our eldercare and garden data sets are within the boundaries of Singapore main island, we can apply the following code.
 
 ```{r}
 eldercare[!unlist(st_contains(sgboundary_sf, eldercare)),]
@@ -629,568 +776,106 @@ eldercare[!unlist(st_contains(sgboundary_sf, eldercare)),]
 garden[!unlist(st_contains(sgboundary_sf, garden)),]
 ```
 
-In the above codes, we are checking for eldercare and garden records that are not contained by sgboundary_sf. 
+In the above codes, we are checking for eldercare and garden records that are not contained by sgboundary_sf.
 
 Since the results return 0 row for both data sets, we are certain these data sets are confined to within Singapore's main island.
 
-# 3 Data Wrangling (Distance Matrix)
+## 2.4 Extracting types of other amenities
 
-## 3.1 Computing Distance Matrix
+The amenities data set consists of different types of amenities recorded in different rows. To extract each of them (hospital, community centres, parks), we apply the codes below.
 
-### 3.1.1 Converting from sf data.table to SpatialPolygonsDataFrame
-
-```{r}
-#| eval: false
-mpsz_sp <- as(mpsz_sf, "Spatial")
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(mpsz_sp, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/mpsz_sp.rds")
-```
-
-```{r}
-#| echo: false
-mpsz_sp <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/mpsz_sp.rds")
-```
-
-```{r}
-mpsz_sp
-```
-
-#### 3.1.1.1 Eldercare Centres
-
-```{r}
-#| eval: false
-eldercare_sp <- as(eldercare, "Spatial")
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(eldercare_sp, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/eldercare_sp.rds")
-```
-
-```{r}
-#| echo: false
-eldercare_sp <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/eldercare_sp.rds")
-```
-
-```{r}
-eldercare_sp
-```
-
-#### 3.1.1.2 Community gardens
-
-```{r}
-#| eval: false
-garden_sp <- as(garden, "Spatial")
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(garden_sp, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/garden_sp.rds")
-```
-
-```{r}
-#| echo: false
-garden_sp <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/garden_sp.rds")
-```
-
-```{r}
-garden_sp
-```
-
-#### 3.1.1.3 CHAS clinics
-
-```{r}
-#| eval: false
-chas_sp <- as(chas, "Spatial")
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(chas_sp, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/chas_sp.rds")
-```
-
-```{r}
-#| echo: false
-chas_sp <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/chas_sp.rds")
-```
-
-```{r}
-chas_sp
-```
-
-#### 3.1.1.4 Other amenities
-
-##### 3.1.1.4.1 Extracting amenities types
+Hospital:
 
 ```{r}
 hospital <- amenities %>% filter(fclass == "hospital")
 ```
 
 ```{r}
+#| eval: false
+#| echo: false
+write_rds(hospital, "data/rds/hospital.rds")
+```
+
+```{r}
+#| echo: false
+hospital <- read_rds("data/rds/hospital.rds")
+```
+
+Community Centre:
+
+```{r}
 communitycentre <- amenities %>% filter(fclass == "community_centre")
 ```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(communitycentre, "data/rds/communitycentre.rds")
+```
+
+```{r}
+#| echo: false
+communitycentre <- read_rds("data/rds/communitycentre.rds")
+```
+
+Park:
 
 ```{r}
 park <- amenities %>% filter(fclass == "park")
 ```
 
-##### 3.1.1.4.2 Converting to SpatialPolygonsDataFrame
-
-```{r}
-#| eval: false
-hospital_sp <- as(hospital, "Spatial")
-```
-
-```{r}
-#| eval: false
-communitycentre_sp <- as(communitycentre, "Spatial")
-```
-
-```{r}
-#| eval: false
-park_sp <- as(park, "Spatial")
-```
-
 ```{r}
 #| eval: false
 #| echo: false
-write_rds(hospital_sp, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/hospital_sp.rds")
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(communitycentre_sp, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/communitycentre_sp.rds")
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(park_sp, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/park_sp.rds")
+write_rds(park, "data/rds/park.rds")
 ```
 
 ```{r}
 #| echo: false
-hospital_sp <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/hospital_sp.rds")
+park <- read_rds("data/rds/park.rds")
 ```
 
-```{r}
-#| echo: false
-communitycentre_sp <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/communitycentre_sp.rds")
-```
-
-```{r}
-#| echo: false
-park_sp <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/park_sp.rds")
-```
-
-```{r}
-hospital_sp
-communitycentre_sp
-park_sp
-```
-
-### 3.1.2 Computing the distance matrix
-
-```{r}
-#| eval: false
-dist_matrix <- spDists(mpsz_sp, longlat = FALSE)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(dist_matrix, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/dist_matrix.rds")
-```
-
-```{r}
-#| echo: false
-dist_matrix <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/dist_matrix.rds")
-```
-
-```{r}
-head(dist_matrix, n = c(10,10))
-```
-
-#### 3.1.2.1 Eldercare centres
-
-```{r}
-#| eval: false
-eldercare_dist_matrix <- spDists(eldercare_sp, longlat = FALSE)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(eldercare_dist_matrix, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/eldercare_dist_matrix.rds")
-```
-
-```{r}
-#| echo: false
-eldercare_dist_matrix <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/eldercare_dist_matrix.rds")
-```
-
-```{r}
-head(eldercare_dist_matrix, n = c(10,10))
-```
-
-#### 3.1.2.2 Community gardens
-
-```{r}
-#| eval: false
-garden_dist_matrix <- spDists(garden_sp, longlat = FALSE)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(garden_dist_matrix, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/garden_dist_matrix.rds")
-```
-
-```{r}
-#| echo: false
-garden_dist_matrix <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/garden_dist_matrix.rds")
-```
-
-```{r}
-head(garden_dist_matrix, n = c(10,10))
-```
-
-#### 3.1.2.3 CHAS clinics
-
-```{r}
-#| eval: false
-chas_dist_matrix <- spDists(chas_sp, longlat = FALSE)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(chas_dist_matrix, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/chas_dist_matrix.rds")
-```
-
-```{r}
-#| echo: false
-chas_dist_matrix <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/chas_dist_matrix.rds")
-```
-
-```{r}
-head(chas_dist_matrix, n = c(10,10))
-```
-
-#### 3.1.2.4 Other amenities (Hospitals, Community Centres, Parks)
-
-Hospitals: 
-```{r}
-#| eval: false
-hospital_dist_matrix <- spDists(hospital_sp, longlat = FALSE)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(hospital_dist_matrix, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/hospital_dist_matrix.rds")
-```
-
-```{r}
-#| echo: false
-hospital_dist_matrix <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/hospital_dist_matrix.rds")
-```
-
-```{r}
-head(hospital_dist_matrix, n = c(10,10))
-```
-
-Community Centres:
-
-```{r}
-#| eval: false
-communitycentre_dist_matrix <- spDists(communitycentre_sp, longlat = FALSE)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(communitycentre_dist_matrix, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/communitycentre_dist_matrix.rds")
-```
-
-```{r}
-#| echo: false
-communitycentre_dist_matrix <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/communitycentre_dist_matrix.rds")
-```
-
-```{r}
-head(communitycentre_dist_matrix, n = c(10,10))
-```
-
-Parks:
-
-```{r}
-#| eval: false
-park_dist_matrix <- spDists(park_sp, longlat = FALSE)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(park_dist_matrix, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/park_dist_matrix.rds")
-```
-
-```{r}
-#| echo: false
-park_dist_matrix <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/park_dist_matrix.rds")
-```
-
-```{r}
-head(park_dist_matrix, n = c(10,10))
-```
-
-### 3.1.3 Labelling column and row headers of a distance matrix **(might not need!)**
-
-```{r}
-#| eval: false
-#| echo: false
-sz_names <- mpsz_sf$SUBZONE
-```
-
-```{r}
-#| eval: false
-#| echo: false
-colnames(dist_matrix) <- paste0(sz_names)
-rownames(dist_matrix) <- paste0(sz_names)
-```
-
-#### 3.1.3.1 Eldercare centres
-
-```{r}
-#| eval: false
-#| echo: false
-eldercare_names <- eldercare$NAME
-```
-
-```{r}
-#| eval: false
-#| echo: false
-colnames(eldercare_dist_matrix) <- paste0(eldercare_names)
-rownames(eldercare_dist_matrix) <- paste0(eldercare_names)
-```
-
-### ?? 3.1.4 Pivoting distance value by SUBZONE name **(might not need!)**
-
-```{r}
-#| eval: false
-#| echo: false
-distPair <- melt(dist_matrix) %>% 
-  rename(dist = value) %>%
-  rename(origin = Var1) %>%
-  rename(dest = Var2)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(distPair, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/distPair.rds")
-```
-
-```{r}
-#| eval: false
-#| echo: false
-distPair <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/distPair.rds")
-```
-
-```{r}
-#| eval: false
-#| echo: false
-head(distPair)
-```
-
-### ?? 3.1.5 Updating intra-zonal distances **(might not need!)**
-
-```{r}
-#| eval: false
-#| echo: false
-distPair %>% filter(dist > 0) %>%
-  summary()
-```
-
-From the results, we can see that the minimum distance is 173.8m.
-
-Next, a constant distance of 50m is added into the intra-zones distance.
-
-```{r}
-#| eval: false
-#| echo: false
-distPair$dist <- ifelse(distPair$dist == 0, 50, distPair$dist)
-```
-
-The code below can be used to check the result data.frame.
-
-```{r}
-#| eval: false
-#| echo: false
-distPair %>% summary()
-```
-
-### 3.1.6 Distance matrix in kilometres
-
-```{r}
-#| eval: false
-distmat_km <- as.matrix(dist_matrix/1000)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(distmat_km, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/distmat_km.rds")
-```
-
-```{r}
-#| echo: false
-distmat_km <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/distmat_km.rds")
-```
-
-#### 3.1.6.1. Eldercare centres
-
-```{r}
-#| eval: false
-eldercare_distmat_km <- as.matrix(eldercare_dist_matrix/1000)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(eldercare_distmat_km, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/eldercare_distmat_km.rds")
-```
-
-```{r}
-#| echo: false
-eldercare_distmat_km <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/eldercare_distmat_km.rds")
-```
-
-```{r}
-eldercare_distmat_km
-```
-
-#### 3.1.6.2 Community Gardens
-
-```{r}
-#| eval: false
-garden_distmat_km <- as.matrix(garden_dist_matrix/1000)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(garden_distmat_km, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/garden_distmat_km.rds")
-```
-
-```{r}
-#| echo: false
-garden_distmat_km <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/garden_distmat_km.rds")
-```
-
-```{r}
-garden_distmat_km
-```
-
-#### 3.1.6.3 CHAS clinics
-
-```{r}
-#| eval: false
-chas_distmat_km <- as.matrix(chas_dist_matrix/1000)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(chas_distmat_km, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/chas_distmat_km.rds")
-```
-
-```{r}
-#| echo: false
-chas_distmat_km <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/chas_distmat_km.rds")
-```
-
-```{r}
-chas_distmat_km
-```
+## 2.5 Inserting capacity columns into facilities data frames
 
-#### 3.1.6.4 Other amenities (Hospital, Community Centres, Parks)
+For our accessibility analysis, we would need the capacity (supply) of each facility.
 
-Hospital:
-
-```{r}
-#| eval: false
-hospital_distmat_km <- as.matrix(hospital_dist_matrix/1000)
-```
+For eldercare, we use an estimated capacity of 100, implying that each eldercare centre can hold 100 elderly people at any point of time.
 
 ```{r}
-#| eval: false
-#| echo: false
-write_rds(hospital_distmat_km, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/hospital_distmat_km.rds")
+eldercare <- eldercare %>% mutate(capacity = 100)
 ```
 
-```{r}
-#| echo: false
-hospital_distmat_km <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/hospital_distmat_km.rds")
-```
+Community gardens are not very big, occupying a small land space within estates. Hence, we use an estimated capacity of 15, implying that each community garden can hold 25 elderly people at any point of time.
 
 ```{r}
-hospital_distmat_km
+garden <- garden %>% mutate(capacity = 25)
 ```
 
-Community Centres:
-
-```{r}
-#| eval: false
-communitycentre_distmat_km <- as.matrix(communitycentre_dist_matrix/1000)
-```
+Most general practitioner clinics in Singapore are also small in scale. Hence, we assume that each of them can hold 15 elderly people each time.
 
 ```{r}
-#| eval: false
-#| echo: false
-write_rds(communitycentre_distmat_km, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/communitycentre_distmat_km.rds")
+chas <- chas %>% mutate(capacity=15)
 ```
 
-```{r}
-#| echo: false
-communitycentre_distmat_km <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/communitycentre_distmat_km.rds")
-```
+Hospitals in Singapore has varying capacity. Based on various articles, such as this, we estimate that each hospital can hold about [1000](https://www.skh.com.sg/news/announcements/sengkang-general-and-community-hospitals-open-their-doors-to-serve-the-northeast-community) elderly people at any point of time.
 
 ```{r}
-communitycentre_distmat_km
+hospital <- hospital %>% mutate(capacity=1000)
 ```
-
-Parks:
 
-```{r}
-#| eval: false
-park_distmat_km <- as.matrix(park_dist_matrix/1000)
-```
+Community centres occupy a significant land area, holding many activities for the entire neighbourhood. Hence, we estimate that it can hold about 1000 elderly at any point in time.
 
 ```{r}
-#| eval: false
-#| echo: false
-write_rds(park_distmat_km, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/park_distmat_km.rds")
+communitycentre <- communitycentre %>% mutate(capacity = 1000)
 ```
 
-```{r}
-#| echo: false
-park_distmat_km <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/park_distmat_km.rds")
-```
+Most parks in Singapore are quite big and can hold approximately 500 elderly at any point in time.
 
 ```{r}
-park_distmat_km
+park <- park %>% mutate(capacity = 500)
 ```
 
-# 4 Data Preparation (Aspatial Data)
+# 3 Data Preparation (Aspatial Data)
 
 The first step to dealing with our aspatial data is to import it into our R environment. To do so, we can use read_csv() from the readr package.
 
@@ -1198,9 +883,13 @@ The first step to dealing with our aspatial data is to import it into our R envi
 residents <- read.csv("data/respopagesextod2023.csv")
 ```
 
+We take a look at the residents data.
+
 ```{r}
 glimpse(residents)
 ```
+
+Since the data has an AG (age) field broken down into several age groups, let's take a look at how many unique age group classifications there are using the following code.
 
 ```{r}
 unique(residents$AG)
@@ -1242,7 +931,9 @@ elderly <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data
 elderly
 ```
 
-# 5 Joining geospatial and aspatial data 
+# 4 Joining geospatial and aspatial data
+
+It's time to combine the geospatial and aspatial data, using subzone and planning area names.
 
 ```{r}
 mpsz_sf
@@ -1251,6 +942,10 @@ mpsz_sf
 ```{r}
 elderly
 ```
+
+From the above, we see that the subzone and planning area values in elderly data set are not in full uppercase, while that in mpsz_sf data set is in full uppercase. Since R is case sensitive, this would hinder our join.
+
+Hence, we can change the values in elderly data set to full uppercase, so that it can match with the values in mpsz_sf. To do so, we can use toupper() as shown below.
 
 ```{r}
 #| eval: false
@@ -1261,6 +956,8 @@ elderly$PA <- toupper(elderly$PA)
 #| eval: false
 elderly$SZ <- toupper(elderly$SZ)
 ```
+
+Now that we have changed the values to uppercase, we can use left_join() from dplyr package to conduct our join, using subzone and planning area values.
 
 ```{r}
 #| eval: false
@@ -1278,9 +975,19 @@ write_rds(mpsz_demand, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/
 mpsz_demand <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/mpsz_demand.rds")
 ```
 
-# 6 Creating hexagon data 
+```{r}
+mpsz_demand
+```
 
-#### 6.1 Making a hexagon object
+We've succesfully combined our data! Now, we can easily map the demand of each region geometrically for analysis later.
+
+# 5 Creating hexagon data
+
+Accessibility analysis can be done with hexagon data as individual subzones might be too large. In this section, we will create hexagon data.
+
+## 5.1 Making a hexagon object
+
+To make a hexagon object, we use st_make_grid() from sf package.
 
 ```{r}
 #| eval: false
@@ -1303,11 +1010,14 @@ hexagons <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/dat
 plot(st_geometry(hexagons))
 ```
 
-## 6.2 Deriving hexagon of Singapore main island
+![](images/hexagons.png)
+
+## 5.2 Deriving hexagon of Singapore main island
 
 To get the hexagon of Singapore main island,
 
 ```{r}
+#| eval: false
 hexagon <- hexagons %>% st_intersection(mpsz_sf)
 ```
 
@@ -1323,10 +1033,13 @@ hexagon <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data
 ```
 
 ```{r}
+#| eval: false
 plot(st_geometry(hexagon))
 ```
 
-## 6.3 Inserting attributes into hexagon 
+![](images/hexagon.png)
+
+## 5.3 Inserting attributes into hexagon
 
 **Step 1: Converting hexagon into sf object**
 
@@ -1372,112 +1085,465 @@ plot(st_geometry(hexagon_sf))
 
 **Step 2: Inserting planning area and subzone names**
 
-Here, we use st_join() and st_within() from sf package to combine the aggregated demand for each subzone into the hexagon_sf data frame. 
+Here, we use st_join() and st_within() from sf package to combine the aggregated demand for each subzone into the hexagon_sf data frame.
 
 ```{r}
-hexagon_demand <- st_join(hexagon_sf, mpsz_demand, st_within)
+#| eval: false
+hex <- st_join(hexagon_sf, mpsz_demand, st_overlaps)
 ```
 
 ```{r}
 #| eval: false
 #| echo: false
-write_rds(hexagon_demand, "data/rds/hexagon_demand.rds")
+write_rds(hex, "data/rds/hex.rds")
 ```
 
 ```{r}
 #| echo: false
-hexagon_demand <- readRDS("data/rds/hexagon_demand.rds")
+#| eval: false
+hex <- readRDS("data/rds/hex.rds")
+```
+
+Since many hexagons can make up a single subzone, and the current demand field in the hexagon_demand represents the demand for one entire subzone, we have to divide the aggregated demand across the different hexagons in each subzone.
+
+To do so, we first find out the count of hexagons contained in each subzone by using the following code.
+
+```{r}
+#| eval: false
+hex_count <- st_drop_geometry(hex) %>% count(SUBZONE)
 ```
 
 ```{r}
 #| eval: false
 #| echo: false
-plot(st_geometry(hexagon_demand))
+write_rds(hex_count, "data/rds/hex_count.rds")
 ```
 
-Since many hexagons can make up a single subzone, and the current demand field in the hexagon_demand represents the demand for one entire subzone, we have to divide the aggregated demand across the different hexagons in each subzone. 
-
-To do so, we first find out the numner of hexagons contained in each subzone by using the following code.
-
 ```{r}
+#| echo: false
 #| eval: false
-#| echo: false
-hexagon_count <- st_drop_geometry(hexagon_demand) %>% count(SUBZONE)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-write_rds(hexagon_count, "data/rds/hexagon_count.rds")
-```
-
-```{r}
-#| echo: false
-hexagon_count <- readRDS("data/rds/hexagon_count.rds")
+hex_count <- readRDS("data/rds/hex_count.rds")
 ```
 
 Then, we use left_join() from dplyr to include the total number of hexagons sharing the same subzone as the hexagon of that row.
 
 ```{r}
 #| eval: false
-#| echo: false
-hexagon_demand_sf <- left_join(hexagon_demand, hexagon_count)
+hex_demand_sf <- left_join(hex, hex_count)
 ```
 
 ```{r}
 #| eval: false
 #| echo: false
-write_rds(hexagon_demand_sf, "data/rds/hexagon_demand_sf.rds")
+write_rds(hex_demand_sf, "data/rds/hex_demand_sf.rds")
 ```
 
 ```{r}
 #| echo: false
-hexagon_demand_sf <- readRDS("data/rds/hexagon_demand_sf.rds")
+hex_demand_sf <- readRDS("data/rds/hex_demand_sf.rds")
 ```
 
 ```{r}
-hexagon_demand_sf
+hex_demand_sf
 ```
 
-Next, we divide the aggregated demand by the number of hexagons sharing the same subzone. The new field, hexagon_demand, indicates the average demand of the particular hexagon. 
+Next, we divide the aggregated demand by the number of hexagons sharing the same subzone. The new field, hexagon_demand, indicates the average demand of the particular hexagon.
 
 ```{r}
-hexagondemand_sf <- hexagon_demand_sf %>% mutate(hexagon_demand = ceiling(demand/n))
+#| eval: false
+hex_sf <- hex_demand_sf %>% mutate(hexagon_demand = ceiling(demand/n))
 ```
 
 ```{r}
 #| eval: false
 #| echo: false
-write_rds(hexagondemand_sf, "data/rds/hexagondemand_sf.rds")
+write_rds(hex_sf, "data/rds/hex_sf.rds")
 ```
 
 ```{r}
 #| echo: false
-hexagondemand_sf <- readRDS("data/rds/hexagondemand_sf.rds")
+hex_sf <- readRDS("data/rds/hex_sf.rds")
+```
+
+# 6 Preparing Distance Matrix
+
+We need the distance matrix between the residential areas (reflected in mpsz_demand) and each facility to determine the accessibility to the latter.
+
+To do so, we have to apply the steps in the following sections.
+
+### 6.1.1 Convert from sf data.table to SpatialPolygonsDataFrame
+
+We can use data in sf format to prepare distance matrix. However, there has been empirical evidence that it is too computationally intensive, and that sp format is a better choice computationally. Hence, we convert our sf data sets into sp objects.
+
+#### 6.1.1.1 hex_sf
+
+```{r}
+#| eval: false
+hex_sp <- as(hex_sf, "Spatial")
 ```
 
 ```{r}
-eldercare <- eldercare %>% mutate(capacity = 2500)
+#| eval: false
+#| echo: false
+write_rds(hex_sp, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/hex_sp.rds")
 ```
 
-
-# 5 Modelling and Visualizing Accesssibility using Hansen Method *(requires hexagon)*
-
-## 5.1 Computing Hansen's accessibility (requires hexagon)
+```{r}
+#| echo: false
+hex_sp <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/hex_sp.rds")
+```
 
 ```{r}
-eldercare_acc_hansen <- data.frame(ac(hexagondemand_sf$hexagon_demand,
+hex_sp
+```
+
+#### 6.1.1.2 Eldercare Centres
+
+```{r}
+#| eval: false
+eldercare_sp <- as(eldercare, "Spatial")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(eldercare_sp, "/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/eldercare_sp.rds")
+```
+
+```{r}
+#| echo: false
+eldercare_sp <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/eldercare_sp.rds")
+```
+
+```{r}
+eldercare_sp
+```
+
+#### 6.1.1.3 Community gardens
+
+```{r}
+#| eval: false
+garden_sp <- as(garden, "Spatial")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(garden_sp, "data/rds/garden_sp.rds")
+```
+
+```{r}
+#| echo: false
+garden_sp <- readRDS("data/rds/garden_sp.rds")
+```
+
+#### 6.1.1.4 CHAS clinics
+
+```{r}
+#| eval: false
+chas_sp <- as(chas, "Spatial")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(chas_sp, "data/rds/chas_sp.rds")
+```
+
+```{r}
+#| echo: false
+chas_sp <- readRDS("data/rds/chas_sp.rds")
+```
+
+#### 6.1.1.5 Hospitals
+
+```{r}
+#| eval: false
+hospital_sp <- as(hospital, "Spatial")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(hospital_sp, "data/rds/hospital_sp.rds")
+```
+
+```{r}
+#| echo: false
+hospital_sp <- readRDS("data/rds/hospital_sp.rds")
+```
+
+#### 6.1.1.5 Community Centres
+
+```{r}
+#| eval: false
+communitycentre_sp <- as(communitycentre, "Spatial")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(communitycentre_sp, "data/rds/communitycentre_sp.rds")
+```
+
+```{r}
+#| echo: false
+communitycentre_sp <- readRDS("data/rds/communitycentre_sp.rds")
+```
+
+#### 6.1.1.6 Parks
+
+```{r}
+#| eval: false
+park_sp <- as(park, "Spatial")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(park_sp, "data/rds/park_sp.rds")
+```
+
+```{r}
+#| echo: false
+park_sp <- readRDS("data/rds/park_sp.rds")
+```
+
+### 6.1.2 Computing distance matrix
+
+Next, we use spDists from sp to compute the distance matrix from each hexagon in hex_sp to each location in every facility data set, as shown below.
+
+#### 6.1.2.1 Hexagons and eldercare centres
+
+```{r}
+#| eval: false
+eldercare_dist_matrix <- spDists(hex_sp, eldercare_sp, longlat = FALSE)
+```
+
+We put the longlat argument as FALSE as our data set geometries are not in longlat format.
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(eldercare_dist_matrix, "data/rds/eldercare_dist_matrix.rds")
+```
+
+```{r}
+#| echo: false
+eldercare_dist_matrix <- readRDS("data/rds/eldercare_dist_matrix.rds")
+```
+
+To have an understanding of how the distance looks like, we can apply the following code to see the first 10 rows and columns of eldercare_dist_matrix.
+
+```{r}
+head(eldercare_dist_matrix, n = c(5,5))
+```
+
+Then, we repeat the same steps for all other facilities in section 3.1.2.2 to 3.1.3.4.
+
+#### 6.1.2.2 Community gardens
+
+```{r}
+#| eval: false
+garden_dist_matrix <- spDists(hex_sp, garden_sp, longlat = FALSE)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(garden_dist_matrix, "data/rds/garden_dist_matrix.rds")
+```
+
+```{r}
+#| echo: false
+garden_dist_matrix <- readRDS("data/rds/garden_dist_matrix.rds")
+```
+
+#### 6.1.2.3 CHAS clinics
+
+```{r}
+#| eval: false
+chas_dist_matrix <- spDists(hex_sp, chas_sp, longlat = FALSE)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(chas_dist_matrix, "data/rds/chas_dist_matrix.rds")
+```
+
+```{r}
+#| echo: false
+chas_dist_matrix <- readRDS("/Users/binhui-ong/IS415-GAA/Take-home_Ex/Take-home_Ex03/data/rds/chas_dist_matrix.rds")
+```
+
+#### 6.1.2.4 Other amenities (Hospitals, Community Centres, Parks)
+
+Hospitals:
+
+```{r}
+#| eval: false
+hospital_dist_matrix <- spDists(hex_sp, hospital_sp, longlat = FALSE)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(hospital_dist_matrix, "data/rds/hospital_dist_matrix.rds")
+```
+
+```{r}
+#| echo: false
+hospital_dist_matrix <- readRDS("data/rds/hospital_dist_matrix.rds")
+```
+
+Community Centres:
+
+```{r}
+#| eval: false
+communitycentre_dist_matrix <- spDists(hex_sp, communitycentre_sp, longlat = FALSE)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(communitycentre_dist_matrix, "data/rds/communitycentre_dist_matrix.rds")
+```
+
+```{r}
+#| echo: false
+communitycentre_dist_matrix <- readRDS("data/rds/communitycentre_dist_matrix.rds")
+```
+
+Parks:
+
+```{r}
+#| eval: false
+park_dist_matrix <- spDists(hex_sp, park_sp, longlat = FALSE)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(park_dist_matrix, "data/rds/park_dist_matrix.rds")
+```
+
+```{r}
+#| echo: false
+park_dist_matrix <- readRDS("data/rds/park_dist_matrix.rds")
+```
+
+### 6.1.3 Labelling column and row headers of distance matrix
+
+Right now, our matrices do not have column and row headers, which can make it difficult to trace the hexagons and facilities when we look at them.
+
+Hence, we use the codes below to extract the names of each data set.
+
+```{r}
+#| eval: false
+#| echo: false
+sz_names <- hex_sf$SUBZONE
+eldercare_names <- eldercare$NAME
+garden_names <- garden$Name
+chas_names <- chas$NAME
+hospital_names <- hospital$name
+communitycentre_names <- communitycentre$name
+park_names <- park$name
+```
+
+Then, we insert the names into the matrices accordingly.
+
+```{r}
+#| eval: false
+#| echo: false
+colnames(eldercare_dist_matrix) <- paste0(eldercare_names)
+rownames(eldercare_dist_matrix) <- paste0(sz_names)
+
+colnames(garden_dist_matrix) <- paste0(garden_names)
+rownames(garden_dist_matrix) <- paste0(sz_names)
+
+colnames(chas_dist_matrix) <- paste0(chas_names)
+rownames(chas_dist_matrix) <- paste0(sz_names)
+
+colnames(hospital_dist_matrix) <- paste0(hospital_names)
+rownames(hospital_dist_matrix) <- paste0(sz_names)
+
+colnames(communitycentre_dist_matrix) <- paste0(communitycentre_names)
+rownames(communitycentre_dist_matrix) <- paste0(sz_names)
+
+colnames(park_dist_matrix) <- paste0(park_names)
+rownames(park_dist_matrix) <- paste0(sz_names)
+```
+
+### 6.1.6 Distance matrix in kilometres
+
+Since our distance matrix values are currently in metres (as we used the SVY21 CRS), the unit system is a bit too small. We can convert their units to to kilometres using the code chunk below.
+
+```{r}
+#| eval: false
+eldercare_distmat_km <- as.matrix(eldercare_dist_matrix/1000)
+garden_distmat_km <- as.matrix(garden_dist_matrix/1000)
+chas_distmat_km <- as.matrix(chas_dist_matrix/1000)
+hospital_distmat_km <- as.matrix(hospital_dist_matrix/1000)
+communitycentre_distmat_km <- as.matrix(communitycentre_dist_matrix/1000)
+park_distmat_km <- as.matrix(park_dist_matrix/1000)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(eldercare_distmat_km, "data/rds/eldercare_distmat_km.rds")
+write_rds(garden_distmat_km, "data/rds/garden_distmat_km.rds")
+write_rds(chas_distmat_km, "data/rds/chas_distmat_km.rds")
+write_rds(hospital_distmat_km, "data/rds/hospital_distmat_km.rds")
+write_rds(communitycentre_distmat_km, "data/rds/communitycentre_distmat_km.rds")
+write_rds(park_distmat_km, "data/rds/park_distmat_km.rds")
+```
+
+```{r}
+#| echo: false
+eldercare_distmat_km <- readRDS("data/rds/eldercare_distmat_km.rds")
+garden_distmat_km <- readRDS("data/rds/garden_distmat_km.rds")
+chas_distmat_km <- readRDS("data/rds/chas_distmat_km.rds")
+hospital_distmat_km <- readRDS("data/rds/hospital_distmat_km.rds")
+communitycentre_distmat_km <- readRDS("data/rds/communitycentre_distmat_km.rds")
+park_distmat_km <- readRDS("data/rds/park_distmat_km.rds")
+```
+
+Let's take a look at the first 3 rows and columns of the eldercare_distmat_km matrix to have a rough idea of how it looks like.
+
+```{r}
+head(eldercare_distmat_km, 3, 3)
+```
+
+# 7 Modelling and Visualizing Accesssibility using Hansen Method
+
+To compute Hansen's accessibility, we use ac() of SpatialAcc package.
+
+## 7.1 Computing Hansen's accessibility
+
+Here, we compute the accessibility of eldercare centres (eldercare) from each hexagon, and convert it to a data frame.
+
+```{r}
+#| eval: false
+eldercare_acc_hansen <- data.frame(ac(hex_sf$hexagon_demand,
                                       eldercare$capacity,
                                       eldercare_distmat_km,
                                       power = 2,
                                       family = "Hansen"))
 ```
 
+Then, we rename the column name as it looks too messy (and confusing if we want to copy it later on).
+
 ```{r}
+#| eval: false
 colnames(eldercare_acc_hansen) <- "accHansen"
 ```
 
+Then, we convert the data into tibble format.
+
 ```{r}
+#| eval: false
 eldercare_acc_hansen <- as_tibble(eldercare_acc_hansen)
 ```
 
@@ -1492,23 +1558,834 @@ write_rds(eldercare_acc_hansen, "data/rds/eldercare_acc_hansen.rds")
 eldercare_acc_hansen <- readRDS("data/rds/eldercare_acc_hansen.rds")
 ```
 
-**stuck here**
+Next, we bind the columns of hex_sf and eldercare_acc_hansen so that we can find out the respective eldercare_acc_hansen values for each hexagon in hex_sf in a very clear manner, using bind_cols().
+
 ```{r}
 #| eval: false
 #| echo: false
-eldercare_hexagon_hansen <- bind_cols(hexagondemand_sf, eldercare_acc_hansen)
-```
-
-## 5.2 Visualizing Hansen's accessibility
-
-### 5.2.1 Extracting map extend (requires hexagon)
-
-```{r}
-
+eldercare_hexagon_hansen <- bind_cols(hex_sf, eldercare_acc_hansen)
 ```
 
 ```{r}
-
+#| eval: false
+write_rds(eldercare_hexagon_hansen, "data/rds/eldercare_hexagon_hansen.rds")
 ```
 
-### 5.3 Statistical graphic visualization
+```{r}
+#| echo: false
+eldercare_hexagon_hansen <- read_rds("data/rds/eldercare_hexagon_hansen.rds")
+```
+
+We can do the same for the other 5 types of facilities, as shown in the following code.
+
+```{r}
+#| eval: false
+garden_acc_hansen <- data.frame(ac(hex_sf$hexagon_demand,
+                                      garden$capacity,
+                                      garden_distmat_km,
+                                      power = 2,
+                                      family = "Hansen"))
+chas_acc_hansen <- data.frame(ac(hex_sf$hexagon_demand,
+                                      chas$capacity,
+                                      chas_distmat_km,
+                                      power = 2,
+                                      family = "Hansen"))
+hospital_acc_hansen <- data.frame(ac(hex_sf$hexagon_demand,
+                                      hospital$capacity,
+                                      hospital_distmat_km,
+                                      power = 2,
+                                      family = "Hansen"))
+communitycentre_acc_hansen <- data.frame(ac(hex_sf$hexagon_demand,
+                                      communitycentre$capacity,
+                                      communitycentre_distmat_km,
+                                      power = 2,
+                                      family = "Hansen"))
+park_acc_hansen <- data.frame(ac(hex_sf$hexagon_demand,
+                                      park$capacity,
+                                      park_distmat_km,
+                                      power = 2,
+                                      family = "Hansen"))
+```
+
+```{r}
+#| eval: false
+colnames(garden_acc_hansen) <- "accHansen"
+colnames(chas_acc_hansen) <- "accHansen"
+colnames(hospital_acc_hansen) <- "accHansen"
+colnames(communitycentre_acc_hansen) <- "accHansen"
+colnames(park_acc_hansen) <- "accHansen"
+```
+
+```{r}
+#| eval: false
+garden_acc_hansen <- as_tibble(garden_acc_hansen)
+chas_acc_hansen <- as_tibble(chas_acc_hansen)
+hospital_acc_hansen <- as_tibble(hospital_acc_hansen)
+communitycentre_acc_hansen <- as_tibble(communitycentre_acc_hansen)
+park_acc_hansen <- as_tibble(park_acc_hansen)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(garden_acc_hansen, "data/rds/garden_acc_hansen.rds")
+write_rds(chas_acc_hansen, "data/rds/chas_acc_hansen.rds")
+write_rds(hospital_acc_hansen, "data/rds/hospital_acc_hansen.rds")
+write_rds(communitycentre_acc_hansen, "data/rds/communitycentre_acc_hansen.rds")
+write_rds(park_acc_hansen, "data/rds/park_acc_hansen.rds")
+```
+
+```{r}
+#| echo: false
+garden_acc_hansen <- read_rds("data/rds/garden_acc_hansen.rds")
+chas_acc_hansen <- read_rds("data/rds/chas_acc_hansen.rds")
+hospital_acc_hansen <- read_rds("data/rds/hospital_acc_hansen.rds")
+communitycentre_acc_hansen <- read_rds("data/rds/communitycentre_acc_hansen.rds")
+park_acc_hansen <- read_rds("data/rds/park_acc_hansen.rds")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+garden_hexagon_hansen <- bind_cols(hex_sf, garden_acc_hansen)
+chas_hexagon_hansen <- bind_cols(hex_sf, chas_acc_hansen)
+hospital_hexagon_hansen <- bind_cols(hex_sf, hospital_acc_hansen)
+communitycentre_hexagon_hansen <- bind_cols(hex_sf, communitycentre_acc_hansen)
+park_hexagon_hansen <- bind_cols(hex_sf, park_acc_hansen)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(garden_hexagon_hansen, "data/rds/garden_hexagon_hansen.rds")
+write_rds(chas_hexagon_hansen, "data/rds/chas_hexagon_hansen.rds")
+write_rds(hospital_hexagon_hansen, "data/rds/hospital_hexagon_hansen.rds")
+write_rds(communitycentre_hexagon_hansen, "data/rds/communitycentre_hexagon_hansen.rds")
+write_rds(park_hexagon_hansen, "data/rds/park_hexagon_hansen.rds")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+garden_hexagon_hansen <- read_rds("data/rds/garden_hexagon_hansen.rds")
+chas_hexagon_hansen <- read_rds("data/rds/chas_hexagon_hansen.rds")
+hospital_hexagon_hansen <- read_rds("data/rds/hospital_hexagon_hansen.rds")
+communitycentre_hexagon_hansen <- read_rds("data/rds/communitycentre_hexagon_hansen.rds")
+park_hexagon_hansen <- read_rds("data/rds/park_hexagon_hansen.rds")
+```
+
+## 7.2 Visualizing Hansen's accessibility
+
+### 7.2.1 Extracting map extend
+
+We need to map extend for our visualizations. To extract it, we use st_bbox() from sf package.
+
+```{r}
+mapex <- st_bbox(hex_sf)
+```
+
+### 7.2.2 Visualization
+
+Then, we apply the appropriate tmap functions to create our visualization of the accessibility values. Here, I will only show selected facilities due to space constraints.
+
+Eldercare centres:
+
+```{r}
+#| eval: false
+tmap_mode("plot")
+tm_shape(eldercare_hexagon_hansen,
+         bbox = mapex) + 
+  tm_fill(col = "accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(eldercare) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to eldercare: Hansen method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+![](images/ac%20eldercare%20hansen.png)
+
+Community gardens:
+
+```{r}
+#| eval: false
+tmap_mode("plot")
+tm_shape(garden_hexagon_hansen,
+         bbox = mapex) + 
+  tm_fill(col = "accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(garden) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to community gardens: Hansen method",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+![](images/ac%20garden%20hansen.png)
+
+Of course, we can adjust the options in tm_fill however we like. n represents the number of classifications for our accessibility values, and style represents how they should be classified.
+
+## 7.3 Statistical graphic visualization
+
+A statistical graphic visualization might be very helpful to give a concise big picture of our data too.
+
+Since we want a simpler view, we can perhaps choose to depict our data by regions as it consists of less variables.
+
+To derive the region name of each hexagon, we can use left_join() from dplyr as shown below, bringing region names in from mpsz, and joining both data sets using subzone names.
+
+Eldercare:
+
+```{r}
+#| eval: false
+eldercare_hansen <- left_join(eldercare_hexagon_hansen, st_drop_geometry(mpsz), 
+                          by = c(`SUBZONE` = 'SUBZONE_N')) %>% 
+  select(1:6, 13)
+```
+
+In the above, we also selected relevant columns only, to keep our output simple.
+
+Then, we use the relevant ggplot2 functions to construct a boxplot of accessibility values by regions as shown below.
+
+```{r}
+#| eval: false
+ggplot(data=eldercare_hansen, 
+       aes(y = log(accHansen), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+![](images/eldercare%20hansen%20stat%20plot.png)
+
+Community gardens:
+
+```{r}
+#| eval: false
+garden_hansen <- left_join(garden_hexagon_hansen, st_drop_geometry(mpsz), 
+                          by = c(`SUBZONE` = 'SUBZONE_N')) %>% 
+  select(1:6, 13)
+```
+
+```{r}
+#| eval: false
+ggplot(data=garden_hansen, 
+       aes(y = log(accHansen), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+![](images/garden%20hansen%20stat%20plot.png)
+
+# 8 Modelling and Visualizing Accesssibility using KD2SFCA Method
+
+Similar to Hansen method, we would be using ac() from SpatialAcc package. We would also mostly apply the same steps throughout the analysis, with the only change being the family argument used in ac().
+
+## 8.1 Computing KD2SFCA's accessibility
+
+However, KD2SFCA method does not allow NA values. Hence, we replace the NA values with '0' as shown below before beginning our analysis.
+
+```{r}
+hex_sf$hexagon_demand[is.na(hex_sf$hexagon_demand)] <- 0
+```
+
+Thereafter, we apply similar analysis steps as that of Hansen method.
+
+Eldercare centres:
+
+```{r}
+#| eval: false
+eldercare_acc_KD2SFCA <- data.frame(ac(hex_sf$hexagon_demand,
+                                      eldercare$capacity,
+                                      eldercare_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "KD2SFCA"))
+colnames(eldercare_acc_KD2SFCA) <- "accKD2SFCA"
+eldercare_acc_KD2SFCA <- as_tibble(eldercare_acc_KD2SFCA)
+eldercare_hexagon_KD2SFCA <- bind_cols(hex_sf, eldercare_acc_KD2SFCA)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(eldercare_acc_KD2SFCA, "data/rds/eldercare_acc_KD2SFCA.rds")
+write_rds(eldercare_hexagon_KD2SFCA, "data/rds/eldercare_hexagon_KD2SFCA.rds")
+```
+
+CHAS clinics:
+
+```{r}
+#| eval: false
+chas_acc_KD2SFCA <- data.frame(ac(hex_sf$hexagon_demand,
+                                      chas$capacity,
+                                      chas_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "KD2SFCA"))
+colnames(chas_acc_KD2SFCA) <- "accKD2SFCA"
+chas_acc_KD2SFCA <- as_tibble(chas_acc_KD2SFCA)
+chas_hexagon_KD2SFCA <- bind_cols(hex_sf, chas_acc_KD2SFCA)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(chas_acc_KD2SFCA, "data/rds/chas_acc_KD2SFCA.rds")
+write_rds(chas_hexagon_KD2SFCA, "data/rds/chas_hexagon_KD2SFCA.rds")
+```
+
+We can do the same for the other types of facilities, as shown in the following code.
+
+```{r}
+#| eval: false
+garden_acc_KD2SFCA <- data.frame(ac(hex_sf$hexagon_demand,
+                                      garden$capacity,
+                                      garden_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "KD2SFCA"))
+colnames(garden_acc_KD2SFCA) <- "accKD2SFCA"
+garden_acc_KD2SFCA <- as_tibble(garden_acc_KD2SFCA)
+garden_hexagon_KD2SFCA <- bind_cols(hex_sf, garden_acc_KD2SFCA)
+
+
+hospital_acc_KD2SFCA <- data.frame(ac(hex_sf$hexagon_demand,
+                                      hospital$capacity,
+                                      hospital_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "KD2SFCA"))
+colnames(hospital_acc_KD2SFCA) <- "accKD2SFCA"
+hospital_acc_KD2SFCA <- as_tibble(hospital_acc_KD2SFCA)
+hospital_hexagon_KD2SFCA <- bind_cols(hex_sf, hospital_acc_KD2SFCA)
+
+
+communitycentre_acc_KD2SFCA <- data.frame(ac(hex_sf$hexagon_demand,
+                                       communitycentre$capacity,
+                                       communitycentre_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "KD2SFCA"))
+colnames(communitycentre_acc_KD2SFCA) <- "accKD2SFCA"
+communitycentre_acc_KD2SFCA <- as_tibble(communitycentre_acc_KD2SFCA)
+communitycentre_hexagon_KD2SFCA <- bind_cols(hex_sf, communitycentre_acc_KD2SFCA)
+
+
+park_acc_KD2SFCA <- data.frame(ac(hex_sf$hexagon_demand,
+                                      park$capacity,
+                                      park_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "KD2SFCA"))
+colnames(park_acc_KD2SFCA) <- "accKD2SFCA"
+park_acc_KD2SFCA <- as_tibble(park_acc_KD2SFCA)
+park_hexagon_KD2SFCA <- bind_cols(hex_sf, park_acc_KD2SFCA)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(garden_acc_KD2SFCA, "data/rds/garden_acc_KD2SFCA.rds")
+write_rds(chas_acc_KD2SFCA, "data/rds/chas_acc_KD2SFCA.rds")
+write_rds(hospital_acc_KD2SFCA, "data/rds/hospital_acc_KD2SFCA.rds")
+write_rds(communitycentre_acc_KD2SFCA, "data/rds/communitycentre_acc_KD2SFCA.rds")
+write_rds(park_acc_KD2SFCA, "data/rds/park_acc_KD2SFCA.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+garden_acc_KD2SFCA <- read_rds("data/rds/garden_acc_KD2SFCA.rds")
+chas_acc_KD2SFCA <- read_rds("data/rds/chas_acc_KD2SFCA.rds")
+hospital_acc_KD2SFCA <- read_rds("data/rds/hospital_acc_KD2SFCA.rds")
+communitycentre_acc_KD2SFCA <- read_rds("data/rds/communitycentre_acc_KD2SFCA.rds")
+park_acc_KD2SFCA <- read_rds("data/rds/park_acc_KD2SFCA.rds")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+garden_hexagon_KD2SFCA <- bind_cols(hex_sf, garden_acc_KD2SFCA)
+chas_hexagon_KD2SFCA <- bind_cols(hex_sf, chas_acc_KD2SFCA)
+hospital_hexagon_KD2SFCA <- bind_cols(hex_sf, hospital_acc_KD2SFCA)
+communitycentre_hexagon_KD2SFCA <- bind_cols(hex_sf, communitycentre_acc_KD2SFCA)
+park_hexagon_KD2SFCA <- bind_cols(hex_sf, park_acc_KD2SFCA)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(garden_hexagon_KD2SFCA, "data/rds/garden_hexagon_KD2SFCA.rds")
+write_rds(chas_hexagon_KD2SFCA, "data/rds/chas_hexagon_KD2SFCA.rds")
+write_rds(hospital_hexagon_KD2SFCA, "data/rds/hospital_hexagon_KD2SFCA.rds")
+write_rds(communitycentre_hexagon_KD2SFCA, "data/rds/communitycentre_hexagon_KD2SFCA.rds")
+write_rds(park_hexagon_KD2SFCA, "data/rds/park_hexagon_KD2SFCA.rds")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+garden_hexagon_KD2SFCA <- read_rds("data/rds/garden_hexagon_KD2SFCA.rds")
+chas_hexagon_KD2SFCA <- read_rds("data/rds/chas_hexagon_KD2SFCA.rds")
+hospital_hexagon_KD2SFCA <- read_rds("data/rds/hospital_hexagon_KD2SFCA.rds")
+communitycentre_hexagon_KD2SFCA <- read_rds("data/rds/communitycentre_hexagon_KD2SFCA.rds")
+park_hexagon_KD2SFCA <- read_rds("data/rds/park_hexagon_KD2SFCA.rds")
+```
+
+## 8.2 Visualizing KD2SFCA's accessibility
+
+Similar to Hansen method, we can also visualize the KD2SFCA accessibility methods as shown below.
+
+Eldercare:
+
+```{r}
+#| eval: false
+tmap_mode("plot")
+tm_shape(eldercare_hexagon_KD2SFCA,
+         bbox = mapex) + 
+  tm_fill(col = "accKD2SFCA",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(eldercare) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to eldercare: KD2SFCA method",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+![](images/ac%20eldercare%20kd2sfca.png)
+
+CHAS clinics:
+
+```{r}
+#| eval: false
+tmap_mode("plot")
+tm_shape(chas_hexagon_KD2SFCA,
+         bbox = mapex) + 
+  tm_fill(col = "accKD2SFCA",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(chas) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to CHAS clinics: KD2SFCA method",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+![](images/ac%20chas%20kd2sfca.png)
+
+## 8.3 Statistical graphic visualization
+
+We can use statistical graphic visualizations here too.
+
+Eldercare:
+
+```{r}
+#| eval: false
+eldercare_kd2sfca <- left_join(eldercare_hexagon_KD2SFCA, st_drop_geometry(mpsz), 
+                          by = c(`SUBZONE` = 'SUBZONE_N')) %>% 
+  select(1:6, 13)
+```
+
+```{r}
+#| eval: false
+ggplot(data=eldercare_kd2sfca, 
+       aes(y = log(accKD2SFCA), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+![](images/eldercare%20kd2sfca%20stat%20plot.png)
+
+CHAS clinics:
+
+```{r}
+#| eval: false
+chas_kd2sfca <- left_join(chas_hexagon_KD2SFCA, st_drop_geometry(mpsz), 
+                          by = c(`SUBZONE` = 'SUBZONE_N')) %>% 
+  select(1:6, 13)
+```
+
+```{r}
+#| eval: false
+ggplot(data=chas_kd2sfca, 
+       aes(y = log(accKD2SFCA), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+![](images/chas%20kd2sfca%20stat%20plot.png)
+
+# 9 Modelling and Visualizing Accessibility using SAM Method
+
+Similar to Hansen and KD2SFCA methods, we run the same steps with the change being in the family argument used in ac().
+
+## 9.1 Computing SAM's accessibility
+
+```{r}
+#| eval: false
+eldercare_acc_SAM <- data.frame(ac(hex_sf$hexagon_demand,
+                                      eldercare$capacity,
+                                      eldercare_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "SAM"))
+colnames(eldercare_acc_SAM) <- "accSAM"
+eldercare_acc_SAM <- as_tibble(eldercare_acc_SAM)
+eldercare_hexagon_SAM <- bind_cols(hex_sf, eldercare_acc_SAM)
+```
+
+We can do the same for the other types of facilities, as shown in the following code.
+
+```{r}
+#| eval: false
+garden_acc_SAM <- data.frame(ac(hex_sf$hexagon_demand,
+                                      garden$capacity,
+                                      garden_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "SAM"))
+colnames(garden_acc_SAM) <- "accSAM"
+garden_acc_SAM <- as_tibble(garden_acc_SAM)
+garden_hexagon_SAM <- bind_cols(hex_sf, garden_acc_SAM)
+
+chas_acc_SAM <- data.frame(ac(hex_sf$hexagon_demand,
+                                      chas$capacity,
+                                      chas_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "SAM"))
+colnames(chas_acc_SAM) <- "accSAM"
+chas_acc_SAM <- as_tibble(chas_acc_SAM)
+chas_hexagon_SAM <- bind_cols(hex_sf, chas_acc_SAM)
+
+hospital_acc_SAM <- data.frame(ac(hex_sf$hexagon_demand,
+                                      hospital$capacity,
+                                      hospital_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "SAM"))
+colnames(hospital_acc_SAM) <- "accSAM"
+hospital_acc_SAM <- as_tibble(hospital_acc_SAM)
+hospital_hexagon_SAM <- bind_cols(hex_sf, hospital_acc_SAM)
+
+
+communitycentre_acc_SAM<- data.frame(ac(hex_sf$hexagon_demand,
+                                       communitycentre$capacity,
+                                       communitycentre_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "SAM"))
+colnames(communitycentre_acc_SAM) <- "accSAM"
+communitycentre_acc_SAM <- as_tibble(communitycentre_acc_SAM)
+communitycentre_hexagon_SAM <- bind_cols(hex_sf, communitycentre_acc_SAM)
+
+
+park_acc_SAM <- data.frame(ac(hex_sf$hexagon_demand,
+                                      park$capacity,
+                                      park_distmat_km,
+                                      d0 = 50,
+                                      power = 2,
+                                      family = "SAM"))
+colnames(park_acc_SAM) <- "accSAM"
+park_acc_SAM <- as_tibble(park_acc_SAM)
+park_hexagon_SAM <- bind_cols(hex_sf, park_acc_SAM)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(eldercare_acc_SAM, "data/rds/eldercare_acc_SAM.rds")
+write_rds(garden_acc_SAM, "data/rds/garden_acc_SAM.rds")
+write_rds(chas_acc_SAM, "data/rds/chas_acc_SAM.rds")
+write_rds(hospital_acc_SAM, "data/rds/hospital_acc_SAM.rds")
+write_rds(communitycentre_acc_SAM, "data/rds/communitycentre_acc_SAM.rds")
+write_rds(park_acc_SAM, "data/rds/park_acc_SAM.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+garden_acc_SAM <- read_rds("data/rds/garden_acc_SAM.rds")
+chas_acc_SAM <- read_rds("data/rds/chas_acc_SAM.rds")
+hospital_acc_SAM <- read_rds("data/rds/hospital_acc_SAM.rds")
+communitycentre_acc_SAM <- read_rds("data/rds/communitycentre_acc_SAM.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+eldercare_acc_SAM <- read_rds("data/rds/eldercare_acc_SAM.rds")
+park_acc_SAM <- read_rds("data/rds/park_acc_SAM.rds")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+eldercare_hexagon_SAM <- bind_cols(hex_sf, eldercare_acc_SAM)
+garden_hexagon_SAM <- bind_cols(hex_sf, garden_acc_SAM)
+chas_hexagon_SAM <- bind_cols(hex_sf, chas_acc_SAM)
+hospital_hexagon_SAM <- bind_cols(hex_sf, hospital_acc_SAM)
+communitycentre_hexagon_SAM <- bind_cols(hex_sf, communitycentre_acc_SAM)
+park_hexagon_SAM <- bind_cols(hex_sf, park_acc_SAM)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(eldercare_hexagon_SAM, "data/rds/eldercare_hexagon_SAM.rds")
+write_rds(garden_hexagon_SAM, "data/rds/garden_hexagon_SAM.rds")
+write_rds(chas_hexagon_SAM, "data/rds/chas_hexagon_SAM.rds")
+write_rds(hospital_hexagon_SAM, "data/rds/hospital_hexagon_SAM.rds")
+write_rds(communitycentre_hexagon_SAM, "data/rds/communitycentre_hexagon_SAM.rds")
+write_rds(park_hexagon_SAM, "data/rds/park_hexagon_SAM.rds")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+eldercare_hexagon_SAM <- read_rds("data/rds/eldercare_hexagon_SAM.rds")
+garden_hexagon_SAM <- read_rds("data/rds/garden_hexagon_SAM.rds")
+chas_hexagon_SAM <- read_rds("data/rds/chas_hexagon_SAM.rds")
+hospital_hexagon_SAM <- read_rds("data/rds/hospital_hexagon_SAM.rds")
+communitycentre_hexagon_SAM <- read_rds("data/rds/communitycentre_hexagon_SAM.rds")
+park_hexagon_SAM <- read_rds("data/rds/park_hexagon_SAM.rds")
+```
+
+## 9.2 Visualizing SAM's accessibility
+
+Eldercare:
+
+```{r}
+#| eval: false
+tmap_mode("plot")
+tm_shape(eldercare_hexagon_SAM,
+         bbox = mapex) + 
+  tm_fill(col = "accSAM",
+          n = 5,
+          style = "fisher",
+          na.rm = TRUE,
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(eldercare) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to eldercare: SAM method",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+![](images/ac%20eldercare%20SAM.png)
+
+Parks:
+
+```{r}
+#| eval: false
+tmap_mode("plot")
+tm_shape(park_hexagon_SAM,
+         bbox = mapex) + 
+  tm_fill(col = "accSAM",
+          n = 5,
+          style = "fisher",
+          na.rm = TRUE,
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(eldercare) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to parks: SAM method",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+![](images/ac%20park%20SAM.png)
+
+## 9.3 Statistical graphic visualization
+
+Eldercare:
+
+```{r}
+#| eval: false
+eldercare_SAM <- left_join(eldercare_hexagon_SAM, st_drop_geometry(mpsz), 
+                          by = c(`SUBZONE` = 'SUBZONE_N')) %>% 
+  select(1:6, 13)
+```
+
+```{r}
+#| eval: false
+ggplot(data=eldercare_SAM, 
+       aes(y = log(accSAM), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+![](images/eldercare%20sam%20stat%20plot.png)
+
+Parks:
+
+```{r}
+#| eval: false
+park_SAM <- left_join(park_hexagon_SAM, st_drop_geometry(mpsz), 
+                          by = c(`SUBZONE` = 'SUBZONE_N')) %>% 
+  select(1:6, 13)
+```
+
+```{r}
+#| eval: false
+ggplot(data=park_SAM, 
+       aes(y = log(accSAM), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+![](images/park%20SAM%20stat%20plot.png)
+
+We can run the same steps to visualize the statistical plots of other facilities.
+
+We're done with the analyses!!!!! Hurray!!!
+
+# 10 Moving Forward: Project UI Design
+
+From this take-home exercise, I had a better understanding of how I can potentially integrate such analysis into our ShinyApp for users to gain insights. In our ShinyApp webpage, there would be 3 tabs for users to conduct different types of analysis based on our respective modules.
+
+In the Accessibility Analysis tab, we would potentially implement the following options on the left pane for users to customize their type of accessibility analysis.
+
++-------------------------------------+--------------------------------------------------------+
+| Type of Option                      | Option Values                                          |
++=====================================+========================================================+
+| Accessibility Analysis Method       | -   Hansen                                             |
+|                                     |                                                        |
+|                                     | -   KD2SFCA                                            |
+|                                     |                                                        |
+|                                     | -   SAM                                                |
++-------------------------------------+--------------------------------------------------------+
+| Facility                            | -   Eldercare centres                                  |
+|                                     |                                                        |
+|                                     | -   CHAS clinics                                       |
+|                                     |                                                        |
+|                                     | -   Community gardens                                  |
+|                                     |                                                        |
+|                                     | -   Hospitals                                          |
+|                                     |                                                        |
+|                                     | -   Parks                                              |
+|                                     |                                                        |
+|                                     | -   Community Centres                                  |
++-------------------------------------+--------------------------------------------------------+
+| Accessibility analysis d0 value     | Values of d0 in intervals of 20 ranging from 20 to 200 |
++-------------------------------------+--------------------------------------------------------+
+| Visualization Classification Method | List of various classification methods, for example:   |
+|                                     |                                                        |
+|                                     | -   quantile                                           |
+|                                     |                                                        |
+|                                     | -   pretty                                             |
+|                                     |                                                        |
+|                                     | -   fisher                                             |
++-------------------------------------+--------------------------------------------------------+
+| Subzone 1                           | List of planning subzones, for example:                |
+|                                     |                                                        |
+|                                     | -   Ang Mo Kio Town Centre                             |
+|                                     |                                                        |
+|                                     | -   Tampines East                                      |
++-------------------------------------+--------------------------------------------------------+
+| Subzone 2                           | List of planning subzones, for example:                |
+|                                     |                                                        |
+|                                     | -   Ang Mo Kio Town Centre                             |
+|                                     |                                                        |
+|                                     | -   Tampines East                                      |
++-------------------------------------+--------------------------------------------------------+
+
+We would most likely offer at most 5 options to prevent the UI from appearing too complicated and overwhelming for users.
+
+Additionally, if possible, we would look into adding the option to include network analysis, on top of the existing Euclidean distance analysis.
+
+On the right pane, the results of the analysis would be displayed.
+
+Below is a sketch of how we expect the UI to look like. Nonetheless, we are still exploring and there might be changes made along the way.
+
+![](images/project%20ui.png)

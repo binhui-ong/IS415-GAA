@@ -387,7 +387,7 @@ ggplot(data=hexagon_Hansen,
              size=2)
 ```
 
-![](images/pic6.3 .png)
+![](images/pic6.3%20.png)
 
 # 7 Modelling and Visualizing Accessibility using KD2SFCA method
 
@@ -441,7 +441,7 @@ tm_shape(eldercare) +
   tm_grid(lwd = 0.1, alpha = 0.5)
 ```
 
-![](images/pic7.2 .png)
+![](images/pic7.2%20.png)
 
 ## 7.3 Statistical graphic visualization
 
